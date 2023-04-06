@@ -1,11 +1,293 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
-<title>Thames CIP</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thames-CIP</title>
+    <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css"
+        integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/table2excel/dist/table2excel.min.js"></script>
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+    <link rel="stylesheet" href="./resources/css/index.css">
+    <link rel="stylesheet" href="./resources/css/guideStyles.css">
+    <link rel="stylesheet" href="./resources/css/mainTableStyles.css">
+    <link rel="stylesheet" href="./resources/css/selectStyle.css">
 </head>
-<body>
 
-<h1>Thames Weirs CIP</h1>
-<h2>Rank Weirs</h2>
+<body id="full-page-container">
+    <!--Navbar section  -->
+    <nav class="navbar">
+        <div class="navbar__container">
+            <a href="#home" id="navbar__logo"><b> Thames Weirs CIP 2023</b></a>
+            <ul class="navbar__menu">
+                <li class="navbar__item">
+                    <a href="#guide" class="navbar__links" id="guide-page">Guide</a>
+                </li>
+                <li class="navbar__item">
+                    <a href="#table-link" class="navbar__links" id="table-link-page">All Weirs</a>
+                </li>
+                <li class="navbar__item">
+                    <a href="#factors" class="navbar__links" id="factors-page">Factors</a>
+                </li>
+                <li class="navbar__item">
+                    <a href="#top10" class="navbar__links" id="top10-page">Top 10</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Hero section -->
+    <header>
+        <div class="guide" id="guide">
 
+            <div class="purpose_box red">
+                <h2><img src="./resources/images/thinking.png" alt="" width="75" height="75"> Purpose</h2>
+                <p>This app is designed to replace the existing weir ranking spreadsheet.
+                    It allows a user to import a spreadsheet and edit any details
+                    to produce a top 10 ranking table.
+                </p>
+            </div>
+
+            <div class="guide__container">
+                <div class="box red">
+                    <h2><img src="./resources/images/upload.png" alt="" width="75" height="75"> Step One</h2>
+                    <p>Load in your weir ranking spreadsheet</p>
+                </div>
+                <div class="box blue">
+                    <h2><img src="./resources/images/recovery.png" alt="" width="75" height="75"> Step Two</h2>
+                    <p>Edit and update the data in your table</p>
+                </div>
+            </div>
+            <div class="guide__container">
+                <div class="box cyan">
+                    <h2><img src="./resources/images/maths.png" alt="" width="75" height="75"> Step Three</h2>
+                    <p>Assign any over-riding factors to your table</p>
+                </div>
+                <div class="box orange">
+                    <h2><img src="./resources/images/podium.png" alt="" width="75" height="75"> Step Four</h2>
+                    <p>Rank the weirs to generate a Top 20 list</p>
+                </div>
+            </div>
+    </header>
+    <div id="content-wrap">
+
+        <!-- Imported Table -->
+        <div class="table--importer" id="table-link">
+            <div class="table--importer--container">
+
+                <div class="weir__container">
+                    <div id="section1">
+                        <h1 class="guide__heading"><img src="./resources/images/customization.png" alt="" width="75"
+                                height="75">
+                            Customise Weir Rankings</h1>
+                        <div class="table__buttons">
+                            <div class="tempy_card">
+                                <div style="padding-right: 20px">
+                                    <button class="click__button" style="display: flex; align-items: center;">
+                                        <input type="file" id="excel_file" />
+                                        <label for="excel_file">
+                                            <img src="./resources/images/excel.png" alt="" width="50" height="50"
+                                                style="margin-right: 10px;">
+                                            <h3>Upload data</h3>
+                                        </label>
+                                    </button>
+                                </div>
+                                <div style="padding-left: 20px">
+                                    <button onclick="exportToExcel()" class="click__button" style="display: flex; align-items: center;" id="save_file">
+                                        <!-- <input type="file" id="save_file" /> -->
+
+                                        <!-- <label for="save_file"> -->
+                                            <img src="./resources/images/diskette.png" alt="" width="50" height="50">
+                                            <h3> Save changes</h3>
+                                        <!-- </label> -->
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="data-card">
+                                <div class="wrapper">
+
+                                    <h3>What are you looking for?</h3>
+                                    <input type="search" placeholder="Filter table data by..."
+                                        class="form-control search-input" data-table="table-editable" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="section2" class="tips_help">
+                        <img class="image__img" src="./resources/images/tip_box_backgroundv3.png" alt="">
+                        <div class="image__overlay red">
+                            <h2 class="image__title">Quick Tips</h2>
+                            <ul>
+                                <li>Use the buttons on the left to load in and/or save your data.</li>
+                                <li>Once you've loaded your data, click the " <i
+                                        class="fas fa-sharp fa-solid fa-list"></i> " icon in your table to
+                                    expand your dataset and edit information
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+                <table id="excel_data" class="table-editable"></table>
+            </div>
+        </div>
+
+        <div class="temp_savetable">
+
+          <table id="save_table" class="table-editable"></table>
+
+        </div>
+
+        <!-- About section -->
+
+        <div class="bottom__container">
+
+            <div class="hero" id="factors">
+                <h1 class="hero__heading"><img src="./resources/images/customization.png" alt="" width="75"
+                        height="75">Risk
+                    Factors</h1>
+                <div class="weir__container">
+                    <div>
+                        <button id="add_row" class="click__button">Add Row</button>
+                        <button id="calculate-button" class="click__button">Calculate multipliers</button>
+
+                        <table id="alt_table" class="table-editable">
+                            <thead>
+                                <tr>
+                                    <th>Over-riding factors</th>
+                                    <th>Columns</th>
+                                    <th>Multiplier</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Placeholder</td>
+                                    <td>
+                                        <select>
+                                            <option value="hello">hello</option>
+                                            <option value="hello">hello2</option>
+                                        </select>
+                                    </td>
+                                    <td contenteditable="true">1</td>
+                                </tr>
+                        </table>
+                    </div>
+
+                    <div class="tips_help">
+                        <img class="image__img" src="./resources/images/tip_box_backgroundv3.png" alt="">
+                        <div class="image__overlay red">
+                            <h2 class="image__title">Quick Tips</h2>
+                            <ul>
+                                <li>Use the table below to assign over-riding factors to various weirs
+                                    or columns in the table
+                                </li>
+                                <li>Use the "Add Row" button to add and assign additional over-riding factors
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hero section -->
+            <div class="hero" id="top10">
+                <h1 class="hero__heading"><img src="./resources/images/hydroelectric.png" alt="" width="75"
+                        height="75">Top
+                    10 Weirs</h1>
+                <div class="hero__container">
+                    <div>
+                        <button id="reRankButton" class="click__button">Re-rank Weirs</button>
+
+                        <table id="summary_table">
+                            <thead>
+                                <th>Weir Name</th>
+                                <th>Weir Rank</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Derwent Valley</td>
+                                    <td>Rank 1</td>
+                                </tr>
+                                <tr>
+                                    <td>Eccup</td>
+                                    <td>Rank 2</td>
+                                </tr>
+                                <tr>
+                                    <td>Brownhill/Digley</td>
+                                    <td>Rank 3</td>
+                                </tr>
+                                <tr>
+                                    <td>Penton Hook Weir</td>
+                                    <td>Rank 4</td>
+                                </tr>
+                                <tr>
+                                    <td>Leighton</td>
+                                    <td>Rank 5</td>
+                                </tr>
+                                <tr>
+                                    <td>Placeholder</td>
+                                    <td>Rank 6</td>
+                                </tr>
+                                <tr>
+                                    <td>Placeholder</td>
+                                    <td>Rank 7</td>
+                                </tr>
+                                <tr>
+                                    <td>Placeholder</td>
+                                    <td>Rank 8</td>
+                                </tr>
+                                <tr>
+                                    <td>Placeholder</td>
+                                    <td>Rank 9</td>
+                                </tr>
+                                <tr>
+                                    <td>Placeholder</td>
+                                    <td>Rank 10</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer section -->
+        <footer class="footer">
+            <div class="parent">
+                <img class="footer__image" src="./resources/images/footer_image_v2.png" alt="">
+
+                <div class="logos">
+                    <img class="jacobs__logo" src="./resources/images//Jacobs_logo.png" alt="" width="120" ,
+                        height="30">
+                    <img class="EA__logo" src="./resources/images/environment-agency-logo.png" alt="" width="120" ,
+                        height="30">
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <script src="./resources/js/navbar.js"></script>
+    <script src="./resources/js/table.js"></script>
+    <script src="./resources/js/saveTable.js"></script>
+    <script src="./resources/js/ranking.js"></script>
+    <script src="./resources/js/maths.js"></script>
+    <script src="./resources/js/factors.js"></script>
 </body>
+
 </html>

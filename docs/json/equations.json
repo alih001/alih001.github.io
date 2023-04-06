@@ -1,0 +1,9 @@
+{
+    "Equations": [
+      {"type": "sum", "output":"Category (I) Score", "values": ["Gate Type Score (ref 1) ", "Operating Gear Type Score (ref 2)"]},
+      {"type": "sum", "output":"Category (II) Score", "values": ["2019 scour score","2019 cracking score", "2019 corrosion score", "2019 Tackle Score", "2019 Erosion Score", "Gate Type Score (ref 1) "]},
+      {"type": "sum", "output":"Total", "values": ["Category (I) Score", "Category (II) Score"]}
+    ]
+
+  }
+

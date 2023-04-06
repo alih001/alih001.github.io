@@ -1,0 +1,191 @@
+/* 
+This part focuses on headers and cards
+*/
+
+.table--importer--container {
+    /* background: #ffffff; */
+    padding: 30px 50px;
+    /* max-width: 1035px; */
+}
+
+.table--importer--container h1 {
+    max-width: fit-content;
+}
+
+.tempy_card {
+    display: flex;
+    grid-template-columns: 1fr 1fr;
+    /* padding: 25px;
+    padding-left: 100px; */
+}
+
+.table__buttons {
+    padding-left: 100px;
+
+}
+
+.data-card:nth-child(1) {
+    border-left-width: 0px;
+    border-right-width: 0px;
+    border-bottom-width: 0px;
+}
+
+.data-card:nth-child(2) {
+    border-left-width: 0px;
+    border-right-width: 0px;
+    border-bottom-width: 0px;
+}
+
+.data-card:nth-child(3) {
+    border-left-width: 0px;
+    border-right-width: 0px;
+    border-bottom-width: 0px;
+
+}
+
+input[type="file"] {
+    display: none;
+}
+
+label {
+    width: 300px;
+    /* width: 250px;
+    height: 60px;
+    -webkit-appearance: none;
+    background: #ffffff;
+    border: 3px dashed rgb(112, 111, 111);
+    border-radius: 15px;
+    outline: none;
+    padding: 10px 10px;
+    padding-left: 20px; */
+    cursor: pointer;
+}
+
+/*
+label:hover {
+    background-color: ;
+    color: white;
+    transition: all 0.4s ease;
+} */
+
+/* 
+This section formats the table itself
+*/
+
+td select {
+    display: block;
+    width: 100%;
+}
+
+tr.hidden {
+    display: none;
+}
+
+.wrapper .form-control .search-input {
+    border: #12d8fa;
+    border-radius: 10;
+}
+
+#excel_data {
+    border-collapse: collapse;
+    margin: 25px 0px;
+    margin-left: 150px;
+    font-size: 0.9em;
+    min-width: 400px;
+    border-radius: 5px 5px 0 0;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+#excel_data th {
+
+    background-color: #000;
+    color: #ffffff;
+    text-align: left;
+    font-weight: bold;
+}
+
+.hidden-header {
+    background-color: #cacaca;
+    color: #131313;
+    text-align: left;
+    font-weight: bold;
+    outline: none;
+    border: none;
+}
+
+#excel_data th,
+#excel_data td {
+    padding: 12px 15px;
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#excel_data tbody tr {
+    border-bottom: 1px solid #c1c1c1;
+}
+
+#excel_data tbody tr:nth-of-type(odd) {
+    background-color: #f3f3f3;
+}
+
+#excel_data tbody tr:nth-of-type(even) {
+    background-color: #c8c8c8;
+}
+
+#excel_data tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
+
+#summary_table,
+#alt_table {
+    border-collapse: collapse;
+    margin: 25px 0px;
+    font-size: 0.9em;
+    min-width: 400px;
+    border-radius: 5px 5px 0 0;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+#summary_table th,
+#alt_table th {
+
+    background-color: #000;
+    color: #ffffff;
+    text-align: left;
+    font-weight: bold;
+}
+
+
+
+#summary_table th,
+#alt_table th,
+#summary_table td,
+#alt_table td {
+    padding: 12px 15px;
+    max-width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#summary_table tbody tr,
+#alt_table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+#summary_table tbody tr:nth-of-type(odd),
+#alt_table tbody tr:nth-of-type(odd) {
+    background-color: #f3f3f3;
+}
+
+#summary_table tbody tr:nth-of-type(even),
+#alt_table tbody tr:nth-of-type(even) {
+    background-color: #c8c8c8;
+}
+
+#summary_table tbody tr:last-of-type,
+#alt_table tbody tr:last-of-type {
+    border-bottom: 2px solid #000000;
+}

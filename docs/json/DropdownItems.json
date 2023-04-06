@@ -1,0 +1,33 @@
+{
+  "2019 scour": [
+    {"text": "None- no reported scour", "value": 0},
+    {"text": "Low- scour reported away from the structure", "value": 2},
+    {"text": "Medium - moderate scour next to the structure", "value": 4},
+    {"text": "High- severe scour next to structure", "value": 6},
+    {"text": "presi test", "value": 6000}
+  ],
+  "2019 cracking": [
+    {"text": "None- good information that there are no problems or not applicable", "value": 0},
+    {"text": "Low- good information that there are minor problems or information lacking but no cause for alarm", "value": 2},
+    {"text": "Medium- information that there are problems or scarce information but giving cause for alarm", "value": 4},
+    {"text": "High- known recurring serious problems and/or warnings following condition surveys", "value": 6}
+  ],
+  "2019 corrosion": [
+    {"text": "None- good information that there are no problems or not applicable", "value": 0},
+    {"text": "Low- good information that there are minor problems or information lacking but no cause for alarm", "value": 2},
+    {"text": "Medium- information that there are problems or scarce information but giving cause for alarm", "value": 4},
+    {"text": "High- known recurring serious problems and/or warnings following condition surveys", "value": 6}
+  ],
+  "2019 Tackle": [
+    {"text": "None- good information that there are no problems or not applicable", "value": 0},
+    {"text": "Low- good information that there are minor problems or information lacking but no cause for alarm", "value": 2},
+    {"text": "Medium- information that there are problems or scarce information but giving cause for alarm", "value": 4},
+    {"text": "High- known recurring serious problems and/or warnings following condition surveys", "value": 6}
+  ],
+  "2019 Erosion": [
+    {"text": "None- good information that there are no problems or not applicable", "value": 0},
+    {"text": "Low- good information that there are minor problems or information lacking but no cause for alarm", "value": 2},
+    {"text": "Medium- information that there are problems or scarce information but giving cause for alarm", "value": 4},
+    {"text": "High- known recurring serious problems and/or warnings following condition surveys", "value": 6}
+  ]
+}
