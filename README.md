@@ -9,7 +9,7 @@ This tool is designed to replace the existing ranking spreadsheet.
 
 Click the link below to open the new ranking tool
 
-`[Thames CIP Tool](https://alih001.github.io/alih001.github.io/)`
+[Thames CIP Tool](https://alih001.github.io/alih001.github.io/)
 
 ### Dependencies
 
