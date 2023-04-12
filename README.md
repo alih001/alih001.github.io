@@ -17,6 +17,9 @@ The tool is currently designed to work best in Google Chrome
 
 ## Version History
 
+* 0.3
+    * Various bug fixes and optimizations
+    * Added saving functionality and initial version control
 * 0.2
     * Various bug fixes and optimizations
     * Adding CSS and Javascript functionality

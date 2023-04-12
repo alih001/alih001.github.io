@@ -108,7 +108,7 @@ excel_file.addEventListener('change', async (event) => {
                     rowItem = 'row' + row + 'item' + cell
 
                     if (row == 1 && trueArray.indexOf(cell) === -1 && cell == 0) {
-                        table_output += '<th class="visually-hidden">' + sheet_data[row][cell] + '</th><th></th>';
+                        table_output += '<th class="visually-hidden"></th><th>' + sheet_data[row][cell] + '</th>';
                     }
                     else if (row == 1 && trueArray.indexOf(cell) === -1) {
                         table_output += '<th id ="' + sheet_data[row][cell] + '">' + sheet_data[row][cell] + '</th>';
