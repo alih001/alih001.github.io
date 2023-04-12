@@ -114,9 +114,19 @@ excel_file.addEventListener('change', async (event) => {
                         table_output += '<th id ="' + sheet_data[row][cell] + '">' + sheet_data[row][cell] + '</th>';
                     }
 
+                    if (row == 1 && cell == sheet_data[row].length - 1) {
+                        table_output += '<th id ="comment">Comment</th>';
+                    }
+
                     if (row > 1 && trueArray.indexOf(cell) === -1) {
                         table_output += '<td contenteditable="true" id="' + rowItem + '" class="' + sheet_data[1][cell] + '">' + sheet_data[row][cell] + '</td>';
                     }
+                    if (row > 1 && cell == sheet_data[row].length - 1) {
+                        table_output += '<td contenteditable="true" id="comment">...if applicable</td>';
+                    }
+                }
+                if (row == 1 && trueArray.indexOf(cell) === -1 && cell == 0) {
+                    table_output += '<th class="visually-hidden">' + sheet_data[row][cell] + '</th><th></th>';
                 }
 
                 table_output += '</tr>';
@@ -150,8 +160,6 @@ excel_file.addEventListener('change', async (event) => {
 
                 if (json_data.hasOwnProperty(selectId)) {
                     var optionArray = json_data[selectId];
-                    // console.log(optionArray)
-                    // console.log(selectElement.className)
                     var desiredText = selectElement.className
 
                     for (var j = 0; j < optionArray.length; j++) {
@@ -207,12 +215,18 @@ function highlightTableCells() {
     // Loop through the dropdown menus
     for (var i = 0; i < dropdowns.length; i++) {
         dropdowns[i].addEventListener("change", function () {
+
             // Get the parent cell of the changed dropdown menu
             var parentCell = this.parentNode;
-            console.log(parentCell)
+            var parent_tr = parentCell.parentElement
             var previousCell = parentCell.previousElementSibling;
+
+            const rowNumber = 'row' + parseInt(parent_tr.getAttribute('id').match(/row(\d+)/)[1]) +'item2';
+            const td = document.querySelector(`td[id*="${rowNumber}"]`);
+
             // Highlight the previous cell with yellow background color
             previousCell.style.backgroundColor = "yellow";
+            td.parentElement.style.backgroundColor = "yellow";
         });
     }
 }

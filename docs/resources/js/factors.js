@@ -11,7 +11,7 @@ $("#add_row").click(function () {
   $.each(colData, function (key, value) {
     select.append($("<option></option>").attr("value", key).text(key));
   });
-  $("#alt_table tbody").append("<tr><td contenteditable='true'>Enter Category Name</td><td>" + select[0].outerHTML + "</td><td contenteditable='true'>1</td><td><button class='delete_row'><i class='fa fa-minus-circle'></i></button></td></tr>");
+  $("#alt_table tbody").append("<tr><td contenteditable='true'>Enter Category Name</td><td>" + select[0].outerHTML + "</td><td contenteditable='true'>1</td><td id='Comment' contenteditable='true'>Enter Comment</td><td><button class='delete_row'><i class='fa fa-minus-circle'></i></button></td></tr>");
 });
 
 $("#alt_table").on("click", ".delete_row", function () {
@@ -46,7 +46,7 @@ function calculateSums() {
     sums[columnsValue] += multiplierValue;
   }
 
-  console.log(sums);
+  // console.log(sums);
 
   // Get all the td elements with class "Rank" in the different table
   const rankTds = document.querySelectorAll("#excel_data td.Total");
@@ -57,8 +57,8 @@ function calculateSums() {
     if (sums[columnsValue]) {
 
       rankTd.innerHTML = (parseFloat(rankTd.innerHTML) * sums[columnsValue]).toFixed(2);
-      console.log(rankTd.innerHTML)
-      console.log((parseFloat(rankTd.innerHTML) * sums[columnsValue]).toFixed(2))
+      // console.log(rankTd.innerHTML)
+      // console.log((parseFloat(rankTd.innerHTML) * sums[columnsValue]).toFixed(2))
     }
   });
 
@@ -75,7 +75,18 @@ function calculateSums() {
 
 function addCalculateSumsListener() {
   const button = document.getElementById("calculate-button");
-  button.addEventListener("click", calculateSums);
+
+  button.addEventListener("click", () => {
+    const commentCells = document.querySelectorAll('#alt_table #Comment');
+    for (let i = 0; i < commentCells.length; i++) {
+      const cell = commentCells[i];
+      if (cell.textContent === 'Enter Comment') {
+        alert('Please enter comments if multipliers are used. Multipliers will not be applied without an accompanying comment. If a multiplier column is not being used, use the delete button to remove that row.');
+        break;
+      } 
+    }
+    calculateSums();
+  });
 }
 
 addCalculateSumsListener();

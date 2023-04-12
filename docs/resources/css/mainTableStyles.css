@@ -2,44 +2,40 @@
 This part focuses on headers and cards
 */
 
-.table--importer--container {
-    /* background: #ffffff; */
-    padding: 30px 50px;
-    /* max-width: 1035px; */
+.table__importer__container {
+    padding: 2rem 3rem;
 }
 
-.table--importer--container h1 {
+.table__importer__container h1 {
     max-width: fit-content;
 }
 
-.tempy_card {
+.table__buttons {
     display: flex;
     grid-template-columns: 1fr 1fr;
-    /* padding: 25px;
-    padding-left: 100px; */
 }
 
-.table__buttons {
-    padding-left: 100px;
+.table__buttons__container {
+    padding-left: 6.25rem;
 
 }
 
 .data-card:nth-child(1) {
-    border-left-width: 0px;
-    border-right-width: 0px;
-    border-bottom-width: 0px;
+    border-left-width: 0rem;
+    border-right-width: 0rem;
+    border-bottom-width: 0rem;
 }
 
 .data-card:nth-child(2) {
-    border-left-width: 0px;
-    border-right-width: 0px;
-    border-bottom-width: 0px;
+    border-left-width: 0rem;
+    border-right-width: 0rem;
+    border-bottom-width: 0rem;
 }
 
 .data-card:nth-child(3) {
-    border-left-width: 0px;
-    border-right-width: 0px;
-    border-bottom-width: 0px;
+    border-left-width: 0rem;
+    border-right-width: 0rem;
+    border-bottom-width: 0rem;
 
 }
 
@@ -48,25 +44,9 @@ input[type="file"] {
 }
 
 label {
-    width: 300px;
-    /* width: 250px;
-    height: 60px;
-    -webkit-appearance: none;
-    background: #ffffff;
-    border: 3px dashed rgb(112, 111, 111);
-    border-radius: 15px;
-    outline: none;
-    padding: 10px 10px;
-    padding-left: 20px; */
+    width: 20rem;
     cursor: pointer;
 }
-
-/*
-label:hover {
-    background-color: ;
-    color: white;
-    transition: all 0.4s ease;
-} */
 
 /* 
 This section formats the table itself
@@ -88,16 +68,15 @@ tr.hidden {
 
 #excel_data {
     border-collapse: collapse;
-    margin: 25px 0px;
-    margin-left: 150px;
+    margin: 1.75rem 0rem;
+    margin-left: 10rem;
     font-size: 0.9em;
-    min-width: 400px;
-    border-radius: 5px 5px 0 0;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    min-width: 25rem;
+    border-radius: 0.25rem 0.25rem 0 0;
+    box-shadow: 0 0 1.25rem rgba(0, 0, 0, 0.15);
 }
 
 #excel_data th {
-
     background-color: #000;
     color: #ffffff;
     text-align: left;
@@ -115,8 +94,8 @@ tr.hidden {
 
 #excel_data th,
 #excel_data td {
-    padding: 12px 15px;
-    max-width: 250px;
+    padding: 0.75rem 1rem;
+    max-width: 15rem;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -141,30 +120,27 @@ tr.hidden {
 #summary_table,
 #alt_table {
     border-collapse: collapse;
-    margin: 25px 0px;
+    margin: 1.75rem 0px;
     font-size: 0.9em;
-    min-width: 400px;
-    border-radius: 5px 5px 0 0;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    min-width: 25rem;
+    border-radius: 0.25rem 0.25rem 0 0;
+    box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.15);
 }
 
 #summary_table th,
 #alt_table th {
-
     background-color: #000;
     color: #ffffff;
     text-align: left;
     font-weight: bold;
 }
 
-
-
 #summary_table th,
 #alt_table th,
 #summary_table td,
 #alt_table td {
-    padding: 12px 15px;
-    max-width: 250px;
+    padding: 0.75rem 1rem;
+    max-width: 15rem;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

@@ -13,10 +13,9 @@
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/table2excel/dist/table2excel.min.js"></script>
-    
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
 
     <link rel="stylesheet" href="./resources/css/index.css">
     <link rel="stylesheet" href="./resources/css/guideStyles.css">
@@ -24,7 +23,7 @@
     <link rel="stylesheet" href="./resources/css/selectStyle.css">
 </head>
 
-<body id="full-page-container">
+<body id="page__body">
     <!--Navbar section  -->
     <nav class="navbar">
         <div class="navbar__container">
@@ -45,18 +44,18 @@
             </ul>
         </div>
     </nav>
-    <!-- Hero section -->
+    <!-- Introduction section -->
     <header>
         <div class="guide" id="guide">
-
-            <div class="purpose_box red">
-                <h2><img src="./resources/images/thinking.png" alt="" width="75" height="75"> Purpose</h2>
-                <p>This app is designed to replace the existing weir ranking spreadsheet.
-                    It allows a user to import a spreadsheet and edit any details
-                    to produce a top 10 ranking table.
-                </p>
+            <div class="purpose__div">
+                <div class="purpose_box red">
+                    <h2><img src="./resources/images/thinking.png" alt="" width="75" height="75"> Purpose</h2>
+                    <p>This app is designed to replace the existing weir ranking spreadsheet.
+                        It allows a user to import a spreadsheet and edit any details
+                        to produce a top 10 ranking table.
+                    </p>
+                </div>
             </div>
-
             <div class="guide__container">
                 <div class="box red">
                     <h2><img src="./resources/images/upload.png" alt="" width="75" height="75"> Step One</h2>
@@ -78,19 +77,20 @@
                 </div>
             </div>
     </header>
-    <div id="content-wrap">
+
+    <div id="table__content">
 
         <!-- Imported Table -->
-        <div class="table--importer" id="table-link">
-            <div class="table--importer--container">
+        <div class="table__importer" id="table-link">
+            <div class="table__importer__container">
 
-                <div class="weir__container">
+                <div class="table__extras">
                     <div id="section1">
                         <h1 class="guide__heading"><img src="./resources/images/customization.png" alt="" width="75"
                                 height="75">
                             Customise Weir Rankings</h1>
-                        <div class="table__buttons">
-                            <div class="tempy_card">
+                        <div class="table__buttons__container">
+                            <div class="table__buttons">
                                 <div style="padding-right: 20px">
                                     <button class="click__button" style="display: flex; align-items: center;">
                                         <input type="file" id="excel_file" />
@@ -102,12 +102,13 @@
                                     </button>
                                 </div>
                                 <div style="padding-left: 20px">
-                                    <button onclick="exportToExcel()" class="click__button" style="display: flex; align-items: center;" id="save_file">
+                                    <button onclick="exportToExcel()" class="click__button"
+                                        style="display: flex; align-items: center;" id="save_file">
                                         <!-- <input type="file" id="save_file" /> -->
 
                                         <!-- <label for="save_file"> -->
-                                            <img src="./resources/images/diskette.png" alt="" width="50" height="50">
-                                            <h3> Save changes</h3>
+                                        <img src="./resources/images/diskette.png" alt="" width="50" height="50">
+                                        <h3> Save changes</h3>
                                         <!-- </label> -->
                                     </button>
                                 </div>
@@ -124,7 +125,7 @@
                         </div>
                     </div>
 
-                    <div id="section2" class="tips_help">
+                    <div id="section2" class="tips__help">
                         <img class="image__img" src="./resources/images/tip_box_backgroundv3.png" alt="">
                         <div class="image__overlay red">
                             <h2 class="image__title">Quick Tips</h2>
@@ -146,7 +147,7 @@
 
         <div class="temp_savetable">
 
-          <table id="save_table" class="table-editable"></table>
+            <table id="save_table" class="table-editable"></table>
 
         </div>
 
@@ -154,11 +155,11 @@
 
         <div class="bottom__container">
 
-            <div class="hero" id="factors">
-                <h1 class="hero__heading"><img src="./resources/images/customization.png" alt="" width="75"
+            <div class="page__section" id="factors">
+                <h1 class="page__section__heading"><img src="./resources/images/customization.png" alt="" width="75"
                         height="75">Risk
                     Factors</h1>
-                <div class="weir__container">
+                <div class="table__extras">
                     <div>
                         <button id="add_row" class="click__button">Add Row</button>
                         <button id="calculate-button" class="click__button">Calculate multipliers</button>
@@ -169,24 +170,16 @@
                                     <th>Over-riding factors</th>
                                     <th>Columns</th>
                                     <th>Multiplier</th>
+                                    <th>Comment</th>
                                     <th></th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Placeholder</td>
-                                    <td>
-                                        <select>
-                                            <option value="hello">hello</option>
-                                            <option value="hello">hello2</option>
-                                        </select>
-                                    </td>
-                                    <td contenteditable="true">1</td>
-                                </tr>
+                            <tbody></tbody>
+
                         </table>
                     </div>
 
-                    <div class="tips_help">
+                    <div class="tips__help">
                         <img class="image__img" src="./resources/images/tip_box_backgroundv3.png" alt="">
                         <div class="image__overlay red">
                             <h2 class="image__title">Quick Tips</h2>
@@ -202,12 +195,13 @@
                 </div>
             </div>
 
-            <!-- Hero section -->
-            <div class="hero" id="top10">
-                <h1 class="hero__heading"><img src="./resources/images/hydroelectric.png" alt="" width="75"
-                        height="75">Top
-                    10 Weirs</h1>
-                <div class="hero__container">
+            <!-- Top 10 section -->
+            <div class="page__section" id="top10">
+                <h1 class="page__section__heading">
+                    <img src="./resources/images/hydroelectric.png" alt="" width="75" height="75">
+                    Top 10 Weirs
+                </h1>
+                <div class="page__section__container">
                     <div>
                         <button id="reRankButton" class="click__button">Re-rank Weirs</button>
 
@@ -217,52 +211,20 @@
                                 <th>Weir Rank</th>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Derwent Valley</td>
-                                    <td>Rank 1</td>
-                                </tr>
-                                <tr>
-                                    <td>Eccup</td>
-                                    <td>Rank 2</td>
-                                </tr>
-                                <tr>
-                                    <td>Brownhill/Digley</td>
-                                    <td>Rank 3</td>
-                                </tr>
-                                <tr>
-                                    <td>Penton Hook Weir</td>
-                                    <td>Rank 4</td>
-                                </tr>
-                                <tr>
-                                    <td>Leighton</td>
-                                    <td>Rank 5</td>
-                                </tr>
-                                <tr>
-                                    <td>Placeholder</td>
-                                    <td>Rank 6</td>
-                                </tr>
-                                <tr>
-                                    <td>Placeholder</td>
-                                    <td>Rank 7</td>
-                                </tr>
-                                <tr>
-                                    <td>Placeholder</td>
-                                    <td>Rank 8</td>
-                                </tr>
-                                <tr>
-                                    <td>Placeholder</td>
-                                    <td>Rank 9</td>
-                                </tr>
-                                <tr>
-                                    <td>Placeholder</td>
-                                    <td>Rank 10</td>
-                                </tr>
-
+                                <tr><td></td><td>Rank 1</td></tr>
+                                <tr><td></td><td>Rank 2</td></tr>
+                                <tr><td></td><td>Rank 3</td></tr>
+                                <tr><td></td><td>Rank 4</td></tr>
+                                <tr><td></td><td>Rank 5</td></tr>
+                                <tr><td></td><td>Rank 6</td></tr>
+                                <tr><td></td><td>Rank 7</td></tr>
+                                <tr><td></td><td>Rank 8</td></tr>
+                                <tr><td></td><td>Rank 9</td></tr>
+                                <tr><td></td><td>Rank 10</td></tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-
             </div>
         </div>
 
