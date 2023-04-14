@@ -1,19 +1,20 @@
-var rerankButton = document.querySelector("#reRankButton");
+const rerankButton = document.querySelector("#reRankButton");
 
 rerankButton.addEventListener("click", function(event) {
+  event.preventDefault();
 
-  event.preventDefault(); // prevent default behavior of the button
   // Get the table element containing the ranking column
   const originalTable = document.getElementById('excel_data');
 
-  // Get the existing table element for the top 10 rows
-  const top10TableBody = document.querySelector('#summary_table tbody');
+  // Get the existing table element for the top rows
+  const summaryTableBody = document.querySelector('#summary_table tbody');
 
   // Clear the contents of the existing table
-  top10TableBody.innerHTML = '';
+  while (summaryTableBody.firstChild) {
+    summaryTableBody.removeChild(summaryTableBody.firstChild);
+  }
 
-  // Get an array of the table rows that have a td element with class "Rank"
-  const rows = Array.from(originalTable.getElementsByTagName('tr'))
+  const rows = [...originalTable.getElementsByTagName('tr')];
 
   // Filter and sort the rows based on the rank value
   const filteredRows = rows.filter(row => row.querySelector('td.Rank')).sort((a, b) => {
@@ -22,17 +23,17 @@ rerankButton.addEventListener("click", function(event) {
     return aRank - bRank;
   });
 
-    // Loop through the filtered and sorted rows and append rankCell and nameCell to top10Table
-    for (let i = 0; i < 10 && i < filteredRows.length; i++) {
-      
-      const row = filteredRows[i];
-      const nameCell = row.querySelector('td.Name');
-      const rankCell = row.querySelector('td.Rank');
-      const newRow = document.createElement('tr');
+  // Append the filtered and sorted rows to the summary table
+  const numRowsToShow = 10;
+  for (let i = 0; i < numRowsToShow && i < filteredRows.length; i++) {
+    const row = filteredRows[i];
+    const nameCell = row.querySelector('td.Name');
+    const rankCell = row.querySelector('td.Rank');
+    const newRow = document.createElement('tr');
 
-      newRow.appendChild(nameCell.cloneNode(true));
-      newRow.appendChild(rankCell.cloneNode(true));
+    newRow.appendChild(nameCell.cloneNode(true));
+    newRow.appendChild(rankCell.cloneNode(true));
 
-      top10TableBody.appendChild(newRow);
-    }
+    summaryTableBody.appendChild(newRow);
+  }
 });

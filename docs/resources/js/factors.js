@@ -3,7 +3,6 @@ fetch('./json/ddm_items.json')
   .then(response => response.json())
   .then(menu_json => {
     colData = menu_json
-    console.log(colData)
   })
 
 $("#add_row").click(function () {
@@ -46,7 +45,6 @@ function calculateSums() {
     sums[columnsValue] += multiplierValue;
   }
 
-  // console.log(sums);
 
   // Get all the td elements with class "Rank" in the different table
   const rankTds = document.querySelectorAll("#excel_data td.Total");
@@ -57,8 +55,6 @@ function calculateSums() {
     if (sums[columnsValue]) {
 
       rankTd.innerHTML = (parseFloat(rankTd.innerHTML) * sums[columnsValue]).toFixed(2);
-      // console.log(rankTd.innerHTML)
-      // console.log((parseFloat(rankTd.innerHTML) * sums[columnsValue]).toFixed(2))
     }
   });
 

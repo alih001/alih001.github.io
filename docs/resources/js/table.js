@@ -7,7 +7,6 @@ excel_file.addEventListener('change', async (event) => {
 
     const response = await fetch("./json/DropdownItems.json");
     const json_data = await response.json();
-    console.log(json_data)
     if (!['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'].includes(event.target.files[0].type)) {
         document.getElementById('excel_data').innerHTML = '<div class="alert alert-danger">Only .xlsx or .xls file format are allowed</div>';
         excel_file.value = '';
@@ -19,8 +18,8 @@ excel_file.addEventListener('change', async (event) => {
 
         var data = new Uint8Array(reader.result);
         var work_book = XLSX.read(data, { type: 'array' });
-        var sheet_data = XLSX.utils.sheet_to_json(work_book.Sheets['Sheet1'], { header: 1 });
-        versionControl = XLSX.utils.sheet_to_json(work_book.Sheets['Sheet2']);
+        var sheet_data = XLSX.utils.sheet_to_json(work_book.Sheets['Table Outputs'], { header: 1 });
+        versionControl = XLSX.utils.sheet_to_json(work_book.Sheets['Version Control']);
 
         let trueArray = []
 
@@ -99,12 +98,10 @@ excel_file.addEventListener('change', async (event) => {
                     rowItem = 'row' + row + 'item' + hidden_cell
 
                     if (row > 1 && trueArray.includes(hidden_cell) && json_data.hasOwnProperty(desiredText)) {
-                        // console.log("Replace this with a ddm: " + desiredText + ", value is" + sheet_data[row][hidden_cell])
                         table_output += '<tr id="' + rowItem + '" class="hidden"><td></td><td class="hidden-header">' + sheet_data[1][hidden_cell] + '</td><td><select id="' + desiredText + '" class="' + sheet_data[row][hidden_cell] + '"></select></td></tr>';
                     }
 
                     else if (row > 1 && trueArray.includes(hidden_cell)) {
-                        // console.log(sheet_data[1][hidden_cell])
                         table_output += '<tr id="' + rowItem + '" class="hidden"><td></td><td class="hidden-header">' + sheet_data[1][hidden_cell] + '</td><td class="' + desiredText + '">' + sheet_data[row][hidden_cell] + '</td></tr>';
                     }
                 }
