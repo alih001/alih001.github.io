@@ -1,45 +1,6 @@
 const excel_file = document.getElementById('excel_file');
 var options;
-// This function adds in a search function to a specific table
-(function (document) {
-    'use strict';
-
-    var TableFilter = (function (myArray) {
-        var search_input;
-
-        function _onInputSearch(e) {
-            search_input = e.target;
-            var tables = document.getElementsByClassName(search_input.getAttribute('data-table'));
-            myArray.forEach.call(tables, function (table) {
-                myArray.forEach.call(table.tBodies, function (tbody) {
-                    myArray.forEach.call(tbody.rows, function (row) {
-                        var text_content = row.textContent.toLowerCase();
-                        var search_val = search_input.value.toLowerCase();
-                        row.style.display = text_content.indexOf(search_val) > -1 ? '' : 'none';
-                    });
-                });
-            });
-        }
-
-        return {
-            init: function () {
-                var inputs = document.getElementsByClassName('search-input');
-                myArray.forEach.call(inputs, function (input) {
-                    input.oninput = _onInputSearch;
-                });
-            }
-        };
-    })(Array.prototype);
-
-    document.addEventListener('readystatechange', function () {
-        if (document.readyState === 'complete') {
-            TableFilter.init();
-        }
-    });
-
-})
-
-    (document);
+var versionControl
 
 // This function lets you load in an excel worksheet into the webapp
 excel_file.addEventListener('change', async (event) => {
@@ -47,7 +8,6 @@ excel_file.addEventListener('change', async (event) => {
     const response = await fetch("./json/DropdownItems.json");
     const json_data = await response.json();
     console.log(json_data)
-
     if (!['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'].includes(event.target.files[0].type)) {
         document.getElementById('excel_data').innerHTML = '<div class="alert alert-danger">Only .xlsx or .xls file format are allowed</div>';
         excel_file.value = '';
@@ -59,8 +19,9 @@ excel_file.addEventListener('change', async (event) => {
 
         var data = new Uint8Array(reader.result);
         var work_book = XLSX.read(data, { type: 'array' });
-        var sheet_name = work_book.SheetNames;
-        var sheet_data = XLSX.utils.sheet_to_json(work_book.Sheets[sheet_name[0]], { header: 1 });
+        var sheet_data = XLSX.utils.sheet_to_json(work_book.Sheets['Sheet1'], { header: 1 });
+        versionControl = XLSX.utils.sheet_to_json(work_book.Sheets['Sheet2']);
+
         let trueArray = []
 
         if (sheet_data.length > 0) {
@@ -180,53 +141,98 @@ excel_file.addEventListener('change', async (event) => {
     }
 });
 
-// This function adds the functionality to open/close hidden rows defined in the worksheet
-function toggle(btnID, eIDs) {
-    // Feed the list of ids as a selector
-    var theRows = document.querySelectorAll(eIDs);
-    // Get the button that triggered this
-    var theButton = document.getElementById(btnID);
-    // If the button is not expanded...
-    if (theButton.getAttribute("aria-expanded") == "false") {
-        // Loop through the rows and show them
-        for (var i = 0; i < theRows.length; i++) {
-            theRows[i].classList.add("shown");
-            theRows[i].classList.remove("hidden");
+function exportToExcel() {
+
+    const table1 = document.getElementById('excel_data');
+    const rows = table1.querySelectorAll('tr');
+    let errorFound = false;
+    rows.forEach((row) => {
+      if (row.style.backgroundColor === 'yellow') {
+        const commentCell = row.querySelector('#comment');
+        if (commentCell && commentCell.innerText === '...if applicable') {
+          errorFound = true;
         }
-        // Now set the button to expanded
-        theButton.setAttribute("aria-expanded", "true");
-        // Otherwise button is not expanded...
+      }
+    });
+    
+    if (errorFound) {
+        alert('Error: Updates were made in Weir Ranking table without an accompanying comment. Please ensure all rows highlighted yellow have an appropriate comment entered.');
     } else {
-        // Loop through the rows and hide them
-        for (var i = 0; i < theRows.length; i++) {
-            theRows[i].classList.add("hidden");
-            theRows[i].classList.remove("shown");
+
+        const newTable = table1.cloneNode(true);
+        const cellsToRemove = newTable.querySelectorAll('td:first-child, th:first-child');
+        cellsToRemove.forEach(cell => cell.remove());
+          
+        const itemIds = [];
+        for (let i = 1; i <= 44; i++) {
+            const tableElement = document.getElementById(`row2item${i}`);
+            if (tableElement && tableElement.classList.contains('hidden')) {
+                const itemNumber = parseInt(tableElement.getAttribute('id').match(/item(\d+)/)[1]);
+                itemIds.push(itemNumber);
+            }
         }
-        // Now set the button to collapsed
-        theButton.setAttribute("aria-expanded", "false");
+
+        const hiddenRows = newTable.querySelectorAll('tr.hidden');
+        hiddenRows.forEach(row => row.remove());
+        
+            // Per row, just take all the hidden rows and chonk them into our new empty headers
+            let trs = newTable.querySelectorAll('tr');
+        
+            for (let i = 0; i < trs.length; i++) {
+              let row = trs[i];
+              let innertext = '';
+              
+              for (let j = 0; j < itemIds.length; j++) {
+                let cell = (i === 0) ? document.createElement('th') : document.createElement('td');
+                let refCell = row.cells[itemIds[j]];
+                
+                if (i > 0) {
+                    row_id = "row" + (i+1) + "item" + itemIds[j];
+                    let tr = table1.querySelector(`#${row_id}`);
+                    let select = tr.lastElementChild.querySelector('select');
+                    if (select) {
+                        innertext = select.options[select.selectedIndex].text;
+                    } else {
+                        innertext = tr.lastElementChild.innerHTML;
+                    }
+                } else {
+                    row_id = "row" + (i+2) + "item" + itemIds[j];
+                    let tr = table1.querySelector(`#${row_id}`);
+                    let select = tr.lastElementChild.querySelector('select');
+                    
+                    const lastChild = tr.lastElementChild;
+                    const secondLastChild = lastChild.previousElementSibling;
+                            
+                    if (select) {
+                        innertext = secondLastChild.innerHTML; // reset innertext for each row
+                    }
+                }
+            
+                let text = document.createTextNode(innertext);
+                cell.appendChild(text);
+                row.insertBefore(cell, refCell.nextSibling);
+              }
+            }
+      
+            var filename = prompt("Enter a filename for the exported Excel file:");
+            const factorTable = document.getElementById('alt_table');
+            if (filename != null) {
+                var wb = XLSX.utils.book_new();
+                var ws1 = XLSX.utils.json_to_sheet(versionControl);
+                var ws2 = XLSX.utils.table_to_sheet(newTable);
+                var ws3 = XLSX.utils.table_to_sheet(factorTable);
+        
+                XLSX.utils.book_append_sheet(wb, ws1, "Version Control");
+                XLSX.utils.book_append_sheet(wb, ws2, "Table Outputs");
+                XLSX.utils.book_append_sheet(wb, ws3, "Risk Factors");
+                XLSX.writeFile(wb, filename + ".xlsx");
+            }
+      
+          // Reset background colours now that we've saved
+            const trElements = document.querySelectorAll('tr');
+            trElements.forEach(tr => tr.removeAttribute('style'));
+            
+            const hiddenTdElements = document.querySelectorAll('td[style*="display:none"][style*="background-color:yellow"]');
+            hiddenTdElements.forEach(td => td.removeAttribute('style'));
     }
-}
-
-const table = document.getElementById("excel_data");
-
-function highlightTableCells() {
-    // Get all dropdown menus in the table
-    var dropdowns = document.querySelectorAll("#excel_data select");
-    // Loop through the dropdown menus
-    for (var i = 0; i < dropdowns.length; i++) {
-        dropdowns[i].addEventListener("change", function () {
-
-            // Get the parent cell of the changed dropdown menu
-            var parentCell = this.parentNode;
-            var parent_tr = parentCell.parentElement
-            var previousCell = parentCell.previousElementSibling;
-
-            const rowNumber = 'row' + parseInt(parent_tr.getAttribute('id').match(/row(\d+)/)[1]) +'item2';
-            const td = document.querySelector(`td[id*="${rowNumber}"]`);
-
-            // Highlight the previous cell with yellow background color
-            previousCell.style.backgroundColor = "yellow";
-            td.parentElement.style.backgroundColor = "yellow";
-        });
-    }
-}
+  }
