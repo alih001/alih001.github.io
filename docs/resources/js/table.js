@@ -210,20 +210,44 @@ function exportToExcel() {
                 row.insertBefore(cell, refCell.nextSibling);
               }
             }
-      
-            var filename = prompt("Enter a filename for the exported Excel file:");
-            const factorTable = document.getElementById('alt_table');
-            if (filename != null) {
-                var wb = XLSX.utils.book_new();
-                var ws1 = XLSX.utils.json_to_sheet(versionControl);
-                var ws2 = XLSX.utils.table_to_sheet(newTable);
-                var ws3 = XLSX.utils.table_to_sheet(factorTable);
-        
-                XLSX.utils.book_append_sheet(wb, ws1, "Version Control");
-                XLSX.utils.book_append_sheet(wb, ws2, "Table Outputs");
-                XLSX.utils.book_append_sheet(wb, ws3, "Risk Factors");
-                XLSX.writeFile(wb, filename + ".xlsx");
-            }
+
+            // Get the modal
+            var modal = document.getElementById("myModal");
+            var username;
+            modal.style.display = "block";
+
+            // When the user clicks the "Save" button, store the username and close the modal
+            var saveBtn = document.getElementById("saveBtn");
+            saveBtn.onclick = function() {
+                filename = document.getElementById("filename").value;
+                username = document.getElementById("username").value;
+                email = document.getElementById("email").value;
+                summary = document.getElementById("summary").value;
+
+                modal.style.display = "none";
+
+                let newRow = {
+                    Filename: filename,
+                    Username: username,
+                    Email: email,
+                    Summary: summary
+                };
+                
+                versionControl.push(newRow);
+
+                const factorTable = document.getElementById('alt_table');
+
+                if (filename != null) {
+                    var wb = XLSX.utils.book_new();
+                    var ws1 = XLSX.utils.json_to_sheet(versionControl);
+                    var ws2 = XLSX.utils.table_to_sheet(newTable);
+                    var ws3 = XLSX.utils.table_to_sheet(factorTable);
+            
+                    XLSX.utils.book_append_sheet(wb, ws1, "Version Control");
+                    XLSX.utils.book_append_sheet(wb, ws2, "Table Outputs");
+                    XLSX.utils.book_append_sheet(wb, ws3, "Risk Factors");
+                    XLSX.writeFile(wb, filename + ".xlsx");
+                }
       
           // Reset background colours now that we've saved
             const trElements = document.querySelectorAll('tr');
@@ -231,5 +255,6 @@ function exportToExcel() {
             
             const hiddenTdElements = document.querySelectorAll('td[style*="display:none"][style*="background-color:yellow"]');
             hiddenTdElements.forEach(td => td.removeAttribute('style'));
+            }
     }
   }
