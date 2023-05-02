@@ -95,7 +95,7 @@ tr.hidden {
 #excel_data th,
 #excel_data td {
     padding: 0.75rem 1rem;
-    max-width: 15rem;
+    /* max-width: 15rem; */
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -122,9 +122,19 @@ tr.hidden {
     border-collapse: collapse;
     margin: 1.75rem 0px;
     font-size: 0.9em;
-    min-width: 25rem;
+    /* min-width: 125rem; */
     border-radius: 0.25rem 0.25rem 0 0;
     box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.15);
+}
+
+#summary_table {
+    min-width: 25rem;
+}
+
+#excel_data select, 
+#alt_table select {
+  min-width: 13rem;
+  width: auto;
 }
 
 #summary_table th,
@@ -140,7 +150,7 @@ tr.hidden {
 #summary_table td,
 #alt_table td {
     padding: 0.75rem 1rem;
-    max-width: 15rem;
+    /* max-width: 15rem; */
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

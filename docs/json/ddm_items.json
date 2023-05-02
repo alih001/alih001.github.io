@@ -1,46 +1,64 @@
 {
-"GORING" : "a",
-"MOLESEY" : "a",
-"IFFLEY" : "a",
-"NORTHMOOR" : "a",
-"MAPLEDURHAM" : "a",
-"BRAY" : "a",
-"GODSTOW" : "a",
-"CAVERSHAM" : "a",
-"BELL" : "a",
-"OLD WINDSOR" : "a",
-"COOKHAM" : "a",
-"SHIFFORD" : "a",
-"ROMNEY" : "a",
-"CULHAM" : "a",
-"OSNEY" : "a",
-"BOULTERS" : "a",
-"BENSON" : "a",
-"CHERTSEY" : "a",
-"TEMPLE" : "a",
-"CLIFTON" : "a",
-"ABINGDON" : "a",
-"MARSH" : "a",
-"KINGS" : "a",
-"SHIPLAKE" : "a",
-"BUSCOT" : "a",
-"CLEEVE" : "a",
-"PENTON HOOK" : "a",
-"SANDFORD" : "a",
-"HURLEY" : "a",
-"HAMBLEDEN" : "a",
-"MARLOW" : "a",
-"DAYS" : "a",
-"SONNING" : "a",
-"BOVENEY" : "a",
-"SUNBURY" : "a",
-"ST JOHNS" : "a",
-"SHEPPERTON" : "a",
-"GRAFTON" : "a",
-"TEDDINGTON" : "a",
-"WHITCHURCH" : "a",
-"EYNSHAM" : "a",
-"PINKHILL" : "a",
-"JUBILEE" : "a",
-"RADCOT": "a"
+  "Attribute": {
+    "Complex": [
+      "GORING", "MOLESEY", "IFFLEY", "NORTHMOOR",
+      "MAPLEDURHAM", "BRAY", "GODSTOW", "CAVERSHAM",
+      "BELL", "OLD WINDSOR", "COOKHAM", "SHIFFORD",
+      "ROMNEY", "CULHAM", "OSNEY", "BOULTERS",
+      "BENSON", "CHERTSEY", "TEMPLE", "CLIFTON",
+      "ABINGDON", "MARSH", "KINGS", "SHIPLAKE",
+      "BUSCOT", "CLEEVE", "PENTON HOOK", "SANDFORD",
+      "HURLEY", "HAMBLEDEN", "MARLOW", "DAYS",
+      "SONNING", "BOVENEY", "SUNBURY", "ST JOHNS",
+      "SHEPPERTON", "GRAFTON", "TEDDINGTON", "WHITCHURCH",
+      "EYNSHAM", "PINKHILL", "JUBILEE", "RADCOT"
+    ],
+    "Gate Set": [
+      "Paddle and Rymer",
+      "Radial", 
+      "Buck"
+    ],
+    "2019 scour": [
+      "None- no reported scour",
+      "Low- scour reported away from the structure",
+      "Medium - moderate scour next to the structure",
+      "High- severe scour next to structure",
+      "presi test"
+    ],
+    "2019 cracking": [
+      "None- good information that there are no problems or not applicable",
+      "Low- good information that there are minor problems or information lacking but no cause for alarm",
+      "Medium- information that there are problems or scarce information but giving cause for alarm",
+      "High- known recurring serious problems and/or warnings following condition surveys"
+    ],
+    "2019 corrosion": [
+      "None- good information that there are no problems or not applicable",
+      "Low- good information that there are minor problems or information lacking but no cause for alarm",
+      "Medium- information that there are problems or scarce information but giving cause for alarm",
+      "High- known recurring serious problems and/or warnings following condition surveys"
+    ],
+    "2019 Tackle": [
+      "None- good information that there are no problems or not applicable",
+      "Low- good information that there are minor problems or information lacking but no cause for alarm",
+      "Medium- information that there are problems or scarce information but giving cause for alarm",
+      "High- known recurring serious problems and/or warnings following condition surveys"
+    ],
+    "2019 Erosion": [
+      "None- good information that there are no problems or not applicable",
+      "Low- good information that there are minor problems or information lacking but no cause for alarm",
+      "Medium- information that there are problems or scarce information but giving cause for alarm",
+      "High- known recurring serious problems and/or warnings following condition surveys"
+    ]
+  },
+
+  "Reference": {
+    "Complex": "Rank",
+    "Gate Set": "Gate Type Score (ref 1)",
+    "2019 scour": "2019 scour score",
+    "2019 cracking": "2019 cracking score",
+    "2019 corrosion": "2019 corrosion score",
+    "2019 Tackle": "2019 Tackle Score",
+    "2019 Erosion": "2019 Erosion Score"
   }
+
+}
