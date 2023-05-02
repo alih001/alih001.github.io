@@ -17,6 +17,11 @@ The tool is currently designed to work best in Google Chrome
 
 ## Version History
 
+* 0.5
+    * Improved over-riding factor functionality
+    * 'Prettier' formatting
+* 0.4
+    * Additional version control functions
 * 0.3
     * Various bug fixes and optimizations
     * Added saving functionality and initial version control
