@@ -1,6 +1,7 @@
 const excel_file = document.getElementById('excel_file')
 var options
 var versionControl
+var rowData = [];
 
 // This function lets you load in an excel worksheet into the webapp
 excel_file.addEventListener('change', async event => {
@@ -32,16 +33,14 @@ excel_file.addEventListener('change', async event => {
 
     let trueArray = []
 
-    if (sheet_data.length > 0) {
-      var table_output = '<table class="table-editable">'
+    row_size = sheet_data.length
 
-      const filterName = 'Collapsable'
-      const key_count = Object.keys(sheet_data)
-      const lenth = key_count.length
+    if (row_size > 0) {
+      var table_output = '<table class="table-editable">'
 
       for (
         var collapse_cell = 0;
-        collapse_cell <= sheet_data.length;
+        collapse_cell <= row_size;
         collapse_cell++
       ) {
         if (sheet_data[0][collapse_cell] === 'Collapsable Header') {
@@ -49,7 +48,7 @@ excel_file.addEventListener('change', async event => {
         }
       }
       let index_ids = []
-      for (var row = 1; row <= sheet_data.length; row++) {
+      for (var row = 1; row <= row_size; row++) {
         let row_id = []
 
         for (var item = 0; item < trueArray.length; item++) {
@@ -62,28 +61,36 @@ excel_file.addEventListener('change', async event => {
         index_ids[row - 1] = row_id.replace(/ /g, ',')
       }
 
-      for (var row = 1; row < sheet_data.length; row++) {
-        if (row == 1) {
-          table_output += '<thead>'
+      for (var row = 0; row < row_size; row++) {
+        if (row > 0) {
+          if (row == 1) {
+            table_output += '<thead>'
+          }
+          table_output += '<tr>'
+          button_id = row + '_id'
+  
+          if (row > 1) {
+            table_output +=
+              '<td class = "table_button">' +
+              '<button type="button" id="' +
+              button_id +
+              '" onclick="toggle(this.id,' +
+              "'" +
+              index_ids[row - 1] +
+              "'" +
+              ');"aria-expanded="false" ;"><i class="fas fa-sharp fa-solid fa-list"></i></button>' +
+              '</td>'
+          }
         }
-        table_output += '<tr>'
-        button_id = row + '_id'
 
-        if (row > 1) {
-          table_output +=
-            '<td class = "table_button">' +
-            '<button type="button" id="' +
-            button_id +
-            '" onclick="toggle(this.id,' +
-            "'" +
-            index_ids[row - 1] +
-            "'" +
-            ');"aria-expanded="false" ;"><i class="fas fa-sharp fa-solid fa-list"></i></button>' +
-            '</td>'
-        }
+        within_row_size = sheet_data[row].length - 1
 
-        for (var cell = 0; cell < sheet_data[row].length; cell++) {
+        for (var cell = 0; cell < within_row_size; cell++) {
           rowItem = 'row' + row + 'item' + cell
+
+          if (row == 0) {
+            rowData.push(sheet_data[row][cell]);
+          }
 
           if (row == 1 && trueArray.indexOf(cell) === -1 && cell == 0) {
             table_output +=
@@ -99,7 +106,7 @@ excel_file.addEventListener('change', async event => {
               '</th>'
           }
 
-          if (row == 1 && cell == sheet_data[row].length - 1) {
+          if (row == 1 && cell == within_row_size - 1) {
             table_output += '<th id ="comment">Comment</th>'
           }
 
@@ -113,7 +120,7 @@ excel_file.addEventListener('change', async event => {
               sheet_data[row][cell] +
               '</td>'
           }
-          if (row > 1 && cell == sheet_data[row].length - 1) {
+          if (row > 1 && cell == within_row_size - 1) {
             table_output +=
               '<td contenteditable="true" id="comment">...if applicable</td>'
           }
@@ -132,7 +139,7 @@ excel_file.addEventListener('change', async event => {
 
         for (
           var hidden_cell = 0;
-          hidden_cell < sheet_data[row].length;
+          hidden_cell < within_row_size;
           hidden_cell++
         ) {
           desiredText = sheet_data[1][hidden_cell]
@@ -200,10 +207,12 @@ excel_file.addEventListener('change', async event => {
 })
 
 function exportToExcel () {
+
   hideAllRows()
   const table1 = document.getElementById('excel_data')
   const rows = table1.querySelectorAll('tr')
   let errorFound = false
+
   rows.forEach(row => {
     if (row.style.backgroundColor === 'yellow') {
       const commentCell = row.querySelector('#comment')
@@ -262,21 +271,23 @@ function exportToExcel () {
         } else {
           row_id = 'row' + (i + 2) + 'item' + itemIds[j]
           let tr = table1.querySelector(`#${row_id}`)
-          let select = tr.lastElementChild.querySelector('select')
 
           const lastChild = tr.lastElementChild
           const secondLastChild = lastChild.previousElementSibling
-
-          if (select) {
-            innertext = secondLastChild.innerHTML // reset innertext for each row
-          }
+          innertext = secondLastChild.innerHTML
         }
 
         let text = document.createTextNode(innertext)
         cell.appendChild(text)
-        row.insertBefore(cell, refCell.nextSibling)
+        row.insertBefore(cell, refCell)
       }
     }
+
+    var row = newTable.insertRow(0)
+    rowData.forEach((val, index)=> {
+      cell1 = row.insertCell(index)
+      cell1.innerHTML = val
+    })
 
     // Get the modal
     var modal = document.getElementById('myModal')
