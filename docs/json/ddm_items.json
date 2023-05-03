@@ -1,23 +1,6 @@
 {
   "Attribute": {
-    "Complex": [
-      "GORING", "MOLESEY", "IFFLEY", "NORTHMOOR",
-      "MAPLEDURHAM", "BRAY", "GODSTOW", "CAVERSHAM",
-      "BELL", "OLD WINDSOR", "COOKHAM", "SHIFFORD",
-      "ROMNEY", "CULHAM", "OSNEY", "BOULTERS",
-      "BENSON", "CHERTSEY", "TEMPLE", "CLIFTON",
-      "ABINGDON", "MARSH", "KINGS", "SHIPLAKE",
-      "BUSCOT", "CLEEVE", "PENTON HOOK", "SANDFORD",
-      "HURLEY", "HAMBLEDEN", "MARLOW", "DAYS",
-      "SONNING", "BOVENEY", "SUNBURY", "ST JOHNS",
-      "SHEPPERTON", "GRAFTON", "TEDDINGTON", "WHITCHURCH",
-      "EYNSHAM", "PINKHILL", "JUBILEE", "RADCOT"
-    ],
-    "Gate Set": [
-      "Paddle and Rymer",
-      "Radial", 
-      "Buck"
-    ],
+
     "2019 scour": [
       "None- no reported scour",
       "Low- scour reported away from the structure",
