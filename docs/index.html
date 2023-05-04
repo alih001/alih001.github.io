@@ -89,46 +89,33 @@
                             Customise Weir Rankings</h1>
                         <div class="table__buttons__container">
                             <div class="table__buttons">
-                                <div style="padding-right: 20px">
-                                    <button class="click__button" style="display: flex; align-items: center;">
-                                        <input type="file" id="excel_file" />
-                                        <label for="excel_file">
-                                            <img src="./resources/images/excel.png" alt="" width="50" height="50"
-                                                style="margin-right: 10px;">
-                                            <h3>Upload data</h3>
-                                        </label>
-                                    </button>
-                                </div>
-                                <div style="padding-left: 20px">
-                                    <button onclick="exportToExcel()" class="click__button"
-                                        style="display: flex; align-items: center;" id="save_file">
-                                        <!-- <input type="file" id="save_file" /> -->
+                                <button class="click__button">
+                                    <input type="file" id="excel_file" />
+                                    <label for="excel_file">
+                                        <h3>Upload data</h3>
+                                    </label>
+                                </button>
+                                <button onclick="exportToExcel()" class="click__button" id="save_file">
+                                    <h3> Save changes</h3>
+                                </button>
+                                <div id="myModal" class="modal">
+                                    <div class="modal-content">
+                                        <form>
+                                        <label for="filename">Filename:</label>
+                                        <input type="text" id="filename" name="filename">
 
-                                        <!-- <label for="save_file"> -->
-                                        <img src="./resources/images/diskette.png" alt="" width="50" height="50">
-                                        <h3> Save changes</h3>
-                                        <!-- </label> -->
-                                    </button>
-                                    <div id="myModal" class="modal">
-                                        <div class="modal-content">
-                                          <form>
-                                            <label for="filename">Filename:</label>
-                                            <input type="text" id="filename" name="filename">
+                                        <label for="username">Username:</label>
+                                        <input type="text" id="username" name="username">
 
-                                            <label for="username">Username:</label>
-                                            <input type="text" id="username" name="username">
+                                        <label for="username">Email:</label>
+                                        <input type="email" id="email" name="email">
 
-                                            <label for="username">Email:</label>
-                                            <input type="email" id="email" name="email">
+                                        <label for="summary">Updates summary</label>
+                                        <input type="text" id="summary" name="summary">
 
-                                            <label for="summary">Updates summary</label>
-                                            <input type="text" id="summary" name="summary">
-
-                                            <button type="button" id="saveBtn">Save</button>
-                                          </form>
-                                        </div>
-                                      </div>
-                                    
+                                        <button type="button" id="saveBtn">Save</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
 
@@ -170,13 +157,28 @@
             <div class="page__section" id="factors">
                 <h1 class="page__section__heading"><img src="./resources/images/customization.png" alt="" width="75"
                         height="75">Risk Factors</h1>
-                <div class="table__extras">
+                <div class="factor__extras">
 
-                    <div>
+                    <div class="tips__help">
+                        <img class="image__img" src="./resources/images/tip_box_backgroundv3.png" alt="">
+                        <div class="image__overlay red">
+                            <h2 class="image__title">Quick Tips</h2>
+                            <ul>
+                                <li>Use the table below to assign over-riding factors to various weirs
+                                    or columns in the table
+                                </li>
+                                <li>Use the "Add Row" button to add and assign additional over-riding factors
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="factor__div">
+                        <div class="three_butts">
                         <button id="add_row" class="click__button">Add Row</button>
                         <button id="calculate-button" class="click__button">Calculate multipliers</button>
                         <button id="reset-button" class="click__button">Reset all multipliers</button>
-
+                        </div>
                         <table id="alt_table" class="table-editable">
                             <thead>
                                 <tr>
@@ -190,21 +192,7 @@
                             <tbody></tbody>
                         </table>
 
-                        <div class="tips__help">
-                            <img class="image__img" src="./resources/images/tip_box_backgroundv3.png" alt="">
-                            <div class="image__overlay red">
-                                <h2 class="image__title">Quick Tips</h2>
-                                <ul>
-                                    <li>Use the table below to assign over-riding factors to various weirs
-                                        or columns in the table
-                                    </li>
-                                    <li>Use the "Add Row" button to add and assign additional over-riding factors
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
                     </div>
-
 
                 </div>
             </div>
@@ -216,7 +204,7 @@
                     Top 10 Weirs
                 </h1>
                 <div class="page__section__container">
-                    <div>
+                    <div class="summary_section">
                         <button id="reRankButton" class="click__button">Re-rank Weirs</button>
 
                         <table id="summary_table">

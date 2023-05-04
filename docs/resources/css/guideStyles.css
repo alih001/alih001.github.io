@@ -1,5 +1,5 @@
 body {
-    background-color: rgb(213, 213, 213);
+    background-color: #ebf6f3;
 }
 
 :root {
@@ -23,31 +23,25 @@ header {
 }
 
 .guide {
-    padding: 3rem 0;
+    padding: 1rem 0;
 }
 
 .guide h1 {
     display: inline-block;
-}
 
-.guide__heading {
-    font-size: 3.75rem;
-    padding-bottom: 1rem;
-    color: #131313;
-    margin: 1.5rem 3rem;
-    /* padding: 25px 50px; */
-    border-bottom: 0.25rem solid green;
-    border-radius: 0.3rem;
 }
 
 #table__content {
-    background-image: linear-gradient(to top, #cfe8f8 0%, #ebf6f3 100%);
+    /* background-image: linear-gradient(to top, #cfe8f8 0%, #ebf6f3 100%); */
+    background-color: #ebf6f3;
 }
 
 .tips__help {
     position: relative;
     width: 35rem;
-    /* height: 550px; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .image__img {
@@ -58,27 +52,23 @@ header {
 
 .image__overlay {
     position: absolute;
-    top: 5.5rem;
-    left: 9.5rem;
-    width: 50%;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    width: 50%;
+    height: 60%;
+    flex-direction: column;
     background-color: rgba(255, 255, 255, 0.5);
     /* Set a semi-transparent background color */
     backdrop-filter: blur(2px);
     border-radius: 0.5rem;
     box-shadow: 0px 30px 40px -20px var(--grayishBlue);
     padding-left: 2rem;
-    padding-top: 0.6rem;
-    /* margin: 20px; */
 }
 
 .image__overlay p {
     color: var(--grayishBlue);
     font-size: 1.5rem;
-    /* text-align: left */
 }
 
 .guide__container {
@@ -104,16 +94,6 @@ h1 {
     color: var(--varyDarkBlue);
 }
 
-.box {
-    background-color: rgba(255, 255, 255, 0.5);
-    /* Set a semi-transparent background color */
-    backdrop-filter: blur(0.5rem);
-    border-radius: 0.5rem;
-    box-shadow: 0px 30px 40px -20px var(--grayishBlue);
-    padding: 2rem;
-    margin: 1rem;
-}
-
 .purpose__div{
     display: grid;
     grid-template-columns: 1fr;
@@ -137,6 +117,18 @@ h1 {
     font-size: 1.5rem;
 }
 
+.box {
+    background-color: rgba(255, 255, 255, 0.5);
+    /* Set a semi-transparent background color */
+    backdrop-filter: blur(0.5rem);
+    border-radius: 0.5rem;
+    box-shadow: 0px 30px 40px -20px var(--grayishBlue);
+    padding: 2rem;
+    margin: 1rem;
+}
+
+
+
 .tips_box {
     background-color: #ffffff;
     border-radius: 0.5rem;
@@ -158,7 +150,7 @@ h1 {
 img {
     float: left;
     margin-right: 1.75rem;
-    /* margin-bottom: 5px; */
+    margin-bottom: 15px;
 }
 
 .cyan {
@@ -184,5 +176,4 @@ img {
 h2 {
     color: var(--varyDarkBlue);
     font-weight: var(--weight3);
-
 }
