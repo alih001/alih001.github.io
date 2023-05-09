@@ -12,35 +12,62 @@ fetch('./json/equations.json')
     mathsData = maths_json
   })
 
-function calcUpdate (event, mathsData, rowReference, updatedClasses) {
-  const filteredArray = mathsData.Equations.filter(equation =>
-    equation.values.includes(event.className)
-  )
+function calculateEquationValue (equation, rowReference) {
+  const values = equation.values.map(value => {
+    const tdValue =
+      document.getElementsByClassName(value)[rowReference - 1].textContent
+    return parseInt(tdValue)
+  })
 
-  filteredArray.forEach(equation => {
-    if (updatedClasses.includes(equation.output)) {
-      return
-    }
-    const sum = equation.values.reduce((accumulator, currentValue) => {
-      const tdValue =
-        document.getElementsByClassName(currentValue)[rowReference - 1]
-          .textContent
-      return accumulator + parseInt(tdValue)
-    }, 0)
+  if (equation.type === 'sum') {
+    return values.reduce(
+      (accumulator, currentValue) => accumulator + currentValue,
+      0
+    )
+  } else if (equation.type === 'product') {
+    return values.reduce(
+      (accumulator, currentValue) => accumulator * currentValue,
+      1
+    )
+  }
+}
 
-    const updateCell = document.getElementsByClassName(equation.output)[
-      rowReference - 1
-    ]
-    updateCell.innerHTML = sum
-    updatedClasses.push(equation.output)
+function calculateOutput (equation, rowReference) {
+  const value = calculateEquationValue(equation, rowReference)
+  const outputCell = document.getElementsByClassName(equation.output)[
+    rowReference - 1
+  ]
+  outputCell.innerHTML = value
+  return value
+}
 
-    if (mathsData.Equations.some(eq => eq.values.includes(equation.output))) {
-      calcUpdate(
-        { className: equation.output },
-        mathsData,
-        rowReference,
-        updatedClasses
-      )
+function calculateCustomProduct (equation, rowReference, tempValues) {
+  const tdValue = document.getElementsByClassName(equation.values[0])[
+    rowReference - 1
+  ]
+  const value = tdValue.innerHTML * equation.values[1]
+  tempValues.push([equation.output, value])
+}
+
+function calcUpdate (event, mathsData, rowReference, tempValues) {
+  mathsData.Equations.forEach(equation => {
+    if (equation.type === 'calculate') {
+      var output = 0
+
+      tempValues.forEach(x => {
+        if (x[0] === equation.values[0]) {
+          output += x[1]
+        }
+      })
+
+      const outputCell = document.getElementsByClassName(equation.output)[
+        rowReference - 1
+      ]
+      outputCell.innerHTML = (output * equation.values[1]).toFixed(2)
+    } else if (equation.type === 'custom product') {
+      calculateCustomProduct(equation, rowReference, tempValues)
+    } else {
+      calculateOutput(equation, rowReference, tempValues)
     }
   })
 }
