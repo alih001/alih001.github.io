@@ -240,6 +240,7 @@ function addCalculateSumsListener () {
       }
     }
     calculateSums()
+    alert('Risk factors successfully applied')
   })
 }
 
@@ -249,6 +250,8 @@ resetButton.addEventListener('click', () => {
 
   const current_table = document.getElementById('excel_data')
   current_table.innerHTML = tableReset
+  alert('Table values reset')
+
 })
 
 addCalculateSumsListener()
