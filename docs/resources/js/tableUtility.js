@@ -2,30 +2,59 @@
   'use strict'
 
   const TableFilter = (() => {
-    const searchTable = (searchInput, tables) => {
-      const rows = getRowsFromTables(tables)
-      rows.forEach(row => {
-        if (!row.classList.contains('hidden')) {
-          const textContent = row.textContent.toLowerCase()
-          const searchVal = searchInput.value.toLowerCase()
-          row.style.display = textContent.includes(searchVal) ? '' : 'none'
-        }
-      })
-    }
+    let debounceTimer
 
-    const getRowsFromTables = tables => {
-      return Array.from(tables).flatMap(table =>
-        Array.from(table.tBodies[0].rows)
-      )
+    const searchTable = (searchInput, tables) => {
+      clearTimeout(debounceTimer)
+
+      debounceTimer = setTimeout(() => {
+        const searchText = searchInput.value.toLowerCase()
+
+        Array.from(tables).forEach(table => {
+          const rows = table.tBodies[0].rows
+          const searchVal = searchText.toLowerCase()
+
+          for (let i = 0; i < rows.length; i++) {
+            const row = rows[i]
+
+            if (row.classList.contains('hidden')) {
+              const textContent = row.textContent.toLowerCase()
+              const rowNumber = parseInt(row.id.match(/row(\d+)/)[1])
+
+              if (!row.id.includes(`row${rowNumber}`)) {
+                row.style.display = 'none'
+                continue // Skip to the next iteration if rowNumber doesn't match
+              }
+
+              if (textContent.includes(searchVal)) {
+                const targetCells = document.querySelectorAll(
+                  `tr[id*="row${rowNumber}"]`
+                )
+                const parentCell = document.querySelector(
+                  `td[id="row${rowNumber}item2"]`
+                )
+
+                parentCell.parentElement.style.display = ''
+                targetCells.forEach(targetCell => {
+                  targetCell.style.display = ''
+                })
+              }
+            } else {
+              const textContent = row.textContent.toLowerCase()
+              row.style.display = textContent.includes(searchVal) ? '' : 'none'
+            }
+          }
+        })
+      }, 200) // Adjust the debounce delay as needed (in milliseconds)
     }
 
     const attachInputListeners = () => {
       const searchInputs = document.querySelectorAll('.search-input')
       Array.from(searchInputs).forEach(searchInput => {
-        searchInput.addEventListener('input', e => {
-          const tables = document.querySelectorAll(
-            `.${searchInput.dataset.table}`
-          )
+        const tables = document.querySelectorAll(
+          `.${searchInput.dataset.table}`
+        )
+        searchInput.addEventListener('input', () => {
           searchTable(searchInput, tables)
         })
       })
