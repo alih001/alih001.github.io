@@ -8,8 +8,8 @@ body {
     --orange: hsl(34, 97%, 64%);
     --blue: hsl(212, 86%, 64%);
     --green: hsl(135, 48%, 43%);
-    --varyDarkBlue: hsl(236, 12%, 25%);
-    --grayishBlue: hsl(236, 11%, 27%);
+    --varyDarkBlue: hsl(0, 0%, 0%);
+    --grayishBlue: hsl(0, 0%, 0%);
     --veryLightGray: hsl(0, 0%, 98%);
     --weight1: 200;
     --weight2: 400;
@@ -69,6 +69,12 @@ header {
 .image__overlay p {
     color: var(--grayishBlue);
     font-size: 1.5rem;
+}
+
+.guide p {
+    color: var(--grayishBlue);
+    font-size: 1.5rem;
+    font-weight: var(--weight2);
 }
 
 .guide__container {
@@ -142,8 +148,9 @@ h1 {
 }
 
 .box p {
-    color: var(--grayishBlue);
+    color: var(--varyDarkBlue);
     font-size: 1.5rem;
+    font-weight: var(--weight2);
     /* text-align: left */
 }
 

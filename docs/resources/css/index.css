@@ -125,24 +125,19 @@ button {
 /* page__section Section */
 
 .bottom__container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-}
-
-#factors {
+    display: flex;
     position: relative;
+    grid-template-columns: 1fr 1fr;
 }
 
 #factors::before {
     content: "";
     position: absolute;
     top: 10%;
-    right: -5%;
     height: 85%;
     width: 5px;
-    background-color:  rgb(47, 89, 137);
-    border-radius: 5px; /* Adjust as needed to change the radius of the border */
-
+    background-color: rgb(47, 89, 137);
+    border-radius: 5px;
 }
 
 .factor__extras {
@@ -151,35 +146,28 @@ button {
     grid-template-columns: 1fr 1fr;
 }
 
-/* .factor__div {
-    outline: red dashed 2px;
-} */
 .three_butts {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-
 }
 
 .page__section {
     padding: 0 2rem;
-    /* outline: red dashed 2px; */
 }
 
-
-
 #top10 {
-    width: 45vw;
+    width: fit-content;
+    padding-right: 5rem;
 }
 
 .page__section__heading {
-    margin-left: 10rem;
+    margin-left: 5rem;
     font-size: 60px;
     padding-bottom: 1rem;
     color: #131313;
     border-bottom: 0.25rem solid green;
     border-radius: 0.3rem;
     width: fit-content;
-    /* max-width: 200rem; */
 }
 
 .page__section__container {
