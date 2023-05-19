@@ -2,6 +2,8 @@ const excel_file = document.getElementById('excel_file')
 var options
 var versionControl
 var rowData = [];
+var modal = document.getElementById('myModal')
+var closeButton = modal.querySelector('.close');
 
 // This function lets you load in an excel worksheet into the webapp
 excel_file.addEventListener('change', async event => {
@@ -290,7 +292,6 @@ function exportToExcel () {
     })
 
     // Get the modal
-    var modal = document.getElementById('myModal')
     var username
     modal.style.display = 'block'
 
@@ -302,7 +303,7 @@ function exportToExcel () {
       email = document.getElementById('email').value
       summary = document.getElementById('summary').value
 
-      modal.style.display = 'none'
+      closeModal()
 
       let newRow = {
         Filename: filename,
@@ -347,4 +348,12 @@ function hideAllRows() {
     row.classList.add('hidden');
   });
 }
+
+// Function to close the modal
+function closeModal() {
+  modal.style.display = 'none';
+}
+
+// Add click event listener to the close button
+closeButton.addEventListener('click', closeModal);
   

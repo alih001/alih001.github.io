@@ -207,20 +207,22 @@ button {
   }
   
   /* Close Button */
-  .close {
-    color: #aaaaaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-  }
+
+.close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 2rem;
+  padding: 1rem;
+}
   
-  .close:hover,
-  .close:focus {
-    color: #000;
-    text-decoration: none;
-    cursor: pointer;
-  }
-  
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
 
 #section2 {
     margin-left: 1rem;
