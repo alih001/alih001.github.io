@@ -51,17 +51,18 @@ excel_file.addEventListener('change', async event => {
       }
       let index_ids = []
       for (var row = 1; row <= row_size; row++) {
-        let row_id = []
-
+        let row_id = [];
+      
         for (var item = 0; item < trueArray.length; item++) {
-          if (item == trueArray.length - 1) {
-            row_id += '#row' + row + 'item' + trueArray[item]
+          if (item === trueArray.length - 1) {
+            row_id.push('#row' + row + 'item' + trueArray[item]);
           } else {
-            row_id += '#row' + row + 'item' + trueArray[item] + ' '
+            row_id.push('#row' + row + 'item' + trueArray[item]);
           }
         }
-        index_ids[row - 1] = row_id.replace(/ /g, ',')
+        index_ids[row - 1] = row_id.join(',');
       }
+      
 
       for (var row = 0; row < row_size; row++) {
         if (row > 0) {

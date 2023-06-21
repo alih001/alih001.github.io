@@ -57,7 +57,7 @@
             }
           }
         })
-      }, 200) // Adjust the debounce delay as needed (in milliseconds)
+      }, 200)
     }
 
     const attachInputListeners = () => {
