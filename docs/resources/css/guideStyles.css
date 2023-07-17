@@ -1,16 +1,9 @@
 body {
-    background-color: #ebf6f3;
+    /* background-color: #ebf6f3; */
+    border-radius: 50px;
 }
 
 :root {
-    --red: hsl(0, 78%, 62%);
-    --cyan: hsl(180, 62%, 55%);
-    --orange: hsl(34, 97%, 64%);
-    --blue: hsl(212, 86%, 64%);
-    --green: hsl(135, 48%, 43%);
-    --varyDarkBlue: hsl(0, 0%, 0%);
-    --grayishBlue: hsl(0, 0%, 0%);
-    --veryLightGray: hsl(0, 0%, 98%);
     --weight1: 200;
     --weight2: 400;
     --weight3: 600;
@@ -29,11 +22,6 @@ header {
 .guide h1 {
     display: inline-block;
 
-}
-
-#table__content {
-    /* background-image: linear-gradient(to top, #cfe8f8 0%, #ebf6f3 100%); */
-    background-color: #ebf6f3;
 }
 
 .tips__help {

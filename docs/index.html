@@ -14,10 +14,12 @@
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
+    <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuid.min.js"></script>
     <link rel="stylesheet" href="./resources/css/index.css">
+    <link rel="stylesheet" href="./resources/css/colours.css">
     <link rel="stylesheet" href="./resources/css/guideStyles.css">
     <link rel="stylesheet" href="./resources/css/mainTableStyles.css">
+    <link rel="stylesheet" href="./resources/css/parameters.css">
     <link rel="stylesheet" href="./resources/css/selectStyle.css">
 </head>
 
@@ -98,6 +100,12 @@
                                 <button onclick="exportToExcel()" class="click__button" id="save_file">
                                     <h3> Save changes</h3>
                                 </button>
+                                <div class="custom-checkbox" id="table__toggle">
+                                    <input id="status" type="checkbox" name="status" onclick="toggleTables()">
+                                    <label for="status">
+                                      <div class="status-switch" data-unchecked="Asset Table" data-checked="Cost Table"></div>
+                                    </label>
+                                </div>
                                 <div id="myModal" class="modal">
                                     <div class="modal-content">
                                         <span class="close">&times;</span> <!-- Close button -->
@@ -147,7 +155,11 @@
 
                 </div>
 
+
+
                 <table id="excel_data" class="table-editable"></table>
+                <table id="cost_data" class="table-editable"></table>
+
             </div>
         </div>
 
@@ -251,6 +263,7 @@
     <script src="./resources/js/ranking.js"></script>
     <script src="./resources/js/maths.js"></script>
     <script src="./resources/js/factors.js"></script>
+    <script src="./resources/js/parameters.js"></script>
 </body>
 
 </html>

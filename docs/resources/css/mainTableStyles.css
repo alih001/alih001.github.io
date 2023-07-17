@@ -20,9 +20,7 @@ This part focuses on headers and cards
 .guide__heading {
     font-size: 3.75rem;
     padding-bottom: 1rem;
-    color: #131313;
     margin: 1.5rem 3rem;
-    border-bottom: 0.25rem solid green;
     border-radius: 0.3rem;
 }
 
@@ -91,58 +89,38 @@ tr.hidden {
 }
 
 .wrapper .form-control .search-input {
-    border: #12d8fa;
     border-radius: 10;
 }
 
-#excel_data {
+#excel_data, 
+#cost_data {
     border-collapse: collapse;
     margin: 1.75rem 0rem;
     margin-left: 10rem;
     font-size: 0.9em;
     min-width: 25rem;
     border-radius: 0.25rem 0.25rem 0 0;
-    box-shadow: 0 0 1.25rem rgba(0, 0, 0, 0.15);
 }
 
-#excel_data th {
-    background-color: #000;
-    color: #ffffff;
+#excel_data th, 
+#cost_data th {
     text-align: left;
     font-weight: bold;
 }
 
 .hidden-header {
-    background-color: #cacaca;
-    color: #131313;
     text-align: left;
     font-weight: bold;
     outline: none;
     border: none;
 }
 
-#excel_data th,
-#excel_data td {
+#excel_data th, #cost_data th,
+#excel_data td, #cost_data td {
     padding: 0.75rem 1rem;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-#excel_data tbody tr {
-    border-bottom: 1px solid #c1c1c1;
-}
-
-#excel_data tbody tr:nth-of-type(odd) {
-    background-color: #f3f3f3;
-}
-
-#excel_data tbody tr:nth-of-type(even) {
-    background-color: #c8c8c8;
-}
-
-#excel_data tbody tr:last-of-type {
-    border-bottom: 2px solid #009879;
 }
 
 #summary_table,
@@ -151,7 +129,6 @@ tr.hidden {
     margin: 1.75rem 0px;
     font-size: 0.9em;
     border-radius: 0.25rem 0.25rem 0 0;
-    box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.15);
 }
 
 #summary_table {
@@ -159,6 +136,7 @@ tr.hidden {
 }
 
 #excel_data select, 
+#cost_data select, 
 #alt_table select {
   min-width: 13rem;
   width: auto;
@@ -166,8 +144,6 @@ tr.hidden {
 
 #summary_table th,
 #alt_table th {
-    background-color: #000;
-    color: #ffffff;
     text-align: left;
     font-weight: bold;
 }
@@ -182,22 +158,3 @@ tr.hidden {
     white-space: nowrap;
 }
 
-#summary_table tbody tr,
-#alt_table tbody tr {
-    border-bottom: 1px solid #dddddd;
-}
-
-#summary_table tbody tr:nth-of-type(odd),
-#alt_table tbody tr:nth-of-type(odd) {
-    background-color: #f3f3f3;
-}
-
-#summary_table tbody tr:nth-of-type(even),
-#alt_table tbody tr:nth-of-type(even) {
-    background-color: #c8c8c8;
-}
-
-#summary_table tbody tr:last-of-type,
-#alt_table tbody tr:last-of-type {
-    border-bottom: 2px solid #000000;
-}

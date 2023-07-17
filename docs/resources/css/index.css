@@ -13,7 +13,6 @@
 }
 
 .navbar {
-    background: #7c9b92;
     height: 5rem;
     display: flex;
     font-size: 1.2rem;
@@ -33,7 +32,6 @@
 }
 
 #navbar__logo {
-    background-color: #ffffff;
     font-family: "Helvetica", sans-serif;
     text-transform: uppercase;
     padding-top: 0.5rem;;
@@ -60,7 +58,6 @@
 }
 
 .navbar__links {
-    color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -77,11 +74,9 @@ button {
 }
 
 .click__button {
-    background-color: #814cea;
     border-radius: 0.5rem;
     border-style: none;
     box-sizing: border-box;
-    color: #FFFFFF;
     cursor: pointer;
     font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 1rem;
@@ -103,21 +98,14 @@ button {
     /* max-width: calc(100% - 10px); */
 }
 
-.click__button:hover,
-.click__button:focus {
-    background-color: #9468ec;
-}
-
 .navbar__links:hover {
     /* background-color: rgb(183, 247, 186); */
     border-radius: 0.75rem;
-    color: rgb(1, 107, 18);
     transition: all 0.3s ease;
     text-decoration: none;
 }
 
 .highlight {
-    border-bottom: 0.3rem solid rgb(1, 107, 18);
     border-bottom-left-radius: 0.5rem;
     border-bottom-right-radius: 0.5rem;
 }
@@ -136,7 +124,6 @@ button {
     top: 10%;
     height: 85%;
     width: 5px;
-    background-color: rgb(47, 89, 137);
     border-radius: 5px;
 }
 
@@ -164,8 +151,6 @@ button {
     margin-left: 5rem;
     font-size: 60px;
     padding-bottom: 1rem;
-    color: #131313;
-    border-bottom: 0.25rem solid green;
     border-radius: 0.3rem;
     width: fit-content;
 }

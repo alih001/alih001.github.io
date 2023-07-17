@@ -1,7 +1,7 @@
-var tableReset = document.getElementById('excel_data').innerHTML;
-var riskTable = document.getElementById('alt_table').innerHTML;
-var colData = {};
-var refData = {};
+var tableReset = document.getElementById('excel_data').innerHTML
+var riskTable = document.getElementById('alt_table').innerHTML
+var colData = {}
+var refData = {}
 
 fetch('./json/ddm_items.json')
   .then(response => response.json())
@@ -146,11 +146,14 @@ function calculateSums () {
     // We also need to look for any classname matches even if they aren't a select element
 
     var selectElements = excelDataTable.querySelectorAll(
-      `td[id='${targetClass}']`)
-    
+      `td[id='${targetClass}']`
+    )
+
     if (selectElements.length === 0) {
       // If there are no elements with the target class, select all td elements with the target class
-      selectElements = excelDataTable.querySelectorAll(`select[id='${targetClass}']`);
+      selectElements = excelDataTable.querySelectorAll(
+        `select[id='${targetClass}']`
+      )
     }
 
     for (let i = 0; i < selectElements.length; i++) {
@@ -217,7 +220,6 @@ function calculateSums () {
 }
 
 function addCalculateSumsListener () {
-
   hideAllRows()
   const button = document.getElementById('calculate-button')
 
@@ -251,7 +253,6 @@ resetButton.addEventListener('click', () => {
   const current_table = document.getElementById('excel_data')
   current_table.innerHTML = tableReset
   alert('Table values reset')
-
 })
 
 addCalculateSumsListener()

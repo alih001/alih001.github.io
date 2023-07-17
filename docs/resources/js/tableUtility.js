@@ -13,13 +13,13 @@
         if (searchText.trim() === '') {
           Array.from(tables).forEach(table => {
             const rows = table.tBodies[0].rows
-    
+
             for (let i = 0; i < rows.length; i++) {
               const row = rows[i]
               row.style.display = ''
             }
           })
-          return;
+          return
         }
 
         Array.from(tables).forEach(table => {
