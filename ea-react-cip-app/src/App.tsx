@@ -1,35 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// App.tsx
+import React from 'react';
+import Navbar from './components/Navbar';
+import Header from './components/guideBox';
+// import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
+    <div>
+      <Navbar />
+
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <Header
+          className="MainHeader" 
+          imageSrc="../src/assets/images/thinking.png"
+          title="Purpose" 
+          description="This app is designed to replace the existing weir ranking spreadsheet. 
+          It allows a user to import a spreadsheet and edit any details to produce a top 10 ranking table."
+        />
+        <Header
+          className="SubHeader" 
+          imageSrc="../src/assets/images/upload.png" 
+          title="Step 1" 
+          description="Load in Data"
+          imageSrc2='../src/assets/images/recovery.png'
+          title2='Step 2'
+          description2='Customise Settings'
+        />
+        <Header
+          className="SubHeader" 
+          imageSrc="../src/assets/images/maths.png" 
+          title="Step 3" 
+          description="Add some factors"
+          imageSrc2='../src/assets/images/podium.png'
+          title2='Step 4'
+          description2='Rank your weirs'
+        />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;

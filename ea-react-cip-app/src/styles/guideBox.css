@@ -1,0 +1,66 @@
+.MainHeader{
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    height: 90%;
+    z-index: 1;
+    width: 100%;
+    max-width: 82.5rem;
+    padding: 0 3rem;
+}
+
+.purpose_box {
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(0.5rem);
+    border-radius: 0.5rem;
+    box-shadow: 0px 30px 40px -20px var(--grayishBlue);
+    padding: 2rem;
+    margin: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.SubHeader {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    height: 90%;
+    z-index: 1;
+    width: 100%;
+    max-width: 82rem;
+    padding: 0 3rem;
+}
+
+
+
+.box {
+    background-color: rgba(255, 255, 255, 0.5);
+    /* Set a semi-transparent background color */
+    backdrop-filter: blur(0.5rem);
+    border-radius: 0.5rem;
+    box-shadow: 0px 30px 40px -20px var(--grayishBlue);
+    padding: 2rem;
+    margin: 1rem;
+}
+
+.tips_box {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0px 20px 20px -20px var(--grayishBlue);
+    padding: 2rem;
+    /* margin: 20px;   */
+    margin-left: 3rem;
+    max-width: 53rem;
+    max-height: 9rem;
+    font-size: 1.5rem;
+}
+
+.box p {
+    color: var(--varyDarkBlue);
+    font-size: 1.5rem;
+    font-weight: var(--weight2);
+    /* text-align: left */
+}
