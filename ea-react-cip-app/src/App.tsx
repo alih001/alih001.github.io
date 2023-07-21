@@ -3,13 +3,17 @@ import React from 'react';
 import Navbar from './components/Navbar';
 import Header from './components/guideBox';
 // import './App.css';
+import DefaultBox from './components/sectionBox';
+import DefaultContainer from './components/sectionContainer';
+import './styles/MainPage.css'
 
-function App() {
+const App: React.FC = () => {
   return (
     <div>
-      <Navbar />
 
-      <div>
+      <Navbar />
+      
+      <DefaultContainer>
         <Header
           className="MainHeader" 
           imageSrc="../src/assets/images/thinking.png"
@@ -35,9 +39,9 @@ function App() {
           title2='Step 4'
           description2='Rank your weirs'
         />
-      </div>
+      </DefaultContainer>
     </div>
   );
-}
+};
 
 export default App;

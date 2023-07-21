@@ -14,22 +14,20 @@ interface MuiCardProps {
 const MuiCardComponent: React.FC<MuiCardProps> = ({ imageSrc, title, description }) => {
   return (
     <Card>
-      {/* <CardActionArea> */}
-        <CardMedia
-          component="img"
-          image={imageSrc}
-          alt="card image"
-          sx={{ width: 75, height: 75, objectFit: 'cover' }} // Set the desired width and height
-        />
-        <CardContent>
-          <Typography gutterBottom variant="h5" component="div">
-            {title}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {description}
-          </Typography>
-        </CardContent>
-      {/* </CardActionArea> */}
+      <CardMedia
+        component="img"
+        image={imageSrc}
+        alt="card image"
+        sx={{ width: 75, height: 75, objectFit: 'cover' }} 
+      />
+      <CardContent>
+        <Typography gutterBottom variant="h5" component="div">
+          {title}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {description}
+        </Typography>
+      </CardContent>
     </Card>
   );
 }
