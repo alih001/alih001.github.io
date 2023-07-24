@@ -6,13 +6,16 @@ import Header from './components/guideBox';
 import DefaultBox from './components/sectionBox';
 import DefaultContainer from './components/sectionContainer';
 import './styles/MainPage.css'
+import Grid from '@mui/material/Unstable_Grid2';
+import GroupOrientation from './components/buttonGroup';
+import CustomizedSwitches from './components/switch';
 
 const App: React.FC = () => {
   return (
     <div>
 
       <Navbar />
-      
+
       <DefaultContainer>
         <Header
           className="MainHeader" 
@@ -39,6 +42,27 @@ const App: React.FC = () => {
           title2='Step 4'
           description2='Rank your weirs'
         />
+      </DefaultContainer>
+      <DefaultContainer>
+
+        <h1>customise weir rankings</h1>
+
+        <DefaultBox>
+          <GroupOrientation/>
+          <CustomizedSwitches/>
+        </DefaultBox>
+      </DefaultContainer>
+
+      <DefaultContainer>
+        <Grid container spacing={2}>
+          <Grid xs={4}>
+              <h1>Top 10 Rankings</h1>
+          </Grid>
+          <Grid xs={4}>
+            <h1>Add Risk Factors</h1>
+          </Grid>
+        </Grid>
+
       </DefaultContainer>
     </div>
   );
