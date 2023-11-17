@@ -21,10 +21,9 @@ interface TableSectionProps {
 
 export const TableSection: React.FC<TableSectionProps> = ({ personDetails, index }) => {
   const { isOpen, toggle } = useOpenController(false);
-  const personDetailKeys = Object.keys(personDetails);
+  const [totalValue, setTotalValue] = useState<number>(10);
   const [modifiedValue, setModifiedValue] = useState<string>("");
   const [tdToUpdate, setTdToUpdate] = useState<string>("");
-  const [totalValue, setTotalValue] = useState<number>(10);
 
   const handleDropdownChange = (selectedValue: string) => {
     let newValue = "";
@@ -42,34 +41,34 @@ export const TableSection: React.FC<TableSectionProps> = ({ personDetails, index
         newValue = "";
         setTdToUpdate("");
     }
-  
-    setModifiedValue(newValue);
-  
+    setModifiedValue(newValue); 
+    setTdToUpdate(`row${index}_Total`);
     setTotalValue(Number(newValue) + 10);
   };
 
   return (
-    <tbody>
+    <>
       <tr>
         <td className="button-td">
           <ExpendableButton isOpen={isOpen} toggle={toggle} />
         </td>
-        <td>Weir : {index} </td>
-        <td>Weir {index} Cat I Score </td>
-        <td>Weir {index} Cat II Score </td>
-        <td id={`row${index}_Total`}>{totalValue}</td>
+        <td>Weir : {index}</td>
+        <td>Weir {index} Cat I Score</td>
+        <td>Weir {index} Cat II Score</td>
+        <td>{totalValue}</td>
       </tr>
       {isOpen &&
-    personDetailKeys.map((key) => (
-    <TableRow
-        key={key}
-        personHeader={key}
-        index={index}
-        tdToUpdate={tdToUpdate}
-        modifiedValue={modifiedValue}
-        personDetails={key === 'Scour' ? <DropdownMenu onOptionChange={handleDropdownChange} /> : personDetails[key]}
-    />
-))}
-    </tbody>
+        Object.entries(personDetails).map(([key, value]) => (
+          <TableRow
+            key={key}
+            personHeader={key}
+            value={key === 'Scour' ? <DropdownMenu onOptionChange={handleDropdownChange} /> : value}
+            index={index}
+            modifiedValue={modifiedValue}
+            tdToUpdate={tdToUpdate}
+          />
+        ))
+      }
+    </>
   );
 };

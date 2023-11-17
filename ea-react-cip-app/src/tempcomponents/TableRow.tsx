@@ -3,25 +3,22 @@ import React from "react";
 
 interface TableRowProps {
   personHeader: string;
+  value: string | React.ReactNode;
   index: number;
-  tdToUpdate?: string;
-  modifiedValue: string | React.ReactNode;
-  personDetails: string | React.ReactNode;
+  modifiedValue: string;
+  tdToUpdate: string;
 }
 
-export const TableRow: React.FC<TableRowProps> = (props) => {
-  const tdIdPart = props.tdToUpdate && props.tdToUpdate.split("_")[1]?.split("value")[1];
+export const TableRow: React.FC<TableRowProps> = ({ personHeader, value, index, modifiedValue, tdToUpdate }) => {
+  const shouldUpdateValue = `row${index}_value${personHeader}` === tdToUpdate;
 
   return (
     <tr>
-      <td id={`row${props.index}_header${props.personHeader}`}>{props.personHeader}</td>
-      <td id={`row${props.index}_value${props.personHeader}`}>
-        {
-          props.personHeader === tdIdPart
-            ? props.modifiedValue 
-            : props.personDetails
-        }
-      </td>
+      <td></td>
+      <td></td>
+      <td>{personHeader}</td>
+      <td>{shouldUpdateValue ? modifiedValue : value}</td>
+      <td></td>
     </tr>
   );
 };
