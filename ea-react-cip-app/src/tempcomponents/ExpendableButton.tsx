@@ -16,7 +16,7 @@ export const ExpendableButton: React.FC<ExpendableButtonProps> = ({ isOpen, togg
           transition: "all 0.25s",
         }}
       >
-        expand_more
+        More Info
       </span>
     </button>
   );

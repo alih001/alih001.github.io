@@ -7,11 +7,11 @@ import DropdownMenu from "./DropdownMenu";
 
 interface PersonDetails {
   id: number;
-  name: string;
-  phone: string;
-  email: string;
-  country: string;
-  alphanumeric: string;
+  'Gate Type': string;
+  Corrosion: string;
+  Erosion: string;
+  Scour: string;
+  UUID: string;
 }
 
 interface TableSectionProps {
@@ -54,9 +54,9 @@ export const TableSection: React.FC<TableSectionProps> = ({ personDetails, index
         <td className="button-td">
           <ExpendableButton isOpen={isOpen} toggle={toggle} />
         </td>
-        <td>Person : {index}</td>
-        <td>yo{index}</td>
-        <td>yoyo{index}</td>
+        <td>Weir : {index} </td>
+        <td>Weir {index} Cat I Score </td>
+        <td>Weir {index} Cat II Score </td>
         <td id={`row${index}_Total`}>{totalValue}</td>
       </tr>
       {isOpen &&
@@ -67,7 +67,7 @@ export const TableSection: React.FC<TableSectionProps> = ({ personDetails, index
         index={index}
         tdToUpdate={tdToUpdate}
         modifiedValue={modifiedValue}
-        personDetails={key === 'country' ? <DropdownMenu onOptionChange={handleDropdownChange} /> : personDetails[key]}
+        personDetails={key === 'Scour' ? <DropdownMenu onOptionChange={handleDropdownChange} /> : personDetails[key]}
     />
 ))}
     </tbody>

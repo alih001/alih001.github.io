@@ -8,12 +8,11 @@ export const Table: React.FC = () => {
     <table>
       <thead>
         <tr>
-          <td></td>
-          <th>Email</th>
-          <th>Name</th>
-          <th>Phone</th>
-          <th>Country</th>
-          <th>Alphanumeric</th>
+          <th>Button</th>
+          <th>Weir</th>
+          <th>Cat Score</th>
+          <th>Cat II Score</th>
+          <th>Total Value</th>
         </tr>
       </thead>
       <tbody>
