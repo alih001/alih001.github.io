@@ -1,5 +1,6 @@
 // TableRow.tsx
 import React from "react";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface TableRowProps {
   personHeader: string;
@@ -14,11 +15,11 @@ export const TableRow: React.FC<TableRowProps> = ({ personHeader, value, index, 
 
   return (
     <tr>
-      <td></td>
-      <td></td>
+      <td className = 'white-background'></td>
+      <td className = 'white-background'></td>
       <td>{personHeader}</td>
       <td>{shouldUpdateValue ? modifiedValue : value}</td>
-      <td></td>
+      <td className = 'white-background'></td>
     </tr>
   );
 };

@@ -5,7 +5,14 @@ import { TableRow } from "./TableRow";
 import useOpenController from "../Hooks/useOpenController";
 import DropdownMenu from "./DropdownMenu";
 
-interface PersonDetails {
+interface VisualDetails {
+  Weir: string;
+  'Cat I Score': number;
+  'Cat II Score': number;
+  'totalValue': number
+}
+
+interface HiddenDetails {
   id: number;
   'Gate Type': string;
   Corrosion: string;
@@ -15,13 +22,14 @@ interface PersonDetails {
 }
 
 interface TableSectionProps {
-  personDetails: PersonDetails;
+  visualDetails: VisualDetails;
+  hiddenDetails: HiddenDetails;
   index: number;
 }
 
-export const TableSection: React.FC<TableSectionProps> = ({ personDetails, index }) => {
+export const TableSection: React.FC<TableSectionProps> = ({ hiddenDetails, visualDetails, index }) => {
   const { isOpen, toggle } = useOpenController(false);
-  const [totalValue, setTotalValue] = useState<number>(10);
+  const [totalValue, setTotalValue] = useState<number>(visualDetails['totalValue']);
   const [modifiedValue, setModifiedValue] = useState<string>("");
   const [tdToUpdate, setTdToUpdate] = useState<string>("");
 
@@ -43,7 +51,7 @@ export const TableSection: React.FC<TableSectionProps> = ({ personDetails, index
     }
     setModifiedValue(newValue); 
     setTdToUpdate(`row${index}_Total`);
-    setTotalValue(Number(newValue) + 10);
+    setTotalValue(Number(newValue) + Number(visualDetails['totalValue']));
   };
 
   return (
@@ -52,13 +60,13 @@ export const TableSection: React.FC<TableSectionProps> = ({ personDetails, index
         <td className="button-td">
           <ExpendableButton isOpen={isOpen} toggle={toggle} />
         </td>
-        <td>Weir : {index}</td>
-        <td>Weir {index} Cat I Score</td>
-        <td>Weir {index} Cat II Score</td>
-        <td>{totalValue}</td>
+        <td>{visualDetails.Weir}</td>
+        <td>{visualDetails['Cat I Score']}</td>
+        <td>{visualDetails['Cat II Score']}</td>
+        <td className = {`row${index}_Total`}>{totalValue}</td>
       </tr>
       {isOpen &&
-        Object.entries(personDetails).map(([key, value]) => (
+        Object.entries(hiddenDetails).map(([key, value]) => (
           <TableRow
             key={key}
             personHeader={key}

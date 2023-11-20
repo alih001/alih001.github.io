@@ -3,7 +3,7 @@ import React from 'react';
 import { Table } from './tempcomponents/Table';
 import ExcelToJson from './tempcomponents/ExcelToJson';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import './styles/tableStyles.css'
 
 function App() {
   return (

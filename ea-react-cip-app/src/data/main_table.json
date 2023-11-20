@@ -1,0 +1,32 @@
+[
+    {
+        "Weir": "Bell Weir",
+        "Cat I Score": 50,
+        "Cat II Score": 100,
+        "totalValue": 9
+    },
+    {
+        "Weir": "Old Windsor",
+        "Cat I Score": 20,
+        "Cat II Score": 30,
+        "totalValue": 13
+    },
+    {
+        "Weir": "Penton Hook",
+        "Cat I Score": 80,
+        "Cat II Score": 200,
+        "totalValue": 90
+    },
+    {
+        "Weir": "Benson",
+        "Cat I Score": 5,
+        "Cat II Score": 6,
+        "totalValue": 85
+    },
+    {
+        "Weir": "Romney",
+        "Cat I Score": 10,
+        "Cat II Score": 60,
+        "totalValue": 45
+    }
+  ]
