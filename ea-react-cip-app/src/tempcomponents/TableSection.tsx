@@ -54,7 +54,7 @@ export const TableSection: React.FC<TableSectionProps> = ({ hiddenDetails, visua
   return (
     <>
       <tr>
-        <td className="button-td">
+        <td>
           <ExpendableButton isOpen={isOpen} toggle={toggle} />
         </td>
         <td>{visualDetails.Weir}</td>

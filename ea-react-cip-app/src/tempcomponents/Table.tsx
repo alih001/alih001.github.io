@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { TableSection } from "./TableSection";
 import * as XLSX from 'xlsx';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export const Table: React.FC = () => {
   const [tableData, setTableData] = useState([]);
@@ -31,18 +32,19 @@ export const Table: React.FC = () => {
   return (
     <>
     <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
-    <table className="table table-striped table-bordered table-hover">
-        <thead className="thead-dark">
-        <tr>
-          <th></th>
-          <th>Weir</th>
-          <th>Cat I Score</th>
-          <th>Cat II Score</th>
-          <th>Total Value</th>
-        </tr>
-      </thead>
-      <tbody>
-        {tableData.map((tableDetails, index) => {
+    {tableData.length > 0 && (
+        <table className="table table-striped table-bordered table-hover">
+          <thead className="thead-dark">
+            <tr>
+              <th></th>
+              <th>Weir</th>
+              <th>Cat I Score</th>
+              <th>Cat II Score</th>
+              <th>Total Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tableData.map((tableDetails, index) => {
           // Filter out visual details
           const visualDetails = visualKeys.reduce((details, key) => {
             if (Object.prototype.hasOwnProperty.call(tableDetails, key)) {
@@ -70,7 +72,7 @@ export const Table: React.FC = () => {
         })}
       </tbody>
     </table>
-    </>
-  );
+  )}
+</>
+);
 };
-

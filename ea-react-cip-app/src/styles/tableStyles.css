@@ -1,4 +1,9 @@
 .white-background {
     background-color: rgb(114, 41, 41) !important;
   }
-  
+
+button {
+  outline: none;
+  border: none;
+  background-color: transparent;
+}
