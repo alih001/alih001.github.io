@@ -1,19 +1,40 @@
 // Table.tsx
-import React from "react";
-import table_json from "../data/collapse_table.json";
+import React, { useState } from "react";
 import { TableSection } from "./TableSection";
-
+import * as XLSX from 'xlsx';
 
 export const Table: React.FC = () => {
-  // Define the keys for visual and hidden details
-  const visualKeys = ['Weir', 'Cat I Score', 'Cat II Score', 'totalValue'];
-  const hiddenKeys = ['id', 'Gate Type', 'Corrosion', 'Erosion', 'Scour', 'UUID'];
+  const [tableData, setTableData] = useState([]);
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    parseExcel(file);
+  };
+
+  const parseExcel = (file) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const data = e.target.result;
+      const workbook = XLSX.read(data, { type: 'binary' });
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const json = XLSX.utils.sheet_to_json(worksheet);
+      setTableData(json);
+    };
+    reader.readAsBinaryString(file);
+  };
+  
+
+  const visualKeys = ['Weir', 'Category (I) Score', 'Category (II) Score', 'Step (I) Score'];
+  const hiddenKeys = ['Gate Type', 'Scour'];
 
   return (
-    <table>
-        <thead>
+    <>
+    <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
+    <table className="table table-striped table-bordered table-hover">
+        <thead className="thead-dark">
         <tr>
-          <th>Button</th>
+          <th></th>
           <th>Weir</th>
           <th>Cat I Score</th>
           <th>Cat II Score</th>
@@ -21,7 +42,7 @@ export const Table: React.FC = () => {
         </tr>
       </thead>
       <tbody>
-        {table_json.map((tableDetails, index) => {
+        {tableData.map((tableDetails, index) => {
           // Filter out visual details
           const visualDetails = visualKeys.reduce((details, key) => {
             if (Object.prototype.hasOwnProperty.call(tableDetails, key)) {
@@ -49,6 +70,7 @@ export const Table: React.FC = () => {
         })}
       </tbody>
     </table>
+    </>
   );
 };
 
