@@ -1,6 +1,6 @@
 // App.tsx
 import React from 'react';
-import { Table } from './tempcomponents/Table';
+import { Table } from './tableComponents/Table';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/tableStyles.css'
 import ResponsiveAppBar from './components/Navbar';
@@ -9,13 +9,11 @@ import DefaultBox from './components/sectionBox';
 import DefaultContainer from './components/sectionContainer';
 import './styles/MainPage.css'
 import Grid from '@mui/material/Unstable_Grid2';
-import CustomizedSwitches from './components/switch';
 
 const App: React.FC = () => {
   return (
     <div>
-
-      <ResponsiveAppBar />
+      <ResponsiveAppBar/>
 
       <DefaultContainer>
         <Header
@@ -50,8 +48,9 @@ const App: React.FC = () => {
         <h1>Customise weir rankings</h1>
 
         <DefaultBox>
+          {/* <CustomizedSwitches/> */}
           <Table/> 
-          <CustomizedSwitches/>
+
         </DefaultBox>
       </DefaultContainer>
 

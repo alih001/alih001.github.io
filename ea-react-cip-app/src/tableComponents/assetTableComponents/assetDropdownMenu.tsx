@@ -1,6 +1,6 @@
 // DropdownMenu.tsx
 import React, { useState, ChangeEvent } from 'react';
-import countryOptions from '../data/optionsData.json';
+import countryOptions from '../../data/optionsData.json';
 
 interface DropdownMenuProps {
   onOptionChange: (value: string) => void;

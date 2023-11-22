@@ -1,9 +1,9 @@
 // TableSection.tsx
 import React, { useState } from 'react';
-import { ExpendableButton } from "./ExpendableButton";
-import { TableRow } from "./TableRow";
-import useOpenController from "../Hooks/useOpenController";
-import DropdownMenu from "./DropdownMenu";
+import { ExpendableButton } from "./assetExpendableButton";
+import { TableRow } from "./assetTableRow";
+import useOpenController from "../../Hooks/useOpenController";
+import DropdownMenu from "./assetDropdownMenu";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface VisualDetails {
@@ -24,7 +24,7 @@ interface TableSectionProps {
   index: number;
 }
 
-export const TableSection: React.FC<TableSectionProps> = ({ hiddenDetails, visualDetails, index }) => {
+export const AssetTableSection: React.FC<TableSectionProps> = ({ hiddenDetails, visualDetails, index }) => {
   const { isOpen, toggle } = useOpenController(false);
   const [totalValue, setTotalValue] = useState<number>(visualDetails['Step (I) Score']);
   const [modifiedValue, setModifiedValue] = useState<string>("");
