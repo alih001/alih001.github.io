@@ -1,5 +1,5 @@
 // Table.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AssetTableSection } from "./assetTableComponents/assetTableSection";
 import { CostTableSection } from "./costTableComponents/costTableSection";
 import * as XLSX from 'xlsx';
@@ -58,8 +58,36 @@ export const Table: React.FC = () => {
     return acc;
   }, {});
   
+  // Load state from local storage when component mounts
+  useEffect(() => {
+    const savedAssetTableData = localStorage.getItem('assetTableData');
+    const savedCostTableData = localStorage.getItem('costTableData');
 
+    if (savedAssetTableData) {
+      setAssetTableData(JSON.parse(savedAssetTableData));
+    }
+    if (savedCostTableData) {
+      setCostTableData(JSON.parse(savedCostTableData));
+    }
+  }, []);
   
+  // Save state to local storage when it changes
+  useEffect(() => {
+    localStorage.setItem('assetTableData', JSON.stringify(assetTableData));
+  }, [assetTableData]);
+
+  useEffect(() => {
+    localStorage.setItem('costTableData', JSON.stringify(costTableData));
+  }, [costTableData]);
+
+  const [dropdownSelections, setDropdownSelections] = useState({});
+
+  // Function to update dropdown selections
+  const handleDropdownChange = (index, value) => {
+    setDropdownSelections(prev => ({ ...prev, [index]: value }));
+  };
+
+  // Pass this function and the selections down to AssetTableSection
 
   return (
     <>
@@ -117,11 +145,13 @@ export const Table: React.FC = () => {
 
                 return (
                   <AssetTableSection
-                    visualDetails={visualDetails}
-                    hiddenDetails={hiddenDetails}
-                    index={index}
-                    key={index}
-                  />
+                  visualDetails={visualDetails}
+                  hiddenDetails={hiddenDetails}
+                  index={index}
+                  key={index}
+                  dropdownSelections={dropdownSelections}
+                  onDropdownChange={handleDropdownChange}
+                />
                 );
               })}
         </tbody>

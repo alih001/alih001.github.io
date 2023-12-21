@@ -1,3 +1,4 @@
+// useOpenController.ts
 import { useCallback, useState } from 'react';
 
 export default function useOpenController(initialState: boolean) {

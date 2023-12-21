@@ -1,4 +1,4 @@
-// DropdownMenu.tsx
+// assetDropdownMenu.tsx
 import React, { useState, ChangeEvent } from 'react';
 import countryOptions from '../../data/optionsData.json';
 
@@ -6,13 +6,9 @@ interface DropdownMenuProps {
   onOptionChange: (value: string) => void;
 }
 
-const DropdownMenu: React.FC<DropdownMenuProps> = ({ onOptionChange }) => {
-  const [selectedOption, setSelectedOption] = useState<string>(countryOptions[0]);
-
+const DropdownMenu = ({ selectedOption, onOptionChange }) => {
   const handleOptionChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    const selectedValue = event.target.value;
-    setSelectedOption(selectedValue);
-    onOptionChange(selectedValue);
+    onOptionChange(event.target.value);
   };
 
   return (
@@ -25,5 +21,6 @@ const DropdownMenu: React.FC<DropdownMenuProps> = ({ onOptionChange }) => {
     </select>
   );
 };
+
 
 export default DropdownMenu;

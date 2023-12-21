@@ -24,7 +24,7 @@ interface TableSectionProps {
   index: number;
 }
 
-export const AssetTableSection: React.FC<TableSectionProps> = ({ hiddenDetails, visualDetails, index }) => {
+export const AssetTableSection: React.FC<TableSectionProps> = ({ hiddenDetails, visualDetails, index, dropdownSelections, onDropdownChange }) => {
   const { isOpen, toggle } = useOpenController(false);
   const [totalValue, setTotalValue] = useState<number>(visualDetails['Step (I) Score']);
   const [modifiedValue, setModifiedValue] = useState<string>("");
@@ -67,7 +67,12 @@ export const AssetTableSection: React.FC<TableSectionProps> = ({ hiddenDetails, 
           <TableRow
             key={key}
             personHeader={key}
-            value={key === 'Scour' ? <DropdownMenu onOptionChange={handleDropdownChange} /> : value}
+            value={key === 'Scour' ?
+            <DropdownMenu
+              selectedOption={dropdownSelections[index]} 
+              onOptionChange={(value) => onDropdownChange(index, value)}
+            /> : value
+              }
             index={index}
             modifiedValue={modifiedValue}
             tdToUpdate={tdToUpdate}
