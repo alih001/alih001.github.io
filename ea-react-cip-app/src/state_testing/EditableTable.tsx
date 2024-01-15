@@ -66,8 +66,8 @@ const dropdownValueMap = {
 };
 
 // Define the coordinates for the dropdown cell
-const dropdownRow = 0;
-const dropdownColumn = 0;
+const dropdownRow = 1;
+const dropdownColumn = 2;
 
 const EditableTable: React.FC<EditableTableProps> = ({ data, onDataChange, tableId }) => {
   const handleCellValueChange = (rowIndex: number, colIndex: number, newValue: string) => {
@@ -76,7 +76,7 @@ const EditableTable: React.FC<EditableTableProps> = ({ data, onDataChange, table
     if (rowIndex === dropdownRow && colIndex === dropdownColumn) {
       updatedData[rowIndex][colIndex] = newValue;
       const newThirdColValue = dropdownValueMap[newValue] || 0;
-      updatedData[rowIndex][2] = newThirdColValue.toString();
+      updatedData[rowIndex][4] = newThirdColValue.toString();
     } else {
       updatedData[rowIndex][colIndex] = newValue;
     }

@@ -1,51 +1,49 @@
-// App.tsx
+// App.tsx or your main component
 import React, { useState } from 'react';
-import EditableTable from './state_testing/EditableTable';
-import './App.css';
+import * as XLSX from 'xlsx';
+import FileUpload from './state_testing/FileUpload'; // Import your FileUpload component
+import EditableTable from './state_testing/EditableTable'; // Import your EditableTable component
+
+type TableRow = (string | number)[]; // Adjust this type according to your actual data structure
 
 const App: React.FC = () => {
-
-  type TableRow = [string, string, number];
-
-  const initialTable1Data: TableRow[] = [
-    ["Table 1 - Row 1 Col 1", "Table 1 - Row 1 Col 2", 50],
-    ["Table 1 - Row 2 Col 1", "Table 1 - Row 2 Col 2", 20],
-  ];
-
-  const initialTable2Data: TableRow[] = [
-    ["Table 2 - Row 1 Col 1", "Table 2 - Row 1 Col 2", 30],
-    ["Table 2 - Row 2 Col 1", "Table 2 - Row 2 Col 2", 90],
-  ];
-
-  const [table1Data, setTable1Data] = useState(initialTable1Data);
-  const [table2Data, setTable2Data] = useState(initialTable2Data);
+  const [table1Data, setTable1Data] = useState<TableRow[]>([]);
+  const [table2Data, setTable2Data] = useState<TableRow[]>([]);
   const [isTable1Visible, setIsTable1Visible] = useState(true);
 
-  return (
-    <div className="App">
+  const handleFileUpload = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (event: ProgressEvent<FileReader>) => {
+      if (event.target && event.target.result) {
+        const workbook = XLSX.read(event.target.result, { type: 'binary' });
+        const assetInformation: TableRow[] = XLSX.utils.sheet_to_json(workbook.Sheets['AssetInformation'], { header: 1 });
+        const costInformation: TableRow[] = XLSX.utils.sheet_to_json(workbook.Sheets['CostInformation'], { header: 1 });
+
+        setTable1Data(assetInformation);
+        setTable2Data(costInformation);
+      }
+    };
+    reader.readAsBinaryString(file);
+  };
+
+return (
+    <div>
+      <FileUpload onFileSelect={handleFileUpload} />
       <button onClick={() => setIsTable1Visible(!isTable1Visible)}>
         Switch Table
       </button>
       {isTable1Visible ? (
         <>
           <h1>Editable Table 1</h1>
-          <EditableTable 
-            data={table1Data} 
-            onDataChange={setTable1Data}
-            tableId = "table1"
-          />
+          <EditableTable data={table1Data} onDataChange={setTable1Data} tableId="table1" />
         </>
       ) : (
         <>
           <h1>Editable Table 2</h1>
-          <EditableTable 
-            data={table2Data}
-            onDataChange={setTable2Data}
-            tableId = "table2"
-          />
+          <EditableTable data={table2Data} onDataChange={setTable2Data} tableId="table2" />
         </>
       )}
-    </div>
+  </div>
   );
 };
 
