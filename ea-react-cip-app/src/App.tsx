@@ -4,14 +4,17 @@ import EditableTable from './state_testing/EditableTable';
 import './App.css';
 
 const App: React.FC = () => {
-  const initialTable1Data: string[][] = [
-    ["Table 1 - Row 1 Col 1", "Table 1 - Row 1 Col 2"],
-    ["Table 1 - Row 2 Col 1", "Table 1 - Row 2 Col 2"],
+
+  type TableRow = [string, string, number];
+
+  const initialTable1Data: TableRow[] = [
+    ["Table 1 - Row 1 Col 1", "Table 1 - Row 1 Col 2", 50],
+    ["Table 1 - Row 2 Col 1", "Table 1 - Row 2 Col 2", 20],
   ];
 
-  const initialTable2Data: string[][] = [
-    ["Table 2 - Row 1 Col 1", "Table 2 - Row 1 Col 2"],
-    ["Table 2 - Row 2 Col 1", "Table 2 - Row 2 Col 2"],
+  const initialTable2Data: TableRow[] = [
+    ["Table 2 - Row 1 Col 1", "Table 2 - Row 1 Col 2", 30],
+    ["Table 2 - Row 2 Col 1", "Table 2 - Row 2 Col 2", 90],
   ];
 
   const [table1Data, setTable1Data] = useState(initialTable1Data);
