@@ -1,70 +1,47 @@
 // App.tsx
-import React from 'react';
-import { Table } from './tableComponents/Table';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './styles/tableStyles.css'
-import ResponsiveAppBar from './components/Navbar';
-import Header from './components/guideBox';
-import DefaultBox from './components/sectionBox';
-import DefaultContainer from './components/sectionContainer';
-import './styles/MainPage.css'
-import Grid from '@mui/material/Unstable_Grid2';
+import React, { useState } from 'react';
+import EditableTable from './state_testing/EditableTable';
+import './App.css';
 
 const App: React.FC = () => {
+  const initialTable1Data: string[][] = [
+    ["Table 1 - Row 1 Col 1", "Table 1 - Row 1 Col 2"],
+    ["Table 1 - Row 2 Col 1", "Table 1 - Row 2 Col 2"],
+  ];
+
+  const initialTable2Data: string[][] = [
+    ["Table 2 - Row 1 Col 1", "Table 2 - Row 1 Col 2"],
+    ["Table 2 - Row 2 Col 1", "Table 2 - Row 2 Col 2"],
+  ];
+
+  const [table1Data, setTable1Data] = useState(initialTable1Data);
+  const [table2Data, setTable2Data] = useState(initialTable2Data);
+  const [isTable1Visible, setIsTable1Visible] = useState(true);
+
   return (
-    <div>
-      <ResponsiveAppBar/>
-
-      <DefaultContainer>
-        <Header
-          className="MainHeader" 
-          imageSrc="../src/assets/images/thinking.png"
-          title="Purpose" 
-          description="This app is designed to replace the existing weir ranking spreadsheet. 
-          It allows a user to import a spreadsheet and edit any details to produce a top 10 ranking table."
-        />
-        <Header
-          className="SubHeader" 
-          imageSrc="../src/assets/images/upload.png" 
-          title="Step 1" 
-          description="Load in Data"
-          imageSrc2='../src/assets/images/recovery.png'
-          title2='Step 2'
-          description2='Customise Settings'
-        />
-        <Header
-          className="SubHeader" 
-          imageSrc="../src/assets/images/maths.png" 
-          title="Step 3" 
-          description="Add some factors"
-          imageSrc2='../src/assets/images/podium.png'
-          title2='Step 4'
-          description2='Rank your weirs'
-        />
-      </DefaultContainer>
-
-      <DefaultContainer>
-
-        <h1>Customise weir rankings</h1>
-
-        <DefaultBox>
-          {/* <CustomizedSwitches/> */}
-          <Table/> 
-
-        </DefaultBox>
-      </DefaultContainer>
-
-      <DefaultContainer>
-        <Grid container spacing={2}>
-          <Grid xs={4}>
-              <h1>Top 10 Rankings</h1>
-          </Grid>
-          <Grid xs={4}>
-              <h1>Add Risk Factors</h1>
-          </Grid>
-        </Grid>
-
-      </DefaultContainer>
+    <div className="App">
+      <button onClick={() => setIsTable1Visible(!isTable1Visible)}>
+        Switch Table
+      </button>
+      {isTable1Visible ? (
+        <>
+          <h1>Editable Table 1</h1>
+          <EditableTable 
+            data={table1Data} 
+            onDataChange={setTable1Data}
+            tableId = "table1"
+          />
+        </>
+      ) : (
+        <>
+          <h1>Editable Table 2</h1>
+          <EditableTable 
+            data={table2Data}
+            onDataChange={setTable2Data}
+            tableId = "table2"
+          />
+        </>
+      )}
     </div>
   );
 };

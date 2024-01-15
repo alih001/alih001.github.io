@@ -1,4 +1,4 @@
-// TableSection.tsx
+// costTableSection.tsx
 import React, { useState } from 'react';
 import { ExpendableButton } from "./costExpendableButton";
 import { TableRow } from "./costTableRow";
