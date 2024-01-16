@@ -10,6 +10,7 @@ const App: React.FC = () => {
   const [table1Data, setTable1Data] = useState<TableRow[]>([]);
   const [table2Data, setTable2Data] = useState<TableRow[]>([]);
   const [isTable1Visible, setIsTable1Visible] = useState(true);
+  const [dropdownValues, setDropdownValues] = useState<{ [key: string]: string }>({});
 
   const handleFileUpload = (file: File) => {
     const reader = new FileReader();
@@ -40,6 +41,8 @@ return (
             onDataChange={setTable1Data} 
             tableId="table1"
             collapsibleColumns={['Scour Rating', 'Corrosion Rating']} 
+            dropdownValues={dropdownValues} 
+            setDropdownValues={setDropdownValues} 
           />
         </>
       ) : (
