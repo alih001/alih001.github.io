@@ -95,38 +95,32 @@ const EditableTable: React.FC<EditableTableProps> = ({
   const collapsibleColumnIndexes = [2, 3]; // Array of collapsible column indices
   const [collapsedRows, setCollapsedRows] = useState<Set<number>>(new Set());
   const dropdownValueMap = { "Option 1": 20, "Option 2": 30 }; // Example dropdown options
+  const [outputValues, setOutputValues] = useState<{ [key: string]: string }>({});
 
   const handleDropdownChange = (rowIndex: number, columnIndex: number, newValue: string) => {
     const key = `${tableId}-${rowIndex}-${columnIndex}`;
-    console.log('value being updated is: ', key)
     setDropdownValues({ ...dropdownValues, [key]: newValue });
-
-    console.log(rowIndex, columnIndex)
-
+  
+    // Update outputValues state
+    const outputKey = `${tableId}-${rowIndex}-${columnIndex}-output`;
+    const outputValue = dropdownValueMap[newValue] || newValue;
+    setOutputValues({ ...outputValues, [outputKey]: outputValue });
   
     // Update the data state
     let updatedData = [...data];
-
-    console.log(updatedData)
-    console.log(updatedData[rowIndex])
-    console.log(updatedData[rowIndex][columnIndex])
-
     updatedData[rowIndex] = [...updatedData[rowIndex]];
-    updatedData[rowIndex][columnIndex] = dropdownValueMap[newValue] || newValue;
-
-    console.log(updatedData)
-    console.log(updatedData[rowIndex])
-    console.log(updatedData[rowIndex][columnIndex])
-  
+    updatedData[rowIndex][columnIndex] = outputValue;
     onDataChange(updatedData);
   };
+  
+  
+  
   
   const renderDropdown = (rowIndex: number, columnIndex: number) => {
     const key = `${tableId}-${rowIndex}-${columnIndex}`;
     const dropdownOptions = Object.keys(dropdownValueMap);
     const value = dropdownValues[key] || data[rowIndex][columnIndex];
-    // console.log(key)
-
+  
     return (
       <select
         value={value}
@@ -138,21 +132,26 @@ const EditableTable: React.FC<EditableTableProps> = ({
       </select>
     );
   };
+  
 
   const renderCollapsibleRow = (row: TableRow, rowIndex: number) => {
     return (
       collapsibleColumnIndexes.map(columnIndex => (
-        <tr key={`${rowIndex}-collapsible-${columnIndex}`} >
-          <td colSpan={row.length}>
+        <tr key={`${rowIndex}-collapsible-${columnIndex}`}>
+          <td className={`${tableId}-${rowIndex}-${columnIndex}-title`} colSpan={row.length}>
             {data[0][columnIndex]}
           </td>
-          <td colSpan={row.length}>
+          <td className={`${tableId}-${rowIndex}-${columnIndex}-value`} colSpan={row.length}>
             {renderDropdown(rowIndex, columnIndex)}
+          </td>
+          <td className={`${tableId}-${rowIndex}-${columnIndex}-output`} colSpan={row.length}>
+            {outputValues[`${tableId}-${rowIndex}-${columnIndex}-output`] || ''}
           </td>
         </tr>
       ))
     );
   };
+  
 
   return (
     <table>
