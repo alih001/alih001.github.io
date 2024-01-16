@@ -57,6 +57,7 @@ type EditableTableProps = {
   data: string[][];
   onDataChange: (newData: string[][]) => void;
   tableId: string;
+  collapsibleColumns?: string[];
 };
 
 const dropdownValueMap = {
@@ -69,7 +70,7 @@ const dropdownValueMap = {
 const dropdownRow = 1;
 const dropdownColumn = 2;
 
-const EditableTable: React.FC<EditableTableProps> = ({ data, onDataChange, tableId }) => {
+const EditableTable: React.FC<EditableTableProps> = ({ data, onDataChange, tableId, collapsibleColumns = [] }) => {
   const handleCellValueChange = (rowIndex: number, colIndex: number, newValue: string) => {
     let updatedData = [...data];
 
@@ -84,26 +85,66 @@ const EditableTable: React.FC<EditableTableProps> = ({ data, onDataChange, table
     onDataChange(updatedData);
   };
 
+  const [collapsedRows, setCollapsedRows] = useState<Set<number>>(new Set());
+
+  const toggleRowCollapse = (rowIndex: number) => {
+    setCollapsedRows(prev => {
+      const newCollapsedRows = new Set(prev);
+      if (newCollapsedRows.has(rowIndex)) {
+        newCollapsedRows.delete(rowIndex);
+      } else {
+        newCollapsedRows.add(rowIndex);
+      }
+      return newCollapsedRows;
+    });
+  };
+
+  const collapsibleColumnIndexes = [2, 3]; // Array of collapsible column indices
+
+  const renderCollapsibleRow = (row: TableRow, rowIndex: number) => {
+    return (
+      collapsibleColumnIndexes.map(columnIndex => (
+        <tr key={`${rowIndex}-collapsible-${columnIndex}`}>
+          <td colSpan={row.length}>
+            {data[0][columnIndex]} Details: {row[columnIndex]}
+          </td>
+        </tr>
+      ))
+    );
+  };
+
   return (
     <table>
       <tbody>
         {data.map((row, rowIndex) => (
-          <tr key={rowIndex}>
-            {row.map((cell, colIndex) => {
-              const isDropdown = rowIndex === dropdownRow && colIndex === dropdownColumn;
-              const dropdownOptions = isDropdown ? Object.keys(dropdownValueMap) : [];
-
-              return (
-                <EditableCell
-                  key={`${tableId}-${rowIndex}-${colIndex}`}
-                  value={cell}
-                  onValueChange={(newValue) => handleCellValueChange(rowIndex, colIndex, newValue)}
-                  isDropdown={isDropdown}
-                  dropdownOptions={dropdownOptions}
-                />
-              );
-            })}
-          </tr>
+          <React.Fragment key={rowIndex}>
+            <tr>
+              {/* Row cells */}
+              {row.map((cell, colIndex) => {
+                // Check if the column index is not in the collapsibleColumnIndexes list
+                if (!collapsibleColumnIndexes.includes(colIndex)) {
+                  return (
+                    <EditableCell
+                      key={`${tableId}-${rowIndex}-${colIndex}`}
+                      value={cell}
+                      onValueChange={(newValue) => handleCellValueChange(rowIndex, colIndex, newValue)}
+                    />
+                  );
+                }
+                return null
+              })}
+              {/* Toggle button for collapsible rows */}
+              {tableId === "table1" && (
+                <td>
+                  <button onClick={() => toggleRowCollapse(rowIndex)}>
+                    {collapsedRows.has(rowIndex) ? 'Show' : 'Hide'}
+                  </button>
+                </td>
+              )}
+            </tr>
+            {/* Collapsible rows */}
+            {!collapsedRows.has(rowIndex) && renderCollapsibleRow(row, rowIndex)}
+          </React.Fragment>
         ))}
       </tbody>
     </table>

@@ -35,12 +35,21 @@ return (
       {isTable1Visible ? (
         <>
           <h1>Editable Table 1</h1>
-          <EditableTable data={table1Data} onDataChange={setTable1Data} tableId="table1" />
+          <EditableTable 
+            data={table1Data} 
+            onDataChange={setTable1Data} 
+            tableId="table1"
+            collapsibleColumns={['Scour Rating', 'Corrosion Rating']} 
+          />
         </>
       ) : (
         <>
           <h1>Editable Table 2</h1>
-          <EditableTable data={table2Data} onDataChange={setTable2Data} tableId="table2" />
+          <EditableTable 
+            data={table2Data} 
+            onDataChange={setTable2Data} 
+            tableId="table2" 
+          />
         </>
       )}
   </div>
