@@ -52,7 +52,7 @@ const EditableTable: React.FC<EditableTableProps> = ({
 
   const stage1ScoreColumnIndex = data[0].indexOf("Stage 1 Score");
   const stage2ScoreColumnIndex = data[0].indexOf("Stage 2 Score");
-  // const totalScoreColumnIndex = data[0].indexOf("Total");
+  const totalScoreColumnIndex = data[0].indexOf("Total");
   const costCollapsibleColumnIndexes = [];
   // const dropdownColumnIndex = arrayCollapsibleColumnIndexes[0];
 
@@ -95,28 +95,17 @@ const EditableTable: React.FC<EditableTableProps> = ({
         const outputKey = `${tableId}-${rowIndex}-${dropdownColIndex}-output`;
         let outputValue = (dropdownValueMap[newValue] || newValue);
 
-        console.log("Current ddm is: ", outputKey)
-        console.log("output value currently is:", outputValue)
-
         if (dropdownColIndex === columnIndex) {
           // Current dropdown change
           setOutputValues({ ...outputValues, [outputKey]: outputValue });
-          console.log("Updating user change ddm")
-          console.log("Running total is:", outputValue)
         } else {
           // Other dropdowns
           outputValue = outputValues[outputKey] || 0;
-          console.log("Outputvalues is: ", outputValues)
-          console.log("value assigned is: ", outputValues[outputKey])
-          console.log("Checking values from other unchanged ddms")
-          console.log("other dropdowns currently is:", outputValue)
         }
 
         stage1Score += outputValue; // Adjust this formula as needed
         stage2Score += outputValue; // Adjust this formula as needed
 
-        console.log("Stage 1 score currently is:", stage1Score)
-        console.log("Stage 2 score currently is:", stage2Score)
       });
 
       // Update Stage 1 Score and Stage 2 Score
@@ -126,13 +115,13 @@ const EditableTable: React.FC<EditableTableProps> = ({
       if (stage2ScoreColumnIndex !== -1) {
         updatedData[rowIndex][stage2ScoreColumnIndex] = stage2Score;
       }
+      // Check if we need to update Total Score
+      if (totalScoreColumnIndex !== -1) {
+        updatedData[rowIndex][totalScoreColumnIndex] = stage1Score + stage2Score
+      }
+
     }
 
-    // // Check if we need to update Total Score
-    // if (columnIndex === dropdownColumnIndex && totalScoreColumnIndex !== -1) {
-    //   updatedData[rowIndex][totalScoreColumnIndex] = updatedData[rowIndex][stage1ScoreColumnIndex] + updatedData[rowIndex][stage2ScoreColumnIndex]
-    // }
-  
     onDataChange(updatedData);
   };
   
