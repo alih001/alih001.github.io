@@ -49,12 +49,6 @@ const CostTable: React.FC<CostTableProps> = ({
         return !collapsedGroups.has(groupName);
     };
 
-    const handleDDMChange = (rowIndex: number, colIndex: number,newValue: string) => {
-        let updatedData = [...data];
-        updatedData[rowIndex][colIndex] = newValue; // 2 is the column index for "Start Year"
-        onDataChange(updatedData);
-      };
-
     const handleYearChange = (rowIndex: number, colIndex: number,newValue: string) => {
         const newYear = parseInt(newValue, 10);
         const updatedRow = shiftRowDataForYear(data[rowIndex], newYear);
@@ -103,11 +97,45 @@ const CostTable: React.FC<CostTableProps> = ({
         );
     };
 
+    const shiftRowDataForDuration = (row: any[], currentTotal: number, newDuration: number, startYear: number) => {
+
+        const assignedValue = parseInt(currentTotal / newDuration, 10)
+        const columnIndex = yearToColumnIndex(startYear);
+        // const newRow = row.slice(5).filter(value => value !== 0 && value !== "-");
+      
+        let updatedRow = [...row];
+
+        for (let i = 5; i < updatedRow.length; i++) {
+            updatedRow[i] = "-";
+          }
+
+        for (let i = 0; i < newDuration; i++) {
+            if (columnIndex + i < updatedRow.length) {
+            updatedRow[columnIndex + i] = assignedValue;
+            }
+        }
+      
+        return updatedRow;
+      };
+
+    const handleDurationChange = (rowIndex: number, colIndex: number,newValue: string) => {
+        const newDuration = parseInt(newValue, 10);
+        const currentTotal = data[rowIndex][4]
+        const startYear = data[rowIndex][2]
+        const updatedRow = shiftRowDataForDuration(data[rowIndex], currentTotal, newDuration, startYear);
+
+
+        let updatedData = [...data];
+        updatedData[rowIndex] = updatedRow;
+        updatedData[rowIndex][colIndex] = newValue;
+        onDataChange(updatedData);
+      };
+
     const renderDurationDropdown = (rowIndex: number, colIndex: number, currentValue: any) => {
         return (
         <select
             value={currentValue}
-            onChange={(e) => handleDDMChange(rowIndex, colIndex, e.target.value)}
+            onChange={(e) => handleDurationChange(rowIndex, colIndex, e.target.value)}
         >
             {startDurationOptions.map(duration => (
             <option key={duration} value={duration}>{duration}</option>
