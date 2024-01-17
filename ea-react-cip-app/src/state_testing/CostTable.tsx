@@ -8,8 +8,8 @@ type CostTableProps = {
   collapsibleColumns?: string[];
   dropdownValues: { [key: string]: string };
   setDropdownValues: (values: { [key: string]: string }) => void;
-  collapsedGroups: any;
-  setCollapsedGroups: any;
+  collapsedGroups: Set<string>;
+  setCollapsedGroups: (groups: Set<string>) => void;
 };
 
 const CostTable: React.FC<CostTableProps> = ({
@@ -62,16 +62,16 @@ const CostTable: React.FC<CostTableProps> = ({
       
     const yearToColumnIndex = (year: number) => {
         const baseYear = 2024;  // Adjust this to the year of the first column
-        return 5 + (year - baseYear);  // 4 is the column index for the base year
+        return 6 + (year - baseYear);  // 4 is the column index for the base year
     };
 
     const shiftRowDataForYear = (row: any[], startYear: number) => {
         const columnIndex = yearToColumnIndex(startYear);
-        const newRow = row.slice(5).filter(value => value !== 0 && value !== "-");
+        const newRow = row.slice(6).filter(value => value !== 0 && value !== "-");
       
         let updatedRow = [...row];
 
-        for (let i = 5; i < updatedRow.length; i++) {
+        for (let i = 6; i < updatedRow.length; i++) {
             updatedRow[i] = "-";
           }
 
@@ -101,11 +101,10 @@ const CostTable: React.FC<CostTableProps> = ({
 
         const assignedValue = parseInt(currentTotal / newDuration, 10)
         const columnIndex = yearToColumnIndex(startYear);
-        // const newRow = row.slice(5).filter(value => value !== 0 && value !== "-");
       
         let updatedRow = [...row];
 
-        for (let i = 5; i < updatedRow.length; i++) {
+        for (let i = 6; i < updatedRow.length; i++) {
             updatedRow[i] = "-";
           }
 
@@ -120,7 +119,7 @@ const CostTable: React.FC<CostTableProps> = ({
 
     const handleDurationChange = (rowIndex: number, colIndex: number,newValue: string) => {
         const newDuration = parseInt(newValue, 10);
-        const currentTotal = data[rowIndex][4]
+        const currentTotal = data[rowIndex][5]
         const startYear = data[rowIndex][2]
         const updatedRow = shiftRowDataForDuration(data[rowIndex], currentTotal, newDuration, startYear);
 
@@ -143,13 +142,59 @@ const CostTable: React.FC<CostTableProps> = ({
         </select>
         );
     };
+
+    const handleCostSplitChange = (rowIndex: number, colIndex: number, newValue: string) => {
+        const sliderValue = parseInt(newValue, 10);
+        const currentGroupName = data[rowIndex][0];
+      
+        // Find the related group header row by searching from the start
+        let headerRowIndex = 0;
+        while (headerRowIndex < data.length && data[headerRowIndex][0] !== currentGroupName) {
+          headerRowIndex++;
+        }
+
+        if (headerRowIndex >= data.length) {
+          // Group header not found, handle appropriately
+          return;
+        }
+      
+        // // Assuming total package cost is at a specific index (e.g., 4)
+        const totalPackageCost = parseInt(data[headerRowIndex][5], 10);
+        
+        // // Calculate new package cost based on slider value
+        const newPackageCost = (totalPackageCost * sliderValue) / 100;
+      
+        // Update the data
+        let updatedData = [...data];
+        updatedData[rowIndex][4] = newValue; // Update package cost for this row
+        updatedData[rowIndex][5] = newPackageCost; // Update package cost for this row
+      
+        onDataChange(updatedData);
+      };
+      
+      
+
+    const rendercostSplitSlider = (rowIndex: number, colIndex: number, currentValue: number) => {
+        return (
+          <input 
+            type="range" 
+            min="0" 
+            max="100"  // Assuming a maximum duration of 15
+            value={currentValue} 
+            onChange={(e) => handleCostSplitChange(rowIndex, colIndex, e.target.value)}
+          />
+        );
+      };
       
     const renderCellContent = (row: string[], rowIndex: number, colIndex: number, cell: any) => {
         if (colIndex === 2 && !isGroupHeader(row)) {
             return renderYearDropdown(rowIndex, colIndex, cell);
         } else if (colIndex === 3 && !isGroupHeader(row)) {
             return renderDurationDropdown(rowIndex, colIndex, cell);
-        } else if (cell === 0) {
+        } else if (colIndex === 4 && !isGroupHeader(row)) {
+            return rendercostSplitSlider(rowIndex, colIndex, cell);
+        }
+        else if (cell === 0) {
             return '-';
         }
         else {
