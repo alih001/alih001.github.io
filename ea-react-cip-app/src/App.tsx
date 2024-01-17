@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import FileUpload from './state_testing/FileUpload'; // Import your FileUpload component
 import EditableTable from './state_testing/EditableTable'; // Import your EditableTable component
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 type TableRow = (string | number)[]; // Adjust this type according to your actual data structure
 
