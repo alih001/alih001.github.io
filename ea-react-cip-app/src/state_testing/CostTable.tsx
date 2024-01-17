@@ -168,7 +168,10 @@ const CostTable: React.FC<CostTableProps> = ({
         let updatedData = [...data];
         updatedData[rowIndex][4] = newValue; // Update package cost for this row
         updatedData[rowIndex][5] = newPackageCost; // Update package cost for this row
-      
+
+        // Update Duration Split with new Cost Split
+        const updatedRow = shiftRowDataForDuration(updatedData[rowIndex], newPackageCost, updatedData[rowIndex][3], updatedData[rowIndex][2]);
+        updatedData[rowIndex] = updatedRow;
         onDataChange(updatedData);
       };
       
