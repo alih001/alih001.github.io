@@ -1,5 +1,5 @@
 // EditableTable.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
 type EditableTableProps = {
   data: string[][];
@@ -14,24 +14,48 @@ const EditableTable: React.FC<EditableTableProps> = ({
   data, onDataChange, tableId, collapsibleColumns = [], dropdownValues, setDropdownValues
 }) => {
 
+  const arrayCollapsibleColumnIndexes = useMemo (() => [2, 3, 4], 
+  []);
+  const dropdownValueMap = useMemo(() => ({
+  "High": 20,
+  "Medium": 10,
+  "Low": 5
+  }), []);
+
+  const dropdownColumnIndexes = useMemo(() => [
+  arrayCollapsibleColumnIndexes[0],
+  arrayCollapsibleColumnIndexes[1],
+  arrayCollapsibleColumnIndexes[2]
+  ], [arrayCollapsibleColumnIndexes]);
+
+  const [collapsedRows, setCollapsedRows] = useState<Set<number>>(new Set());
+  const [outputValues, setOutputValues] = useState<{ [key: string]: string }>({});
+
+  useEffect(() => {
+    const initialOutputValues: { [key: string]: number } = {};
+
+    data.forEach((row, rowIndex) => {
+      if (rowIndex > 0) { // Skip the header row
+        dropdownColumnIndexes.forEach(columnIndex => {
+          const key = `${tableId}-${rowIndex}-${columnIndex}-output`;
+          initialOutputValues[key] = dropdownValueMap[row[columnIndex]] || row[columnIndex];
+        });
+      }
+    });
+
+    setOutputValues(initialOutputValues);
+  }, [data, tableId, dropdownValueMap, dropdownColumnIndexes]);
+
   if (!data || data.length === 0) {
     return <div>No data available</div>;
   }
 
-  const arrayCollapsibleColumnIndexes = [2, 3];
-  const costCollapsibleColumnIndexes = [];
-  const dropdownValueMap = {"High": 20,
-                            "Medium": 10,
-                            "Low": 5
-                            };
-
   const stage1ScoreColumnIndex = data[0].indexOf("Stage 1 Score");
   const stage2ScoreColumnIndex = data[0].indexOf("Stage 2 Score");
-  const totalScoreColumnIndex = data[0].indexOf("Total");
+  // const totalScoreColumnIndex = data[0].indexOf("Total");
+  const costCollapsibleColumnIndexes = [];
+  // const dropdownColumnIndex = arrayCollapsibleColumnIndexes[0];
 
-  const dropdownColumnIndex = arrayCollapsibleColumnIndexes[0];
-  const [collapsedRows, setCollapsedRows] = useState<Set<number>>(new Set());
-  const [outputValues, setOutputValues] = useState<{ [key: string]: string }>({});
 
   const toggleRowCollapse = (rowIndex: number) => {
     setCollapsedRows(prev => {
@@ -61,22 +85,53 @@ const EditableTable: React.FC<EditableTableProps> = ({
     updatedData[rowIndex][columnIndex] = outputValue;
 
   
-    // Check if we need to update Stage 1 Score
-    if (columnIndex === dropdownColumnIndex && stage1ScoreColumnIndex !== -1) {
-      const currentStage1Score = updatedData[rowIndex][stage1ScoreColumnIndex];
-      updatedData[rowIndex][stage1ScoreColumnIndex] = outputValue * 2;
+    // Update scores if the changed column is one of the dropdown columns
+    if (dropdownColumnIndexes.includes(columnIndex)) {
+      let stage1Score = 0;
+      let stage2Score = 0;
+      console.log("About to loop through all explicity defined ddms")
+      // Loop through dropdown columns to calculate scores
+      dropdownColumnIndexes.forEach((dropdownColIndex, idx) => {
+        const outputKey = `${tableId}-${rowIndex}-${dropdownColIndex}-output`;
+        let outputValue = (dropdownValueMap[newValue] || newValue);
+
+        console.log("Current ddm is: ", outputKey)
+        console.log("output value currently is:", outputValue)
+
+        if (dropdownColIndex === columnIndex) {
+          // Current dropdown change
+          setOutputValues({ ...outputValues, [outputKey]: outputValue });
+          console.log("Updating user change ddm")
+          console.log("Running total is:", outputValue)
+        } else {
+          // Other dropdowns
+          outputValue = outputValues[outputKey] || 0;
+          console.log("Outputvalues is: ", outputValues)
+          console.log("value assigned is: ", outputValues[outputKey])
+          console.log("Checking values from other unchanged ddms")
+          console.log("other dropdowns currently is:", outputValue)
+        }
+
+        stage1Score += outputValue; // Adjust this formula as needed
+        stage2Score += outputValue; // Adjust this formula as needed
+
+        console.log("Stage 1 score currently is:", stage1Score)
+        console.log("Stage 2 score currently is:", stage2Score)
+      });
+
+      // Update Stage 1 Score and Stage 2 Score
+      if (stage1ScoreColumnIndex !== -1) {
+        updatedData[rowIndex][stage1ScoreColumnIndex] = stage1Score;
+      }
+      if (stage2ScoreColumnIndex !== -1) {
+        updatedData[rowIndex][stage2ScoreColumnIndex] = stage2Score;
+      }
     }
 
-    // Check if we need to update Stage 2 Score
-    if (columnIndex === dropdownColumnIndex && stage2ScoreColumnIndex !== -1) {
-      const currentStage2Score = updatedData[rowIndex][stage2ScoreColumnIndex];
-      updatedData[rowIndex][stage2ScoreColumnIndex] = outputValue * 4;
-    }
-
-    // Check if we need to update Stage 2 Score
-    if (columnIndex === dropdownColumnIndex && totalScoreColumnIndex !== -1) {
-      updatedData[rowIndex][totalScoreColumnIndex] = updatedData[rowIndex][stage1ScoreColumnIndex] + updatedData[rowIndex][stage2ScoreColumnIndex]
-    }
+    // // Check if we need to update Total Score
+    // if (columnIndex === dropdownColumnIndex && totalScoreColumnIndex !== -1) {
+    //   updatedData[rowIndex][totalScoreColumnIndex] = updatedData[rowIndex][stage1ScoreColumnIndex] + updatedData[rowIndex][stage2ScoreColumnIndex]
+    // }
   
     onDataChange(updatedData);
   };
@@ -107,7 +162,7 @@ const EditableTable: React.FC<EditableTableProps> = ({
             {data[0][columnIndex]}
           </td>
           <td className={`${tableId}-${rowIndex}-${columnIndex}-value`}>
-            {renderDropdown(rowIndex, columnIndex)}
+            {dropdownColumnIndexes.includes(columnIndex) ? renderDropdown(rowIndex, columnIndex) : row[columnIndex]}
           </td>
           <td className={`${tableId}-${rowIndex}-${columnIndex}-output`}>
             {outputValues[`${tableId}-${rowIndex}-${columnIndex}-output`] || dropdownValueMap[data[rowIndex][columnIndex]]}
