@@ -2,7 +2,9 @@
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 import FileUpload from './state_testing/FileUpload'; // Import your FileUpload component
-import EditableTable from './state_testing/EditableTable'; // Import your EditableTable component
+// import EditableTable from './state_testing/EditableTable'; // Import your EditableTable component
+import AssetTable from './state_testing/AssetTable'; // Import your EditableTable component
+import CostTable from './state_testing/CostTable'; // Import your EditableTable component
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 type TableRow = (string | number)[]; // Adjust this type according to your actual data structure
@@ -36,8 +38,8 @@ return (
       </button>
       {isTable1Visible ? (
         <>
-          <h1>Editable Table 1</h1>
-          <EditableTable 
+          <h1>Asset Table</h1>
+          <AssetTable 
             data={table1Data} 
             onDataChange={setTable1Data} 
             tableId="table1"
@@ -48,8 +50,8 @@ return (
         </>
       ) : (
         <>
-          <h1>Editable Table 2</h1>
-          <EditableTable 
+          <h1>Cost Table</h1>
+          <CostTable 
             data={table2Data} 
             onDataChange={setTable2Data} 
             tableId="table2" 
