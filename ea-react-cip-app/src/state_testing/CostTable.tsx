@@ -56,7 +56,26 @@ const CostTable: React.FC<CostTableProps> = ({
         let updatedData = [...data];
         updatedData[rowIndex] = updatedRow;
         updatedData[rowIndex][colIndex] = newYear;
-    
+
+        const currentGroupName = updatedData[rowIndex][0];
+        let headerRowIndex = 0;
+        while (headerRowIndex < updatedData.length && updatedData[headerRowIndex][0] !== currentGroupName) {
+          headerRowIndex++;
+        }
+
+        // Check logical dependecies (e.g. is construction before design)
+        const feasibilityStart = updatedData[headerRowIndex+1][2]; 
+        const designStart = updatedData[headerRowIndex+2][2]; 
+        const constructionStart = updatedData[headerRowIndex+3][2]; 
+
+        if (designStart < feasibilityStart) {
+            alert("Design year cannot be earlier than feasibility year.");
+            return;
+        }
+        if (constructionStart < designStart) {
+            alert("Construction year cannot be earlier than design year.");
+            return;
+        }
         onDataChange(updatedData);
     };
       
