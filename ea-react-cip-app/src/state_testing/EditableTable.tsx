@@ -1,58 +1,6 @@
 // EditableTable.tsx
 import React, { useState } from 'react';
 
-type EditableCellProps = {
-  value: string;
-  onValueChange: (newValue: string) => void;
-  isDropdown?: boolean;
-  dropdownOptions?: string[];
-};
-
-const EditableCell: React.FC<EditableCellProps> = ({ 
-  value, 
-  onValueChange, 
-  isDropdown = false, 
-  dropdownOptions = [] 
-}) => {
-  const [editing, setEditing] = useState(false);
-  const [localValue, setLocalValue] = useState(value);
-
-  const handleBlur = () => {
-    onValueChange(localValue);
-    setEditing(false);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setLocalValue(e.target.value);
-  };
-
-  return (
-    <td onClick={() => setEditing(true)}>
-      {editing ? (
-        isDropdown ? (
-          <select value={localValue} onChange={handleChange} onBlur={handleBlur}>
-            {dropdownOptions.map((option, index) => (
-              <option key={index} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <input
-            type="text"
-            value={localValue}
-            onChange={handleChange}
-            onBlur={handleBlur}
-          />
-        )
-      ) : (
-        value
-      )}
-    </td>
-  );
-};
-
-
 type EditableTableProps = {
   data: string[][];
   onDataChange: (newData: string[][]) => void;
@@ -67,16 +15,11 @@ const EditableTable: React.FC<EditableTableProps> = ({
 }) => {
 
   const handleCellValueChange = (rowIndex: number, columnIndex: number, newValue: string) => {
-    console.log("Row is %d", rowIndex)
-    console.log("Column is %d", columnIndex)
-    console.log("new value is %f", newValue)
     let updatedData = [...data];
   
     updatedData[rowIndex] = [...updatedData[rowIndex]]; // Clone the specific row
     updatedData[rowIndex][columnIndex] = newValue; // Update only the cell in the specific row
 
-    console.log('values have been updated')
-  
     onDataChange(updatedData);
   };
 
@@ -92,7 +35,8 @@ const EditableTable: React.FC<EditableTableProps> = ({
     });
   };
 
-  const collapsibleColumnIndexes = [2, 3]; // Array of collapsible column indices
+  const arrayCollapsibleColumnIndexes = [2, 3];
+  const costCollapsibleColumnIndexes = [2];
   const [collapsedRows, setCollapsedRows] = useState<Set<number>>(new Set());
   const dropdownValueMap = { "Option 1": 20, "Option 2": 30 }; // Example dropdown options
   const [outputValues, setOutputValues] = useState<{ [key: string]: string }>({});
@@ -113,9 +57,6 @@ const EditableTable: React.FC<EditableTableProps> = ({
     onDataChange(updatedData);
   };
   
-  
-  
-  
   const renderDropdown = (rowIndex: number, columnIndex: number) => {
     const key = `${tableId}-${rowIndex}-${columnIndex}`;
     const dropdownOptions = Object.keys(dropdownValueMap);
@@ -133,8 +74,7 @@ const EditableTable: React.FC<EditableTableProps> = ({
     );
   };
   
-
-  const renderCollapsibleRow = (row: TableRow, rowIndex: number) => {
+  const renderCollapsibleRow = (row: TableRow, rowIndex: number, collapsibleColumnIndexes:number[]) => {
     return (
       collapsibleColumnIndexes.map(columnIndex => (
         <tr key={`${rowIndex}-collapsible-${columnIndex}`}>
@@ -151,10 +91,46 @@ const EditableTable: React.FC<EditableTableProps> = ({
       ))
     );
   };
-  
 
-  return (
-    <table>
+  if (tableId === "table1") {
+
+    return (
+      <table>
+        <tbody>
+          {data.map((row, rowIndex) => (
+            <React.Fragment key={rowIndex}>
+              <tr>
+                {/* Row cells */}
+                {row.map((cell, colIndex) => {
+                  // Check if the column index is not in the collapsibleColumnIndexes list
+                  if (!arrayCollapsibleColumnIndexes.includes(colIndex)) {
+                    return (
+                      <td key={`${tableId}-${rowIndex}-${colIndex}`}>
+                        {cell}
+                      </td>
+                    );
+                  }
+                  return null
+                })}
+                {/* Toggle button for collapsible rows */}
+                {tableId === "table1" && (
+                  <td>
+                    <button onClick={() => toggleRowCollapse(rowIndex)}>
+                      {collapsedRows.has(rowIndex) ? 'Show' : 'Hide'}
+                    </button>
+                  </td>
+                )}
+              </tr>
+              {/* Collapsible rows */}
+              {tableId === "table1" && !collapsedRows.has(rowIndex) && renderCollapsibleRow(row, rowIndex, arrayCollapsibleColumnIndexes)}
+            </React.Fragment>
+          ))}
+        </tbody>
+      </table>
+    )
+  } else {
+    return (
+      <table>
       <tbody>
         {data.map((row, rowIndex) => (
           <React.Fragment key={rowIndex}>
@@ -162,13 +138,11 @@ const EditableTable: React.FC<EditableTableProps> = ({
               {/* Row cells */}
               {row.map((cell, colIndex) => {
                 // Check if the column index is not in the collapsibleColumnIndexes list
-                if (!collapsibleColumnIndexes.includes(colIndex)) {
+                if (!costCollapsibleColumnIndexes.includes(colIndex)) {
                   return (
-                    <EditableCell
-                      key={`${tableId}-${rowIndex}-${colIndex}`}
-                      value={cell}
-                      onValueChange={(newValue) => handleCellValueChange(rowIndex, colIndex, newValue)}
-                    />
+                    <td key={`${tableId}-${rowIndex}-${colIndex}`}>
+                      {cell}
+                    </td>
                   );
                 }
                 return null
@@ -183,12 +157,13 @@ const EditableTable: React.FC<EditableTableProps> = ({
               )}
             </tr>
             {/* Collapsible rows */}
-            {tableId === "table1" && !collapsedRows.has(rowIndex) && renderCollapsibleRow(row, rowIndex)}
+            {tableId === "table1" && !collapsedRows.has(rowIndex) && renderCollapsibleRow(row, rowIndex, costCollapsibleColumnIndexes)}
           </React.Fragment>
         ))}
       </tbody>
-    </table>
-  );
+      </table>
+    )
+  }
 };
 
 export default EditableTable;
