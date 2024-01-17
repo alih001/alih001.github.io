@@ -24,7 +24,11 @@ const EditableTable: React.FC<EditableTableProps> = ({
                             "Medium": 10,
                             "Low": 5
                             };
+
   const stage1ScoreColumnIndex = data[0].indexOf("Stage 1 Score");
+  const stage2ScoreColumnIndex = data[0].indexOf("Stage 2 Score");
+  const totalScoreColumnIndex = data[0].indexOf("Total");
+
   const dropdownColumnIndex = arrayCollapsibleColumnIndexes[0];
   const [collapsedRows, setCollapsedRows] = useState<Set<number>>(new Set());
   const [outputValues, setOutputValues] = useState<{ [key: string]: string }>({});
@@ -61,6 +65,17 @@ const EditableTable: React.FC<EditableTableProps> = ({
     if (columnIndex === dropdownColumnIndex && stage1ScoreColumnIndex !== -1) {
       const currentStage1Score = updatedData[rowIndex][stage1ScoreColumnIndex];
       updatedData[rowIndex][stage1ScoreColumnIndex] = outputValue * 2;
+    }
+
+    // Check if we need to update Stage 2 Score
+    if (columnIndex === dropdownColumnIndex && stage2ScoreColumnIndex !== -1) {
+      const currentStage2Score = updatedData[rowIndex][stage2ScoreColumnIndex];
+      updatedData[rowIndex][stage2ScoreColumnIndex] = outputValue * 4;
+    }
+
+    // Check if we need to update Stage 2 Score
+    if (columnIndex === dropdownColumnIndex && totalScoreColumnIndex !== -1) {
+      updatedData[rowIndex][totalScoreColumnIndex] = updatedData[rowIndex][stage1ScoreColumnIndex] + updatedData[rowIndex][stage2ScoreColumnIndex]
     }
   
     onDataChange(updatedData);
