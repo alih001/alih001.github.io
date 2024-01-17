@@ -1,0 +1,16 @@
+/* CostTable.css */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+td {
+    border: 1px solid #e0e0e0; /* Light grey border for all table cells */
+    padding: 8px 12px; /* Some padding for better visibility */
+}
+
+.empty-cell {
+    background-color: #f3f3f3; /* Light grey background for empty cells */
+    text-align: center;
+}

@@ -15,6 +15,15 @@ const App: React.FC = () => {
   const [isTable1Visible, setIsTable1Visible] = useState(true);
   const [dropdownValues, setDropdownValues] = useState<{ [key: string]: string }>({});
 
+  const [collapsedCostGroups, setCollapsedCostGroups] = useState<Set<string>>(
+    new Set(table2Data.map(row => row[0]))
+  );
+
+  const [collapsedAssetRows, setCollapsedAssetRows] = useState<Set<number>>(
+    new Set(table1Data.map((_, rowIndex) => rowIndex).slice(1))  // Exclude header row
+  );
+
+  
   const handleFileUpload = (file: File) => {
     const reader = new FileReader();
     reader.onload = (event: ProgressEvent<FileReader>) => {
@@ -22,9 +31,13 @@ const App: React.FC = () => {
         const workbook = XLSX.read(event.target.result, { type: 'binary' });
         const assetInformation: TableRow[] = XLSX.utils.sheet_to_json(workbook.Sheets['AssetInformation'], { header: 1 });
         const costInformation: TableRow[] = XLSX.utils.sheet_to_json(workbook.Sheets['CostInformation'], { header: 1 });
-
+        
         setTable1Data(assetInformation);
+        setCollapsedAssetRows(new Set(assetInformation.map((_, rowIndex) => rowIndex).slice(1)));
+    
         setTable2Data(costInformation);
+        setCollapsedCostGroups(new Set(costInformation.map(row => row[0])));
+      
       }
     };
     reader.readAsBinaryString(file);
@@ -45,7 +58,9 @@ return (
             tableId="table1"
             collapsibleColumns={['Scour Rating', 'Corrosion Rating']} 
             dropdownValues={dropdownValues} 
-            setDropdownValues={setDropdownValues} 
+            setDropdownValues={setDropdownValues}
+            collapsedRows={collapsedAssetRows}
+            setCollapsedRows={setCollapsedAssetRows} 
           />
         </>
       ) : (
@@ -55,6 +70,8 @@ return (
             data={table2Data} 
             onDataChange={setTable2Data} 
             tableId="table2" 
+            collapsedGroups={collapsedCostGroups}
+            setCollapsedGroups={setCollapsedCostGroups}
           />
         </>
       )}

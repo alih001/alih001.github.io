@@ -8,193 +8,76 @@ type CostTableProps = {
   collapsibleColumns?: string[];
   dropdownValues: { [key: string]: string };
   setDropdownValues: (values: { [key: string]: string }) => void;
+  collapsedGroups: any;
+  setCollapsedGroups: any;
 };
 
 const CostTable: React.FC<CostTableProps> = ({
-  data, onDataChange, tableId, collapsibleColumns = [], dropdownValues, setDropdownValues
+  data, onDataChange, tableId, collapsibleColumns = [], dropdownValues, setDropdownValues,
+  collapsedGroups, setCollapsedGroups
 }) => {
 
-  const arrayCollapsibleColumnIndexes = useMemo (() => [2, 3, 4], 
-  []);
-  const dropdownValueMap = useMemo(() => ({
-  "High": 20,
-  "Medium": 10,
-  "Low": 5
-  }), []);
-
-  const dropdownColumnIndexes = useMemo(() => [
-  arrayCollapsibleColumnIndexes[0],
-  arrayCollapsibleColumnIndexes[1],
-  arrayCollapsibleColumnIndexes[2]
-  ], [arrayCollapsibleColumnIndexes]);
-
-  const [collapsedRows, setCollapsedRows] = useState<Set<number>>(new Set());
-  const [outputValues, setOutputValues] = useState<{ [key: string]: string }>({});
-
-  useEffect(() => {
-    const initialOutputValues: { [key: string]: number } = {};
-
-    data.forEach((row, rowIndex) => {
-      if (rowIndex > 0) { // Skip the header row
-        dropdownColumnIndexes.forEach(columnIndex => {
-          const key = `${tableId}-${rowIndex}-${columnIndex}-output`;
-          initialOutputValues[key] = dropdownValueMap[row[columnIndex]] || row[columnIndex];
-        });
-      }
-    });
-
-    setOutputValues(initialOutputValues);
-  }, [data, tableId, dropdownValueMap, dropdownColumnIndexes]);
+//   const [collapsedGroups, setCollapsedGroups] = useState<Set<string>>(new Set(data.map(row => row[0])));
 
   if (!data || data.length === 0) {
     return <div>No data available</div>;
   }
+    // Function to check if a row is a group header
+    const isGroupHeader = (row: string[]) => {
+        return row[1].includes("Package Summary");
+        };
 
-  const stage1ScoreColumnIndex = data[0].indexOf("Stage 1 Score");
-  const stage2ScoreColumnIndex = data[0].indexOf("Stage 2 Score");
-  const totalScoreColumnIndex = data[0].indexOf("Total");
-  const costCollapsibleColumnIndexes = [];
-  // const dropdownColumnIndex = arrayCollapsibleColumnIndexes[0];
-
-
-  const toggleRowCollapse = (rowIndex: number) => {
-    setCollapsedRows(prev => {
-      const newCollapsedRows = new Set(prev);
-      if (newCollapsedRows.has(rowIndex)) {
-        newCollapsedRows.delete(rowIndex);
-      } else {
-        newCollapsedRows.add(rowIndex);
-      }
-      return newCollapsedRows;
-    });
-  };
-
-  const handleDropdownChange = (rowIndex: number, columnIndex: number, newValue: string) => {
-    const key = `${tableId}-${rowIndex}-${columnIndex}`;
-    setDropdownValues({ ...dropdownValues, [key]: newValue });
-  
-    let updatedData = [...data];
-    updatedData[rowIndex] = [...updatedData[rowIndex]];
-
-    // Update the output value for score change
-    updatedData[rowIndex][columnIndex] = dropdownValueMap[newValue] || newValue;
-    const outputKey = `${tableId}-${rowIndex}-${columnIndex}-output`;
-    const outputValue = dropdownValueMap[newValue] || newValue;
-    setOutputValues({ ...outputValues, [outputKey]: outputValue });
-    updatedData[rowIndex] = [...updatedData[rowIndex]];
-    updatedData[rowIndex][columnIndex] = outputValue;
-
-  
-    // Update scores if the changed column is one of the dropdown columns
-    if (dropdownColumnIndexes.includes(columnIndex)) {
-      let stage1Score = 0;
-      let stage2Score = 0;
-      console.log("About to loop through all explicity defined ddms")
-      // Loop through dropdown columns to calculate scores
-      dropdownColumnIndexes.forEach((dropdownColIndex, idx) => {
-        const outputKey = `${tableId}-${rowIndex}-${dropdownColIndex}-output`;
-        let outputValue = (dropdownValueMap[newValue] || newValue);
-
-        if (dropdownColIndex === columnIndex) {
-          // Current dropdown change
-          setOutputValues({ ...outputValues, [outputKey]: outputValue });
+    // Function to toggle group collapse state
+    const toggleGroup = (groupName: string) => {
+        setCollapsedGroups(prev => {
+        const newCollapsedGroups = new Set(prev);
+        if (newCollapsedGroups.has(groupName)) {
+            newCollapsedGroups.delete(groupName);
         } else {
-          // Other dropdowns
-          outputValue = outputValues[outputKey] || 0;
+            newCollapsedGroups.add(groupName);
         }
+        return newCollapsedGroups;
+        });
+    };
 
-        stage1Score += outputValue; // Adjust this formula as needed
-        stage2Score += outputValue; // Adjust this formula as needed
-
-      });
-
-      // Update Stage 1 Score and Stage 2 Score
-      if (stage1ScoreColumnIndex !== -1) {
-        updatedData[rowIndex][stage1ScoreColumnIndex] = stage1Score;
-      }
-      if (stage2ScoreColumnIndex !== -1) {
-        updatedData[rowIndex][stage2ScoreColumnIndex] = stage2Score;
-      }
-      // Check if we need to update Total Score
-      if (totalScoreColumnIndex !== -1) {
-        updatedData[rowIndex][totalScoreColumnIndex] = stage1Score + stage2Score
-      }
-
-    }
-
-    onDataChange(updatedData);
-  };
-  
-  
-  const renderDropdown = (rowIndex: number, columnIndex: number) => {
-    const key = `${tableId}-${rowIndex}-${columnIndex}`;
-    const dropdownOptions = Object.keys(dropdownValueMap);
-    const value = dropdownValues[key] || data[rowIndex][columnIndex];
-  
-    return (
-      <select
-        value={value}
-        onChange={(e) => handleDropdownChange(rowIndex, columnIndex, e.target.value)}
-      >
-        {dropdownOptions.map(option => (
-          <option key={option} value={option}>{option}</option>
-        ))}
-      </select>
-    );
-  };
-  
-  const renderCollapsibleRow = (row: TableRow, rowIndex: number, collapsibleColumnIndexes:number[]) => {
-    return (
-      collapsibleColumnIndexes.map(columnIndex => (
-        <tr key={`${rowIndex}-collapsible-${columnIndex}`}>
-          <td className={`${tableId}-${rowIndex}-${columnIndex}-title`}>
-            {data[0][columnIndex]}
-          </td>
-          <td className={`${tableId}-${rowIndex}-${columnIndex}-value`}>
-            {dropdownColumnIndexes.includes(columnIndex) ? renderDropdown(rowIndex, columnIndex) : row[columnIndex]}
-          </td>
-          <td className={`${tableId}-${rowIndex}-${columnIndex}-output`}>
-            {outputValues[`${tableId}-${rowIndex}-${columnIndex}-output`] || dropdownValueMap[data[rowIndex][columnIndex]]}
-          </td>
-        </tr>
-      ))
-    );
-  };
-
-    return (
-      <table>
+    // Function to determine if a row should be displayed
+    const shouldDisplayRow = (row: string[], rowIndex: number) => {
+        if (rowIndex === 0 || isGroupHeader(row)) return true; // Always show header and group headers
+        const groupName = row[0]; // Assuming the group name is in the first cell
+        return !collapsedGroups.has(groupName);
+    };
+    
+  return (
+    <table>
       <tbody>
-        {data.map((row, rowIndex) => (
-          <React.Fragment key={rowIndex}>
-            <tr>
-              {/* Row cells */}
-              {row.map((cell, colIndex) => {
-                // Check if the column index is not in the collapsibleColumnIndexes list
-                if (!costCollapsibleColumnIndexes.includes(colIndex)) {
-                  return (
-                    <td key={`${tableId}-${rowIndex}-${colIndex}`}>
-                      {cell}
-                    </td>
-                  );
-                }
-                return null
-              })}
-              {/* Toggle button for collapsible rows */}
-              {tableId === "table1" && (
-                <td>
-                  <button onClick={() => toggleRowCollapse(rowIndex)}>
-                    {collapsedRows.has(rowIndex) ? 'Show' : 'Hide'}
-                  </button>
+        {data.map((row, rowIndex) => {
+          if (!shouldDisplayRow(row, rowIndex)) return null;
+
+          return (
+            <React.Fragment key={rowIndex}>
+              <tr>
+                {/* Render cells */}
+                {row.map((cell, colIndex) => (
+                <td key={`${tableId}-${rowIndex}-${colIndex}`}>
+                    {cell === 0 ? '-' : cell}
                 </td>
-              )}
-            </tr>
-            {/* Collapsible rows */}
-            {!collapsedRows.has(rowIndex) && renderCollapsibleRow(row, rowIndex, costCollapsibleColumnIndexes)}
-          </React.Fragment>
-        ))}
+                ))}
+                {/* Toggle button for group headers */}
+                {isGroupHeader(row) && (
+                  <td>
+                    <button onClick={() => toggleGroup(row[0])}>
+                      {collapsedGroups.has(row[0]) ? 'Expand' : 'Collapse'}
+                    </button>
+                  </td>
+                )}
+              </tr>
+              {/* ... [rest of the row rendering logic] */}
+            </React.Fragment>
+          );
+        })}
       </tbody>
-      </table>
-    )
+    </table>
+  );
 };
 
 export default CostTable;

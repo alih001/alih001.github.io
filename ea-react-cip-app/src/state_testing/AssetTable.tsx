@@ -8,10 +8,13 @@ type AssetTableProps = {
   collapsibleColumns?: string[];
   dropdownValues: { [key: string]: string };
   setDropdownValues: (values: { [key: string]: string }) => void;
+  collapsedRows: any;
+  setCollapsedRows: any;
 };
 
 const AssetTable: React.FC<AssetTableProps> = ({
-  data, onDataChange, tableId, collapsibleColumns = [], dropdownValues, setDropdownValues
+  data, onDataChange, tableId, collapsibleColumns = [], dropdownValues, setDropdownValues,
+  collapsedRows, setCollapsedRows
 }) => {
 
   const arrayCollapsibleColumnIndexes = useMemo (() => [2, 3, 4], 
@@ -28,7 +31,7 @@ const AssetTable: React.FC<AssetTableProps> = ({
   arrayCollapsibleColumnIndexes[2]
   ], [arrayCollapsibleColumnIndexes]);
 
-  const [collapsedRows, setCollapsedRows] = useState<Set<number>>(new Set());
+  // const [collapsedRows, setCollapsedRows] = useState<Set<number>>(new Set(data.map((_, rowIndex) => rowIndex)));
   const [outputValues, setOutputValues] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
