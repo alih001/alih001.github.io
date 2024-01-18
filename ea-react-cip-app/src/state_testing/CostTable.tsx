@@ -43,16 +43,33 @@ const CostTable: React.FC<CostTableProps> = ({
     const startYearOptions = Array.from({ length: 2060 - 2020 }, (_, index) => 2020 + index);
     const startDurationOptions = Array.from({ length: 15 }, (_, index) => 0 + index);
     
+    const updateCostSplits = (rowIndex:number, totalPackageCost: number) => {
+
+        if (rowIndex !== null) {
+
+            let updatedData = [...data];
+
+            for (let i = 1; i <= 3; i++) {
+              if (rowIndex + i < updatedData.length) {
+                updatedData[rowIndex + i][5] = (totalPackageCost * updatedData[rowIndex + i][4]) / 100;
+                const updatedPackageCost = updatedData[rowIndex+i][5]
+                const updatedRow = shiftRowDataForDuration(updatedData[rowIndex+i], updatedPackageCost, updatedData[rowIndex+i][3], updatedData[rowIndex+i][2]);
+                updatedData[rowIndex + i] = updatedRow;
+                }
+            }
+            onDataChange(updatedData);
+            closeModal(); // Close the modal
+          }
+    }
 
     const handleSave = () => {
         if (editingRowIndex !== null) {
-          // Implement your logic to update the row with `editingRowIndex`
-          // based on the `sliderValue`
+
           data[editingRowIndex][5] = sliderValue;
-    
-          // Update your table data state here
+
           onDataChange(data);
-    
+          updateCostSplits(editingRowIndex, sliderValue)
+
           closeModal();
         }
       };
@@ -115,7 +132,7 @@ const CostTable: React.FC<CostTableProps> = ({
       
     const yearToColumnIndex = (year: number) => {
         const baseYear = 2024;  // Adjust this to the year of the first column
-        return 6 + (year - baseYear);  // 4 is the column index for the base year
+        return 6 + (year - baseYear);
     };
 
     const shiftRowDataForYear = (row: any[], startYear: number) => {
@@ -200,7 +217,7 @@ const CostTable: React.FC<CostTableProps> = ({
     const handleCostSplitChange = (rowIndex: number, colIndex: number, newValue: string) => {
         const sliderValue = parseInt(newValue, 10);
         const currentGroupName = data[rowIndex][0];
-      
+
         // Find the related group header row by searching from the start
         let headerRowIndex = 0;
         while (headerRowIndex < data.length && data[headerRowIndex][0] !== currentGroupName) {
@@ -212,10 +229,7 @@ const CostTable: React.FC<CostTableProps> = ({
           return;
         }
       
-        // // Assuming total package cost is at a specific index (e.g., 4)
         const totalPackageCost = parseInt(data[headerRowIndex][5], 10);
-        
-        // // Calculate new package cost based on slider value
         const newPackageCost = (totalPackageCost * sliderValue) / 100;
       
         // Update the data
