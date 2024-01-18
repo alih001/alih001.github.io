@@ -77,6 +77,7 @@ const CostTable: React.FC<CostTableProps> = ({
             return;
         }
         onDataChange(updatedData);
+        updateTotalCosts(rowIndex, updatedData)
     };
       
     const yearToColumnIndex = (year: number) => {
@@ -147,6 +148,7 @@ const CostTable: React.FC<CostTableProps> = ({
         updatedData[rowIndex] = updatedRow;
         updatedData[rowIndex][colIndex] = newValue;
         onDataChange(updatedData);
+        updateTotalCosts(rowIndex, updatedData)
       };
 
     const renderDurationDropdown = (rowIndex: number, colIndex: number, currentValue: any) => {
@@ -192,9 +194,41 @@ const CostTable: React.FC<CostTableProps> = ({
         const updatedRow = shiftRowDataForDuration(updatedData[rowIndex], newPackageCost, updatedData[rowIndex][3], updatedData[rowIndex][2]);
         updatedData[rowIndex] = updatedRow;
         onDataChange(updatedData);
+
+        updateTotalCosts(rowIndex, updatedData)
+
       };
       
-      
+    const updateTotalCosts = (rowIndex:number, updatedData) => {
+        const currentGroupName = updatedData[rowIndex][0]
+        let headerRowIndex = 0
+        while (headerRowIndex < updatedData.length && updatedData[headerRowIndex][0] !== currentGroupName) {
+            headerRowIndex++;
+          }
+
+        if (headerRowIndex >= updatedData.length) {
+        // Group header not found, handle appropriately
+        return;
+        }
+
+        // Check logical dependecies (e.g. is construction before design)
+        const totalRow = updatedData[headerRowIndex]; 
+        const feasibilityRow = updatedData[headerRowIndex+1]; 
+        const designRow = updatedData[headerRowIndex+2]; 
+        const constructionRow = updatedData[headerRowIndex+3]; 
+
+        // Start from column index 7
+        for (let colIndex = 6; colIndex < totalRow.length; colIndex++) {
+            const feasibilityValue = parseInt(feasibilityRow[colIndex], 10) || 0;
+            const designValue = parseInt(designRow[colIndex], 10) || 0;
+            const constructionValue = parseInt(constructionRow[colIndex], 10) || 0;
+
+            totalRow[colIndex] = feasibilityValue + designValue + constructionValue;
+        }
+
+    onDataChange([...updatedData]);
+
+    }
 
     const rendercostSplitSlider = (rowIndex: number, colIndex: number, currentValue: number) => {
         return (
