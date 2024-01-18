@@ -1,5 +1,8 @@
 // CostTable.tsx
 import React, { useState, useEffect, useMemo } from 'react';
+import './tableStyles.css';
+import CustomModal from './CustomModal';
+import { Button, Form } from 'react-bootstrap';
 
 type CostTableProps = {
   data: string[][];
@@ -17,9 +20,16 @@ const CostTable: React.FC<CostTableProps> = ({
   collapsedGroups, setCollapsedGroups
 }) => {
 
+    const [showModal, setShowModal] = useState(false);
+    const [sliderValue, setSliderValue] = useState(50); // Initial slider value
+  
     if (!data || data.length === 0) {
         return <div>No data available</div>;
     }
+
+    const handleSliderChange = (e) => setSliderValue(e.target.value);
+    const openModal = () => setShowModal(true);
+    const closeModal = () => setShowModal(false);
 
     const startYearOptions = Array.from({ length: 2060 - 2020 }, (_, index) => 2020 + index);
     const startDurationOptions = Array.from({ length: 15 }, (_, index) => 0 + index);
@@ -226,9 +236,9 @@ const CostTable: React.FC<CostTableProps> = ({
             totalRow[colIndex] = feasibilityValue + designValue + constructionValue;
         }
 
-    onDataChange([...updatedData]);
+        onDataChange([...updatedData]);
 
-    }
+        }
 
     const rendercostSplitSlider = (rowIndex: number, colIndex: number, currentValue: number) => {
         return (
@@ -257,7 +267,7 @@ const CostTable: React.FC<CostTableProps> = ({
             return cell;
         }
     };
-    
+
     return (
     <table>
         <thead>
@@ -268,7 +278,6 @@ const CostTable: React.FC<CostTableProps> = ({
             </tr>
         </thead>
         <tbody>
-
             {data.map((row, rowIndex) => {
             if (!shouldDisplayRow(row, rowIndex)) return null;
 
@@ -276,6 +285,13 @@ const CostTable: React.FC<CostTableProps> = ({
                 <React.Fragment key={rowIndex}>
                 {rowIndex > 0 && (
                 <>
+                    {/* Use the CustomModal component */}
+                    <CustomModal 
+                        showModal={showModal}
+                        closeModal={closeModal}
+                        sliderValue={sliderValue}
+                        handleSliderChange={handleSliderChange}
+                    />
                     <tr>
                         {/* Render cells */}
                         {row.map((cell, colIndex) => (
@@ -286,11 +302,16 @@ const CostTable: React.FC<CostTableProps> = ({
 
                         {/* Toggle button for group headers */}
                         {isGroupHeader(row) && (
+                        <>
                         <td>
                             <button onClick={() => toggleGroup(row[0])}>
                             {collapsedGroups.has(row[0]) ? 'Expand' : 'Collapse'}
                             </button>
                         </td>
+                        <td>
+                            <Button onClick={openModal}>Edit Total Cost</Button>
+                        </td>
+                        </>
                         )}
                     </tr>
                 </>
