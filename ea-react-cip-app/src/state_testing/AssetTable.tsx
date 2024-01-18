@@ -1,11 +1,11 @@
 // AssetTable.tsx
 import React, { useState, useEffect, useMemo } from 'react';
+import './tableStyles.css'
 
 type AssetTableProps = {
   data: string[][];
   onDataChange: (newData: string[][]) => void;
   tableId: string;
-  collapsibleColumns?: string[];
   dropdownValues: { [key: string]: string };
   setDropdownValues: (values: { [key: string]: string }) => void;
   collapsedRows: any;
@@ -13,25 +13,36 @@ type AssetTableProps = {
 };
 
 const AssetTable: React.FC<AssetTableProps> = ({
-  data, onDataChange, tableId, collapsibleColumns = [], dropdownValues, setDropdownValues,
+  data, onDataChange, tableId, dropdownValues, setDropdownValues,
   collapsedRows, setCollapsedRows
 }) => {
 
-  const arrayCollapsibleColumnIndexes = useMemo (() => [2, 3, 4], 
+  const arrayCollapsibleColumnIndexes = useMemo (() => [2, 3, 4, 5], 
   []);
   const dropdownValueMap = useMemo(() => ({
-  "High": 20,
-  "Medium": 10,
-  "Low": 5
+  "None": 0,
+  "Low": 2,
+  "Medium": 4,
+  "High": 6
   }), []);
 
+  const stage1FactorsMap = useMemo(() => ({
+    2: 0.5,
+    3: 1.5,
+    4: 0.2,
+  }), []);
+  
+  const stage2FactorsMap = useMemo(() => ({
+    2: 0.9,
+    4: 2.3,
+  }), []);
+  
   const dropdownColumnIndexes = useMemo(() => [
   arrayCollapsibleColumnIndexes[0],
   arrayCollapsibleColumnIndexes[1],
-  arrayCollapsibleColumnIndexes[2]
+  arrayCollapsibleColumnIndexes[2],
   ], [arrayCollapsibleColumnIndexes]);
 
-  // const [collapsedRows, setCollapsedRows] = useState<Set<number>>(new Set(data.map((_, rowIndex) => rowIndex)));
   const [outputValues, setOutputValues] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
@@ -56,7 +67,6 @@ const AssetTable: React.FC<AssetTableProps> = ({
   const stage1ScoreColumnIndex = data[0].indexOf("Stage 1 Score");
   const stage2ScoreColumnIndex = data[0].indexOf("Stage 2 Score");
   const totalScoreColumnIndex = data[0].indexOf("Total");
-
 
   const toggleRowCollapse = (rowIndex: number) => {
     setCollapsedRows(prev => {
@@ -85,7 +95,6 @@ const AssetTable: React.FC<AssetTableProps> = ({
     updatedData[rowIndex] = [...updatedData[rowIndex]];
     updatedData[rowIndex][columnIndex] = outputValue;
 
-  
     // Update scores if the changed column is one of the dropdown columns
     if (dropdownColumnIndexes.includes(columnIndex)) {
       let stage1Score = 0;
@@ -94,6 +103,10 @@ const AssetTable: React.FC<AssetTableProps> = ({
       // Loop through dropdown columns to calculate scores
       dropdownColumnIndexes.forEach((dropdownColIndex, idx) => {
         const outputKey = `${tableId}-${rowIndex}-${dropdownColIndex}-output`;
+        let stage1Factor = stage1FactorsMap[dropdownColIndex] || 0;
+        let stage2Factor = stage2FactorsMap[dropdownColIndex] || 0;
+    
+        // let outputValue = outputValues[outputKey] || dropdownValue;
         let outputValue = (dropdownValueMap[newValue] || newValue);
 
         if (dropdownColIndex === columnIndex) {
@@ -102,19 +115,21 @@ const AssetTable: React.FC<AssetTableProps> = ({
         } else {
           // Other dropdowns
           outputValue = outputValues[outputKey] || 0;
+          
         }
 
-        stage1Score += outputValue; // Adjust this formula as needed
-        stage2Score += outputValue; // Adjust this formula as needed
+        stage1Score += outputValue * stage1Factor;
+        stage2Score += outputValue * stage2Factor;
+
 
       });
 
       // Update Stage 1 Score and Stage 2 Score
       if (stage1ScoreColumnIndex !== -1) {
-        updatedData[rowIndex][stage1ScoreColumnIndex] = stage1Score;
+        updatedData[rowIndex][stage1ScoreColumnIndex] = stage1Score.toFixed(2);
       }
       if (stage2ScoreColumnIndex !== -1) {
-        updatedData[rowIndex][stage2ScoreColumnIndex] = stage2Score;
+        updatedData[rowIndex][stage2ScoreColumnIndex] = stage2Score.toFixed(2);
       }
       // Check if we need to update Total Score
       if (totalScoreColumnIndex !== -1) {
@@ -144,23 +159,40 @@ const AssetTable: React.FC<AssetTableProps> = ({
     );
   };
   
-  const renderCollapsibleRow = (row: TableRow, rowIndex: number, collapsibleColumnIndexes:number[]) => {
+  const renderCollapsibleRowHeader = () => {
     return (
-      collapsibleColumnIndexes.map(columnIndex => (
-        <tr key={`${rowIndex}-collapsible-${columnIndex}`}>
-          <td className={`${tableId}-${rowIndex}-${columnIndex}-title`}>
-            {data[0][columnIndex]}
-          </td>
-          <td className={`${tableId}-${rowIndex}-${columnIndex}-value`}>
-            {dropdownColumnIndexes.includes(columnIndex) ? renderDropdown(rowIndex, columnIndex) : row[columnIndex]}
-          </td>
-          <td className={`${tableId}-${rowIndex}-${columnIndex}-output`}>
-            {outputValues[`${tableId}-${rowIndex}-${columnIndex}-output`] || dropdownValueMap[data[rowIndex][columnIndex]]}
-          </td>
-        </tr>
-      ))
+      <tr className="collapsible-row-header">
+        <td></td> 
+        <td className="header-cell">Attribute</td>
+        <td className="header-cell">Value</td>
+        <td className="header-cell">Output (If applicable)</td>
+      </tr>
     );
   };
+  
+
+  const renderCollapsibleRow = (row, rowIndex, collapsibleColumnIndexes) => {
+      return (
+          <>
+            {/* Render the header row for the collapsible set */}
+            {renderCollapsibleRowHeader(collapsibleColumnIndexes)}
+            {/* Render the collapsible rows */}
+            {collapsibleColumnIndexes.map(columnIndex => (
+                <tr key={`${rowIndex}-collapsible-${columnIndex}`}>
+                    <td className={`${tableId}-${rowIndex}-${columnIndex}-placeholder`}></td>
+                    <td className={`${tableId}-${rowIndex}-${columnIndex}-title`}>{data[0][columnIndex]}</td>
+                    <td className={`${tableId}-${rowIndex}-${columnIndex}-value`}>
+                        {dropdownColumnIndexes.includes(columnIndex) ? renderDropdown(rowIndex, columnIndex) : row[columnIndex]}
+                    </td>
+                    <td className={`${tableId}-${rowIndex}-${columnIndex}-output`}>
+                        {outputValues[`${tableId}-${rowIndex}-${columnIndex}-output`] || dropdownValueMap[data[rowIndex][columnIndex]]}
+                    </td>
+                </tr>
+              ))}
+          </>
+      );
+  };
+
 
     return (
         <table className="table table-striped table-bordered table-hover">
