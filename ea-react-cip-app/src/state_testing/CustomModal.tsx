@@ -2,7 +2,7 @@
 import React from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
-const CustomModal = ({ showModal, closeModal, sliderValue, handleSliderChange }) => {
+const CustomModal = ({ showModal, closeModal, sliderValue, handleSliderChange, handleSave }) => {
   return (
     <Modal show={showModal} onHide={closeModal}>
       <Modal.Header closeButton>
@@ -16,11 +16,7 @@ const CustomModal = ({ showModal, closeModal, sliderValue, handleSliderChange })
               type="range" 
               value={sliderValue} 
               onChange={handleSliderChange}
-              min={1000}
-              max={50000}
-              step={500}
             />
-            <Form.Control value={sliderValue}/>
           </Form.Group>
         </Form>
       </Modal.Body>
@@ -28,7 +24,7 @@ const CustomModal = ({ showModal, closeModal, sliderValue, handleSliderChange })
         <Button variant="secondary" onClick={closeModal}>
           Close
         </Button>
-        <Button variant="primary" onClick={() => {/* Handle save logic */}}>
+        <Button variant="primary" onClick={handleSave}>
           Save Changes
         </Button>
       </Modal.Footer>

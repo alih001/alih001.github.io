@@ -21,19 +21,42 @@ const CostTable: React.FC<CostTableProps> = ({
 }) => {
 
     const [showModal, setShowModal] = useState(false);
-    const [sliderValue, setSliderValue] = useState(50); // Initial slider value
+    const [sliderValue, setSliderValue] = useState(50);
+    const [editingRowIndex, setEditingRowIndex] = useState(null); // Track the row being edited
   
     if (!data || data.length === 0) {
         return <div>No data available</div>;
     }
-
+  
     const handleSliderChange = (e) => setSliderValue(e.target.value);
-    const openModal = () => setShowModal(true);
-    const closeModal = () => setShowModal(false);
+  
+    const openModal = (rowIndex) => {
+      setEditingRowIndex(rowIndex);
+      setShowModal(true);
+    };
+  
+    const closeModal = () => {
+      setShowModal(false);
+      setEditingRowIndex(null);
+    };
 
     const startYearOptions = Array.from({ length: 2060 - 2020 }, (_, index) => 2020 + index);
     const startDurationOptions = Array.from({ length: 15 }, (_, index) => 0 + index);
     
+
+    const handleSave = () => {
+        if (editingRowIndex !== null) {
+          // Implement your logic to update the row with `editingRowIndex`
+          // based on the `sliderValue`
+          data[editingRowIndex][5] = sliderValue;
+    
+          // Update your table data state here
+          onDataChange(data);
+    
+          closeModal();
+        }
+      };
+
     // Function to check if a row is a group header
     const isGroupHeader = (row: string[]) => {
         return row[1].includes("Package Summary");
@@ -291,6 +314,7 @@ const CostTable: React.FC<CostTableProps> = ({
                         closeModal={closeModal}
                         sliderValue={sliderValue}
                         handleSliderChange={handleSliderChange}
+                        handleSave={handleSave}
                     />
                     <tr>
                         {/* Render cells */}
@@ -309,7 +333,7 @@ const CostTable: React.FC<CostTableProps> = ({
                             </button>
                         </td>
                         <td>
-                            <Button onClick={openModal}>Edit Total Cost</Button>
+                            <Button onClick={() => openModal(rowIndex)}>Edit Total Cost</Button>
                         </td>
                         </>
                         )}
