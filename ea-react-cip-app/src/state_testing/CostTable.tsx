@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import './tableStyles.css';
 import CustomModal from './CustomModal';
-import { Button, Form } from 'react-bootstrap';
+import { Button, Form, Modal } from 'react-bootstrap';
 
 type CostTableProps = {
   data: string[][];
@@ -20,10 +20,24 @@ const CostTable: React.FC<CostTableProps> = ({
   collapsedGroups, setCollapsedGroups
 }) => {
 
+    const packageOptions = useMemo(() => {
+        // Extract unique package names from data
+        const packages = new Set(data.map(row => row[0]));
+        return Array.from(packages);
+      }, [data]);
+
     const [showModal, setShowModal] = useState(false);
     const [sliderValue, setSliderValue] = useState(50);
     const [editingRowIndex, setEditingRowIndex] = useState(null); // Track the row being edited
-  
+    const [selectedPackages, setSelectedPackages] = useState(new Set());
+    const [showChecklistModal, setShowChecklistModal] = useState(false);
+
+    useEffect(() => {
+        // Initialize selected packages only once
+        const allPackages = new Set(data.map(row => row[0]));
+        setSelectedPackages(allPackages);
+    }, []);
+    
     if (!data || data.length === 0) {
         return <div>No data available</div>;
     }
@@ -43,6 +57,54 @@ const CostTable: React.FC<CostTableProps> = ({
     const startYearOptions = Array.from({ length: 2060 - 2020 }, (_, index) => 2020 + index);
     const startDurationOptions = Array.from({ length: 15 }, (_, index) => 0 + index);
     
+    const renderChecklistModal = () => {
+        if (!showChecklistModal) return null;
+      
+        const handleModalClose = () => {
+          setShowChecklistModal(false);
+        };
+      
+        return (
+          <Modal show={showChecklistModal} onClose={handleModalClose}>
+            <h2>Package Filter</h2>
+            <div className="package-checklist">
+              {packageOptions.map(packageName => (
+                <div key={packageName}>
+                  <input
+                    type="checkbox"
+                    checked={selectedPackages.has(packageName)}
+                    onChange={(e) => handlePackageCheckChange(packageName, e.target.checked)}
+                  />
+                  {packageName}
+                </div>
+              ))}
+            </div>
+            <Button variant="primary" onClick={handleModalClose}>Apply Filter</Button>
+          </Modal>
+        );
+      };
+      
+
+    const handlePackageCheckChange = (packageName, isChecked) => {
+        setSelectedPackages(prev => {
+        const newSelected = new Set(prev);
+        if (isChecked) {
+            newSelected.add(packageName);
+        } else {
+            newSelected.delete(packageName);
+        }
+        return newSelected;
+        });
+    };
+    
+    const filteredData = data.filter((row, rowIndex) => {
+        // Skip header row
+        if (rowIndex === 0) return true;
+      
+        // Include rows whose package is selected
+        return selectedPackages.has(row[0]);
+      });
+      
     const updateCostSplits = (rowIndex:number, totalPackageCost: number) => {
 
         if (rowIndex !== null) {
@@ -92,12 +154,14 @@ const CostTable: React.FC<CostTableProps> = ({
         });
     };
 
-    // Function to determine if a row should be displayed
-    const shouldDisplayRow = (row: string[], rowIndex: number) => {
-        if (rowIndex === 0 || isGroupHeader(row)) return true; // Always show header and group headers
-        const groupName = row[0]; // Assuming the group name is in the first cell
-        return !collapsedGroups.has(groupName);
-    };
+    const shouldDisplayRow = (row, rowIndex) => {
+        // Always show header rows
+        if (rowIndex === 0 || isGroupHeader(row)) return true;
+        const isPackageSelected = selectedPackages.has(row[0]);
+        const isGroupCollapsed = collapsedGroups.has(row[0]);
+        return isPackageSelected && (!isGroupCollapsed || isGroupHeader(row));
+      };
+      
 
     const handleYearChange = (rowIndex: number, colIndex: number,newValue: string) => {
         const newYear = parseInt(newValue, 10);
@@ -306,6 +370,9 @@ const CostTable: React.FC<CostTableProps> = ({
     };
 
     return (
+    <>
+    <Button onClick={() => setShowChecklistModal(true)}>Filter Packages</Button>
+    {renderChecklistModal()}
     <table>
         <thead>
             <tr>
@@ -315,7 +382,7 @@ const CostTable: React.FC<CostTableProps> = ({
             </tr>
         </thead>
         <tbody>
-            {data.map((row, rowIndex) => {
+            {filteredData.map((row, rowIndex) => {
             if (!shouldDisplayRow(row, rowIndex)) return null;
 
             return (
@@ -360,6 +427,7 @@ const CostTable: React.FC<CostTableProps> = ({
             })}
         </tbody>
     </table>
+    </>
     );
 };
 
