@@ -3,6 +3,14 @@ import React, { useState, useEffect, useMemo } from 'react';
 import './tableStyles.css';
 import CustomModal from './CustomModal';
 import { Button, Form, Modal } from 'react-bootstrap';
+import Dashboard from './Dashboard';
+
+type Node = {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+};
 
 type CostTableProps = {
   data: string[][];
@@ -31,6 +39,8 @@ const CostTable: React.FC<CostTableProps> = ({
     const [editingRowIndex, setEditingRowIndex] = useState(null); // Track the row being edited
     const [selectedPackages, setSelectedPackages] = useState(new Set());
     const [showChecklistModal, setShowChecklistModal] = useState(false);
+    const [isDashboardOpen, setIsDashboardOpen] = useState(false);
+    const [nodes, setNodes] = useState<Node[]>([]);
 
     useEffect(() => {
         // Initialize selected packages only once
@@ -53,6 +63,16 @@ const CostTable: React.FC<CostTableProps> = ({
       setShowModal(false);
       setEditingRowIndex(null);
     };
+
+    const handleAddNode = (x: number, y: number) => {
+        const newNode: Node = {
+          id: `node-${nodes.length + 1}`,
+          name: `Node ${nodes.length + 1}`,
+          x,
+          y,
+        };
+        setNodes([...nodes, newNode]);
+      };
 
     const startYearOptions = Array.from({ length: 2060 - 2020 }, (_, index) => 2020 + index);
     const startDurationOptions = Array.from({ length: 15 }, (_, index) => 0 + index);
@@ -373,7 +393,15 @@ const CostTable: React.FC<CostTableProps> = ({
     <>
     <Button onClick={() => setShowChecklistModal(true)}>Filter Packages</Button>
     {renderChecklistModal()}
-    <table>
+    <Button onClick={() => setIsDashboardOpen(true)}>Open Dashboard</Button>
+    {isDashboardOpen && (
+      <Dashboard
+        nodes={nodes}
+        onAddNode={handleAddNode}
+        onClose={() => setIsDashboardOpen(false)}
+      />
+    )}
+        <table>
         <thead>
             <tr>
                 {data[0].map((header, index) => {
