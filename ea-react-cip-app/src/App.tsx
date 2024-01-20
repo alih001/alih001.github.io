@@ -1,6 +1,7 @@
 // App.tsx or your main component
 import React, { useState } from 'react';
-import * as XLSX from 'xlsx';
+// import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs'
 import FileUpload from './state_testing/FileUpload';
 import AssetTable from './state_testing/AssetTable';
 import CostTable from './state_testing/CostTable';
@@ -34,23 +35,49 @@ const App: React.FC = () => {
     setIsTable1Visible(event.target.checked);
   };
 
-  const handleFileUpload = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = (event: ProgressEvent<FileReader>) => {
-      if (event.target && event.target.result) {
-        const workbook = XLSX.read(event.target.result, { type: 'binary' });
-        const assetInformation: TableRow[] = XLSX.utils.sheet_to_json(workbook.Sheets['AssetInformation'], { header: 1 });
-        const costInformation: TableRow[] = XLSX.utils.sheet_to_json(workbook.Sheets['CostInformation'], { header: 1 });
-        
-        setTable1Data(assetInformation);
-        setCollapsedAssetRows(new Set(assetInformation.map((_, rowIndex) => rowIndex).slice(1)));
-    
-        setTable2Data(costInformation);
-        setCollapsedCostGroups(new Set(costInformation.map(row => row[0])));
-      
-      }
+  const readExcelFile = async (file) => {
+    const workbook = new ExcelJS.Workbook();
+    const arrayBuffer = await file.arrayBuffer();
+    await workbook.xlsx.load(arrayBuffer);
+  
+    const processSheet = (sheet) => {
+      let data = [];
+      let headers = [];
+  
+      sheet.eachRow((row, rowNumber) => {
+        if (rowNumber === 0) {
+          // Store headers from the first row
+          headers = row.values;
+        } else {
+          // Pushing row values as an array to match the structure used by XLSX
+          let rowData = [];
+          row.eachCell((cell) => {
+            rowData.push(cell.value);
+          });
+          data.push(rowData);
+        }
+      });
+  
+      return data;
     };
-    reader.readAsBinaryString(file);
+  
+    const assetInformationSheet = workbook.getWorksheet('AssetInformation');
+    const costInformationSheet = workbook.getWorksheet('CostInformation');
+    
+    const assetInformation = processSheet(assetInformationSheet);
+    const costInformation = processSheet(costInformationSheet);
+  
+    // Set the processed data to your state
+    setTable1Data(assetInformation);
+    setCollapsedAssetRows(new Set(assetInformation.map((_, rowIndex) => rowIndex).slice(1)));
+    setTable2Data(costInformation);
+    setCollapsedCostGroups(new Set(costInformation.map(row => row[0])));
+  };
+  
+  // Usage in your file upload handler
+  const handleFileUpload = (file: File) => {
+    readExcelFile(file);
+    // No additional logic needed
   };
 
 return (
