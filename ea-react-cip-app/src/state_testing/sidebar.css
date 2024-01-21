@@ -1,8 +1,10 @@
+/* sidebar.css */
 .sidebar-section {
     position: relative;
     left: 0;
     background-color: #F8F9EF;
     /* height: 100vh; */
+    flex-shrink: 0; /* Prevent the sidebar from shrinking */
     width: 18vw;
     display: flex;
     flex-direction: column;
