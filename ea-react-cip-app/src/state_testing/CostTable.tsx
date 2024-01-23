@@ -65,14 +65,12 @@ const CostTable: React.FC<CostTableProps> = ({
     };
 
     const handleAddNode = (x: number, y: number) => {
-        const newNode: Node = {
-          id: `node-${nodes.length + 1}`,
-          name: `Node ${nodes.length + 1}`,
-          x,
-          y,
-        };
-        setNodes([...nodes, newNode]);
+        setNodes(prevNodes => [
+          ...prevNodes, 
+          { id: `node-${prevNodes.length + 1}`, name: `Node ${prevNodes.length + 1}`, x, y }
+        ]);
       };
+      
 
     const startYearOptions = Array.from({ length: 2060 - 2020 }, (_, index) => 2020 + index);
     const startDurationOptions = Array.from({ length: 15 }, (_, index) => 0 + index);
@@ -399,6 +397,7 @@ const CostTable: React.FC<CostTableProps> = ({
         nodes={nodes}
         onAddNode={handleAddNode}
         onClose={() => setIsDashboardOpen(false)}
+        updateNodes={setNodes}
       />
     )}
         <table>
