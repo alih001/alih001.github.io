@@ -1,19 +1,14 @@
 // App.tsx or your main component
 import React, { useState } from 'react';
-// import * as XLSX from 'xlsx';
 import ExcelJS from 'exceljs'
 import FileUpload from './state_testing/FileUpload';
 import AssetTable from './state_testing/AssetTable';
 import CostTable from './state_testing/CostTable';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import ResponsiveAppBar from './components/Navbar';
-import Header from './components/guideBox';
-import DefaultBox from './components/sectionBox';
-import DefaultContainer from './components/sectionContainer';
+import ResponsiveAppBar from './assets/Navbar';
 import './styles/MainPage.css'
-import Grid from '@mui/material/Unstable_Grid2';
-import CustomizedSwitches from './components/switch';
+import CustomizedSwitches from './assets/switch';
 
 type TableRow = (string | number)[];
 
@@ -85,68 +80,37 @@ return (
     <div>
       <ResponsiveAppBar/>
 
-      <DefaultContainer>
-        <Header
-          className="MainHeader" 
-          imageSrc="../src/assets/images/thinking.png"
-          title="Purpose" 
-          description="This app is designed to replace the existing weir ranking spreadsheet. 
-          It allows a user to import a spreadsheet and edit any details to produce a top 10 ranking table."
-        />
-        <Header
-          className="SubHeader" 
-          imageSrc="../src/assets/images/upload.png" 
-          title="Step 1" 
-          description="Load in Data"
-          imageSrc2='../src/assets/images/recovery.png'
-          title2='Step 2'
-          description2='Customise Settings'
-        />
-        <Header
-          className="SubHeader" 
-          imageSrc="../src/assets/images/maths.png" 
-          title="Step 3" 
-          description="Add some factors"
-          imageSrc2='../src/assets/images/podium.png'
-          title2='Step 4'
-          description2='Rank your weirs'
-        />
-      </DefaultContainer>
-
-      <DefaultContainer>
-
-        <h1>Customise weir rankings</h1>
-        <FileUpload onFileSelect={handleFileUpload} />
-        <CustomizedSwitches 
-          onChange={handleSwitchChange} 
-          checked={isTable1Visible} 
-        />
-        {isTable1Visible ? (
-          <>
-            <h3>Asset Table</h3>
-            <AssetTable 
-              data={table1Data} 
-              onDataChange={setTable1Data} 
-              tableId="table1"
-              dropdownValues={dropdownValues} 
-              setDropdownValues={setDropdownValues}
-              collapsedRows={collapsedAssetRows}
-              setCollapsedRows={setCollapsedAssetRows} 
-            />
-          </>
-        ) : (
-          <>
-            <h3>Cost Table</h3>
-            <CostTable 
-              data={table2Data} 
-              onDataChange={setTable2Data} 
-              tableId="table2" 
-              collapsedGroups={collapsedCostGroups}
-              setCollapsedGroups={setCollapsedCostGroups}
-            />
-          </>
-        )}
-      </DefaultContainer>
+      <h1>Customise weir rankings</h1>
+      <FileUpload onFileSelect={handleFileUpload} />
+      <CustomizedSwitches 
+        onChange={handleSwitchChange} 
+        checked={isTable1Visible} 
+      />
+      {isTable1Visible ? (
+        <>
+          <h3>Asset Table</h3>
+          <AssetTable 
+            data={table1Data} 
+            onDataChange={setTable1Data} 
+            tableId="table1"
+            dropdownValues={dropdownValues} 
+            setDropdownValues={setDropdownValues}
+            collapsedRows={collapsedAssetRows}
+            setCollapsedRows={setCollapsedAssetRows} 
+          />
+        </>
+      ) : (
+        <>
+          <h3>Cost Table</h3>
+          <CostTable 
+            data={table2Data} 
+            onDataChange={setTable2Data} 
+            tableId="table2" 
+            collapsedGroups={collapsedCostGroups}
+            setCollapsedGroups={setCollapsedCostGroups}
+          />
+        </>
+      )}
   </div>
   );
 };

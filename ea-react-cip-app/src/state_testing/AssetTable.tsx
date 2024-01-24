@@ -1,6 +1,6 @@
 // AssetTable.tsx
 import React, { useState, useEffect, useMemo } from 'react';
-import './tableStyles.css'
+import '../styles/tableStyles.css';
 
 type AssetTableProps = {
   data: string[][];

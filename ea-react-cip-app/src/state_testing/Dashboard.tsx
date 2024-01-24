@@ -1,10 +1,11 @@
 // Dashboard.tsx
 import React, { useState } from 'react';
-import './tableStyles.css';
+import '../styles/tableStyles.css';
 import Sidebar from './Sidebar';
 import { MapInteractionCSS } from 'react-map-interaction'
 import Draggable from 'react-draggable'
 import Arrow from './Arrow'
+import Summary from './Summary'
 
 type Node = {
   id: string;
@@ -66,9 +67,9 @@ const Dashboard: React.FC<DashboardProps> = ({ nodes, onAddNode, onClose, update
 
   const renderSummary = () => {
     console.log("Create Summary")
-
-      
-
+    return (
+      <Summary/>
+    )
   }
 
   const renderArrow = () => arrows.map((arrow, index) => {

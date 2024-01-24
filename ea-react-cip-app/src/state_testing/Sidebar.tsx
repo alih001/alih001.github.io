@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import {AiFillDashboard, AiOutlineMessage, AiOutlineCloseCircle } from "react-icons/ai"; // Example icons
 import { TbUniverse } from "react-icons/tb";
-import './sidebar.css'
+import '../styles/sidebar.css'
 
 const Sidebar = ({ activeOption, setActiveOption, onClose }) => {
   return (
