@@ -4,6 +4,7 @@ import './tableStyles.css';
 import Sidebar from './Sidebar';
 import { MapInteractionCSS } from 'react-map-interaction'
 import Draggable from 'react-draggable'
+import Arrow from './Arrow'
 
 type Node = {
   id: string;
@@ -24,30 +25,72 @@ const Dashboard: React.FC<DashboardProps> = ({ nodes, onAddNode, onClose, update
   const [mapState, setMapState] = useState({ scale: 1, translation: { x: 0, y: 0 } });
   const [mode, setMode] = useState('edit');
 
+  // State to track multiple arrows
+  const [arrows, setArrows] = useState<Array<{ startId: string, endId: string }>>([]);
+  // Temporary state to hold the start point before the end point is clicked
+  const [tempStart, setTempStart] = useState<Point | null>(null);
+
+
   const handleDragStart = (e) => {
     if (mode === 'pan') {
       e.stopPropagation();
     }
   };
 
+  const handleNodeClick = (node: Node) => {
+    if (!tempStart) {
+      setTempStart(node.id);
+    } else {
+      setArrows([...arrows, { startId: tempStart, endId: node.id }]);
+      setTempStart(null);
+    }
+  };
+  
+  const findNodeById = (id: string) => nodes.find(node => node.id === id);
+
+
   const renderNodes = () => nodes.map(node => (
     <Draggable
       key={node.id}
-      onStart={handleDragStart}
-      onStop={(e, data) => handleDragStop(node.id, e, data)}
+      onStart={mode === 'move' ? handleDragStart : undefined}
+      onStop={(e, data) => mode === 'move' ? handleDragStop(node.id, e, data) : undefined}
       position={{ x: node.x, y: node.y }}
+      disabled={mode !== 'move'}
     >
-      <div className="node">
+      <div className="node" onClick={() => handleNodeClick(node)}>
         {node.name}
       </div>
     </Draggable>
   ));
 
-  const renderContent = () => {
-    return (
-      <>
-      <button onClick={() => setMode('edit')}>Edit Mode</button>
-      <button onClick={() => setMode('pan')}>Pan Mode</button>
+
+  const renderSummary = () => {
+    console.log("Create Summary")
+
+      
+
+  }
+
+  const renderArrow = () => arrows.map((arrow, index) => {
+    const startNode = findNodeById(arrow.startId);
+    const endNode = findNodeById(arrow.endId);
+    if (startNode && endNode) {
+      return (
+        <Arrow 
+          key={index} 
+          startPoint={{ x: startNode.x, y: startNode.y }} 
+          endPoint={{ x: endNode.x, y: endNode.y }} 
+        />
+      );
+    }
+    return null;
+  });
+  
+  const renderContent = () => (
+    <>
+      <button onClick={() => setMode('edit')}>Draw</button>
+      <button onClick={() => setMode('move')}>Move</button>
+      <button onClick={() => setMode('pan')}>Pan & Zoom</button>
       <MapInteractionCSS
         value={mapState}
         onChange={(value) => setMapState(value)}
@@ -58,9 +101,8 @@ const Dashboard: React.FC<DashboardProps> = ({ nodes, onAddNode, onClose, update
       >
         {renderNodes()}
       </MapInteractionCSS>
-      </>
-    );
-  };
+    </>
+  );
 
   const handleContentDoubleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (activeOption === 'nodes' && mode === 'edit') {
@@ -90,9 +132,9 @@ const Dashboard: React.FC<DashboardProps> = ({ nodes, onAddNode, onClose, update
     <div className="dashboard">
       <Sidebar activeOption={activeOption} setActiveOption={setActiveOption} onClose={onClose} />
       <div className="content" onDoubleClick={handleContentDoubleClick}>
-
+      {renderArrow()}
         {activeOption === 'nodes' && renderContent()}
-        {activeOption === 'text' && <p>Option 2</p>}
+        {activeOption === 'text' && renderSummary()}
       </div>
     </div>
   );
