@@ -1,9 +1,9 @@
 // CostTable.tsx
 import React, { useState, useEffect, useMemo } from 'react';
 import '../styles/tableStyles.css';
-import CustomModal from '../state_testing/CustomModal';
+import CustomModal from './CustomModal';
 import { Button, Form, Modal } from 'react-bootstrap';
-import Dashboard from '../state_testing/Dashboard';
+import Dashboard from './NetworkLinks';
 
 type Node = {
   id: string;

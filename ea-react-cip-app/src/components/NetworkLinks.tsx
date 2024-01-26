@@ -4,7 +4,6 @@ import '../styles/tableStyles.css';
 import { MapInteractionCSS } from 'react-map-interaction'
 import Draggable from 'react-draggable'
 import Arrow from './Arrow'
-import Summary from './Summary'
 
 type Node = {
   id: string;
@@ -21,8 +20,7 @@ type DashboardProps = {
 };
 
 
-const Dashboard: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes }) => {
-  const [activeOption, setActiveOption] = useState('nodes');
+const NetworkLinks: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes }) => {
   const [mapState, setMapState] = useState({ scale: 1, translation: { x: 0, y: 0 } });
   const [mode, setMode] = useState('edit');
 
@@ -64,14 +62,6 @@ const Dashboard: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes }) 
     </Draggable>
   ));
 
-
-  const renderSummary = () => {
-    console.log("Create Summary")
-    return (
-      <Summary/>
-    )
-  }
-
   const renderArrow = () => arrows.map((arrow, index) => {
     const startNode = findNodeById(arrow.startId);
     const endNode = findNodeById(arrow.endId);
@@ -106,7 +96,7 @@ const Dashboard: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes }) 
   );
 
   const handleContentDoubleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (activeOption === 'nodes' && mode === 'edit') {
+    if (mode === 'edit') {
       const rect = e.currentTarget.getBoundingClientRect();
       const nodeSize = 100;
       const halfNodeSize = nodeSize / 2;
@@ -133,10 +123,10 @@ const Dashboard: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes }) 
     <div className="dashboard">
       <div className="content" onDoubleClick={handleContentDoubleClick}>
       {renderArrow()}
-        {activeOption === 'nodes' && renderContent()}
+      {renderContent()}
       </div>
     </div>
   );
 };
 
-export default Dashboard;
+export default NetworkLinks;

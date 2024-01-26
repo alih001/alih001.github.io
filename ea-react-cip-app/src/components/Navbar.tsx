@@ -25,7 +25,7 @@ const CustomSidebar = () => {
       >
         <MenuItem component={<Link to="/" />}> Home Page</MenuItem>
         <MenuItem component={<Link to="/Tables" />}> Tables</MenuItem>
-        <MenuItem component={<Link to="/NetworkDashboard" />}> Summary Dashboard</MenuItem>
+        <MenuItem component={<Link to="/SummaryDashboard" />}> Summary Dashboard</MenuItem>
         <MenuItem component={<Link to="/SystemsThinking" />}> Systems Thinking</MenuItem>
       </Menu>
     </Sidebar>

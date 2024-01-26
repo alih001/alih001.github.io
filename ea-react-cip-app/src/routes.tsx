@@ -3,7 +3,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Tables from "./pages/Tables";
 import HomePage from "./pages/HomePage";
-import NetworkDashboard from "./pages/NetworkDashboard";
+import SummaryDashboard from "./pages/SummaryDashboard";
 import SystemsThinking from "./pages/SystemsThinking";
 
 const AppRoutes = () => {
@@ -11,7 +11,7 @@ const AppRoutes = () => {
         <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/Tables" element={<Tables />} />
-            <Route path="/NetworkDashboard" element={<NetworkDashboard />} />
+            <Route path="/SummaryDashboard" element={<SummaryDashboard />} />
             <Route path="/SystemsThinking" element={<SystemsThinking />} />
         </Routes>
     );
