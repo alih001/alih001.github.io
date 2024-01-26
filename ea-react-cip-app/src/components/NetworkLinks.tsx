@@ -4,6 +4,7 @@ import '../styles/tableStyles.css';
 import { MapInteractionCSS } from 'react-map-interaction'
 import Draggable from 'react-draggable'
 import Arrow from './Arrow'
+import { useData } from '../contexts/DataContext';
 
 type Node = {
   id: string;
@@ -15,20 +16,15 @@ type Node = {
 type DashboardProps = {
   nodes: Node[];
   onAddNode: (x: number, y: number) => void;
-  // onClose: () => void;
   updateNodes: (nodes: Node[]) => void;
 };
 
 
 const NetworkLinks: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes }) => {
-  const [mapState, setMapState] = useState({ scale: 1, translation: { x: 0, y: 0 } });
-  const [mode, setMode] = useState('edit');
-
-  // State to track multiple arrows
-  const [arrows, setArrows] = useState<Array<{ startId: string, endId: string }>>([]);
-  // Temporary state to hold the start point before the end point is clicked
-  const [tempStart, setTempStart] = useState<Point | null>(null);
-
+  const { mapState, setMapState } = useData();
+  const { mode, setMode } = useData();
+  const { arrows, setArrows } = useData();
+  const { tempStart, setTempStart } = useData();
 
   const handleDragStart = (e) => {
     if (mode === 'pan') {

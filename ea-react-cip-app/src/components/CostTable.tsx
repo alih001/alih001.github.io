@@ -3,30 +3,17 @@ import React, { useState, useEffect, useMemo } from 'react';
 import '../styles/tableStyles.css';
 import CustomModal from './CustomModal';
 import { Button, Form, Modal } from 'react-bootstrap';
-import Dashboard from './NetworkLinks';
-
-type Node = {
-  id: string;
-  name: string;
-  x: number;
-  y: number;
-};
+import { useData } from '../contexts/DataContext';
 
 type CostTableProps = {
   data: string[][];
   onDataChange: (newData: string[][]) => void;
   tableId: string;
-  collapsibleColumns?: string[];
-  dropdownValues: { [key: string]: string };
-  setDropdownValues: (values: { [key: string]: string }) => void;
-  collapsedGroups: Set<string>;
-  setCollapsedGroups: (groups: Set<string>) => void;
 };
 
 const CostTable: React.FC<CostTableProps> = ({
-  data, onDataChange, tableId, collapsibleColumns = [], dropdownValues, setDropdownValues,
-  collapsedGroups, setCollapsedGroups
-}) => {
+    data, onDataChange, tableId,
+  }) => {
 
     const packageOptions = useMemo(() => {
         // Extract unique package names from data
@@ -34,13 +21,10 @@ const CostTable: React.FC<CostTableProps> = ({
         return Array.from(packages);
       }, [data]);
 
-    const [showModal, setShowModal] = useState(false);
-    const [sliderValue, setSliderValue] = useState(50);
-    const [editingRowIndex, setEditingRowIndex] = useState(null); // Track the row being edited
-    const [selectedPackages, setSelectedPackages] = useState(new Set());
-    const [showChecklistModal, setShowChecklistModal] = useState(false);
-    const [isDashboardOpen, setIsDashboardOpen] = useState(false);
-    const [nodes, setNodes] = useState<Node[]>([]);
+    const {
+      showModal, setShowModal, sliderValue, setSliderValue, editingRowIndex, setEditingRowIndex,
+      selectedPackages, setSelectedPackages, showChecklistModal, setShowChecklistModal, collapsedCostGroups, setCollapsedCostGroups
+          } = useData();
 
     useEffect(() => {
         // Initialize selected packages only once
@@ -63,14 +47,6 @@ const CostTable: React.FC<CostTableProps> = ({
       setShowModal(false);
       setEditingRowIndex(null);
     };
-
-    const handleAddNode = (x: number, y: number) => {
-        setNodes(prevNodes => [
-          ...prevNodes, 
-          { id: `node-${prevNodes.length + 1}`, name: `Node ${prevNodes.length + 1}`, x, y }
-        ]);
-      };
-      
 
     const startYearOptions = Array.from({ length: 2060 - 2020 }, (_, index) => 2020 + index);
     const startDurationOptions = Array.from({ length: 15 }, (_, index) => 0 + index);
@@ -161,7 +137,7 @@ const CostTable: React.FC<CostTableProps> = ({
 
     // Function to toggle group collapse state
     const toggleGroup = (groupName: string) => {
-        setCollapsedGroups(prev => {
+        setCollapsedCostGroups(prev => {
         const newCollapsedGroups = new Set(prev);
         if (newCollapsedGroups.has(groupName)) {
             newCollapsedGroups.delete(groupName);
@@ -176,7 +152,7 @@ const CostTable: React.FC<CostTableProps> = ({
         // Always show header rows
         if (rowIndex === 0 || isGroupHeader(row)) return true;
         const isPackageSelected = selectedPackages.has(row[0]);
-        const isGroupCollapsed = collapsedGroups.has(row[0]);
+        const isGroupCollapsed = collapsedCostGroups.has(row[0]);
         return isPackageSelected && (!isGroupCollapsed || isGroupHeader(row));
       };
       
@@ -391,15 +367,6 @@ const CostTable: React.FC<CostTableProps> = ({
     <>
     <Button onClick={() => setShowChecklistModal(true)}>Filter Packages</Button>
     {renderChecklistModal()}
-    <Button onClick={() => setIsDashboardOpen(true)}>Open Dashboard</Button>
-    {isDashboardOpen && (
-      <Dashboard
-        nodes={nodes}
-        onAddNode={handleAddNode}
-        // onClose={() => (false)}
-        updateNodes={setNodes}
-      />
-    )}
         <table>
         <thead>
             <tr>
@@ -437,7 +404,7 @@ const CostTable: React.FC<CostTableProps> = ({
                         <>
                         <td>
                             <button onClick={() => toggleGroup(row[0])}>
-                            {collapsedGroups.has(row[0]) ? 'Expand' : 'Collapse'}
+                            {collapsedCostGroups.has(row[0]) ? 'Expand' : 'Collapse'}
                             </button>
                         </td>
                         <td>

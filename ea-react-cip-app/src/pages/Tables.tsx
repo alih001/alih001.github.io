@@ -11,9 +11,8 @@ const Tables: React.FC = () => {
   const { table1Data, setTable1Data } = useData();
   const { table2Data, setTable2Data } = useData();
   const { isTable1Visible, setIsTable1Visible } = useData();
-  const { dropdownValues, setDropdownValues } = useData();
-  const { collapsedCostGroups, setCollapsedCostGroups } = useData();
-  const { collapsedAssetRows, setCollapsedAssetRows } = useData();
+  const { setCollapsedAssetRows } = useData();
+  const { setCollapsedCostGroups } = useData();
 
   const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsTable1Visible(event.target.checked);
@@ -77,10 +76,6 @@ const Tables: React.FC = () => {
                 data={table1Data} 
                 onDataChange={setTable1Data} 
                 tableId="table1"
-                dropdownValues={dropdownValues} 
-                setDropdownValues={setDropdownValues}
-                collapsedRows={collapsedAssetRows}
-                setCollapsedRows={setCollapsedAssetRows} 
             />
             </>
         ) : (
@@ -90,8 +85,6 @@ const Tables: React.FC = () => {
                 data={table2Data} 
                 onDataChange={setTable2Data} 
                 tableId="table2" 
-                collapsedGroups={collapsedCostGroups}
-                setCollapsedGroups={setCollapsedCostGroups}
             />
             </>
         )}

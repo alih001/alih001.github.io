@@ -1,16 +1,10 @@
 import React, { useState } from 'react';
 import NetworkLinks from '../components/NetworkLinks';
-
-type Node = {
-    id: string;
-    name: string;
-    x: number;
-    y: number;
-  };
+import { useData } from '../contexts/DataContext';
 
 const SystemsThinking = () => {
 
-    const [nodes, setNodes] = useState<Node[]>([]);
+    const { nodes, setNodes } = useData();
 
     const handleAddNode = (x: number, y: number) => {
         setNodes(prevNodes => [
@@ -23,10 +17,10 @@ const SystemsThinking = () => {
 	<div>
 		<h1>Dashboard</h1>
         <NetworkLinks
-        nodes={nodes}
-        onAddNode={handleAddNode}
-        updateNodes={setNodes}
-      />
+            nodes={nodes}
+            onAddNode={handleAddNode}
+            updateNodes={setNodes}
+        />
 	</div>
 );
 }

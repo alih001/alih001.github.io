@@ -1,49 +1,47 @@
 // AssetTable.tsx
 import React, { useState, useEffect, useMemo } from 'react';
 import '../styles/tableStyles.css';
+import { useData } from '../contexts/DataContext';
 
 type AssetTableProps = {
   data: string[][];
   onDataChange: (newData: string[][]) => void;
   tableId: string;
-  dropdownValues: { [key: string]: string };
-  setDropdownValues: (values: { [key: string]: string }) => void;
-  collapsedRows: any;
-  setCollapsedRows: any;
 };
 
 const AssetTable: React.FC<AssetTableProps> = ({
-  data, onDataChange, tableId, dropdownValues, setDropdownValues,
-  collapsedRows, setCollapsedRows
-}) => {
+    data, onDataChange, tableId
+  }) => {
 
-  const arrayCollapsibleColumnIndexes = useMemo (() => [2, 3, 4, 5], 
-  []);
+  const arrayCollapsibleColumnIndexes = useMemo (() => [2, 3, 4, 5], []);
+
   const dropdownValueMap = useMemo(() => ({
-  "None": 0,
-  "Low": 2,
-  "Medium": 4,
-  "High": 6
-  }), []);
+      "None": 0,
+      "Low": 2,
+      "Medium": 4,
+      "High": 6
+    }), []);
 
   const stage1FactorsMap = useMemo(() => ({
-    2: 0.5,
-    3: 1.5,
-    4: 0.2,
-  }), []);
+      2: 0.5,
+      3: 1.5,
+      4: 0.2,
+    }), []);
   
   const stage2FactorsMap = useMemo(() => ({
-    2: 0.9,
-    4: 2.3,
-  }), []);
+      2: 0.9,
+      4: 2.3,
+    }), []);
   
   const dropdownColumnIndexes = useMemo(() => [
-  arrayCollapsibleColumnIndexes[0],
-  arrayCollapsibleColumnIndexes[1],
-  arrayCollapsibleColumnIndexes[2],
-  ], [arrayCollapsibleColumnIndexes]);
+      arrayCollapsibleColumnIndexes[0],
+      arrayCollapsibleColumnIndexes[1],
+      arrayCollapsibleColumnIndexes[2],
+    ], [arrayCollapsibleColumnIndexes]);
 
-  const [outputValues, setOutputValues] = useState<{ [key: string]: string }>({});
+  const { dropdownValues, setDropdownValues } = useData();
+  const { collapsedAssetRows, setCollapsedAssetRows } = useData();
+  const { outputValues, setOutputValues } = useData();
 
   useEffect(() => {
     const initialOutputValues: { [key: string]: number } = {};
@@ -69,7 +67,7 @@ const AssetTable: React.FC<AssetTableProps> = ({
   const totalScoreColumnIndex = data[0].indexOf("Total");
 
   const toggleRowCollapse = (rowIndex: number) => {
-    setCollapsedRows(prev => {
+    setCollapsedAssetRows(prev => {
       const newCollapsedRows = new Set(prev);
       if (newCollapsedRows.has(rowIndex)) {
         newCollapsedRows.delete(rowIndex);
@@ -222,12 +220,12 @@ const AssetTable: React.FC<AssetTableProps> = ({
                     {/* Toggle button for collapsible rows */}
                     <td>
                     <button onClick={() => toggleRowCollapse(rowIndex)}>
-                        {collapsedRows.has(rowIndex) ? 'Show' : 'Hide'}
+                        {collapsedAssetRows.has(rowIndex) ? 'Show' : 'Hide'}
                     </button>
                     </td>
                 </tr>
                 {/* Render collapsible rows */}
-                {tableId === "table1" && !collapsedRows.has(rowIndex) && renderCollapsibleRow(row, rowIndex, arrayCollapsibleColumnIndexes)}
+                {tableId === "table1" && !collapsedAssetRows.has(rowIndex) && renderCollapsibleRow(row, rowIndex, arrayCollapsibleColumnIndexes)}
                 </>
             )}
             </React.Fragment>
