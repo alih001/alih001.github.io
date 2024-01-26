@@ -1,25 +1,23 @@
-// App.tsx or your main component
-import React, { useState } from 'react';
+import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { DataProvider } from './state_testing/DataContext';
-import ResponsiveAppBar from './assets/Navbar';
-import './styles/MainPage.css'
-import PopulateTables from './state_testing/PopulateTables'
-
-type TableRow = (string | number)[];
+import { DataProvider } from './contexts/DataContext';
+import CustomSidebar from './components/Navbar';
+import './styles/MainPage.css';
+import AppRoutes from './routes';
+import { BrowserRouter } from "react-router-dom";
 
 const App: React.FC = () => {
-
-return (
-  <>
-  <DataProvider>  
-    <div>
-      <ResponsiveAppBar/>
-      <PopulateTables/>
-    </div>
-
-  </DataProvider>
-  </>
+  return (
+    <DataProvider>
+      <BrowserRouter>
+        <div style={{ display: 'flex', height: '100vh' }}>
+          <CustomSidebar/>
+          <div style={{ flex: 1 }}>
+            <AppRoutes/>
+          </div>
+        </div>
+      </BrowserRouter>
+    </DataProvider>
   );
 };
 

@@ -1,7 +1,6 @@
 // Dashboard.tsx
 import React, { useState } from 'react';
 import '../styles/tableStyles.css';
-import Sidebar from './Sidebar';
 import { MapInteractionCSS } from 'react-map-interaction'
 import Draggable from 'react-draggable'
 import Arrow from './Arrow'
@@ -17,11 +16,12 @@ type Node = {
 type DashboardProps = {
   nodes: Node[];
   onAddNode: (x: number, y: number) => void;
-  onClose: () => void;
-  updateNodes: (nodes: Node[]) => void;};
+  // onClose: () => void;
+  updateNodes: (nodes: Node[]) => void;
+};
 
 
-const Dashboard: React.FC<DashboardProps> = ({ nodes, onAddNode, onClose, updateNodes }) => {
+const Dashboard: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes }) => {
   const [activeOption, setActiveOption] = useState('nodes');
   const [mapState, setMapState] = useState({ scale: 1, translation: { x: 0, y: 0 } });
   const [mode, setMode] = useState('edit');
@@ -131,11 +131,9 @@ const Dashboard: React.FC<DashboardProps> = ({ nodes, onAddNode, onClose, update
   
   return (
     <div className="dashboard">
-      <Sidebar activeOption={activeOption} setActiveOption={setActiveOption} onClose={onClose} />
       <div className="content" onDoubleClick={handleContentDoubleClick}>
       {renderArrow()}
         {activeOption === 'nodes' && renderContent()}
-        {activeOption === 'text' && renderSummary()}
       </div>
     </div>
   );

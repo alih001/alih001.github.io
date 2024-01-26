@@ -1,13 +1,13 @@
 // PopulateTables.tsx
 import React from 'react';
-import { useData } from './DataContext';
+import { useData } from '../contexts/DataContext';
 import ExcelJS from 'exceljs'
-import FileUpload from './FileUpload';
-import AssetTable from './AssetTable';
-import CostTable from './CostTable';
+import FileUpload from '../components/FileUpload';
+import AssetTable from '../components/AssetTable';
+import CostTable from '../components/CostTable';
 import CustomizedSwitches from '../assets/switch';
 
-const PopulateTables: React.FC = () => {
+const Tables: React.FC = () => {
   const { table1Data, setTable1Data } = useData();
   const { table2Data, setTable2Data } = useData();
   const { isTable1Visible, setIsTable1Visible } = useData();
@@ -100,4 +100,4 @@ const PopulateTables: React.FC = () => {
   );
 };
 
-export default PopulateTables;
+export default Tables;

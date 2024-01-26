@@ -1,9 +1,9 @@
 // CostTable.tsx
 import React, { useState, useEffect, useMemo } from 'react';
 import '../styles/tableStyles.css';
-import CustomModal from './CustomModal';
+import CustomModal from '../state_testing/CustomModal';
 import { Button, Form, Modal } from 'react-bootstrap';
-import Dashboard from './Dashboard';
+import Dashboard from '../state_testing/Dashboard';
 
 type Node = {
   id: string;
@@ -396,7 +396,7 @@ const CostTable: React.FC<CostTableProps> = ({
       <Dashboard
         nodes={nodes}
         onAddNode={handleAddNode}
-        onClose={() => setIsDashboardOpen(false)}
+        // onClose={() => (false)}
         updateNodes={setNodes}
       />
     )}

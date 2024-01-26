@@ -1,9 +1,10 @@
 // DataContext.tsx
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, ReactNode } from 'react';
 
 type TableRow = (string | number)[];
 
 type DataContextType = {
+    // Populate Table Props
     table1Data: TableRow[];
     setTable1Data: (data: TableRow[]) => void;
     table2Data: TableRow[];
@@ -22,7 +23,7 @@ type DataContextType = {
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
-export const DataProvider: React.FC = ({ children }) => {
+export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [table1Data, setTable1Data] = useState<TableRow[]>([]);
   const [table2Data, setTable2Data] = useState<TableRow[]>([]);
   const [isTable1Visible, setIsTable1Visible] = useState(true);
