@@ -1,10 +1,16 @@
 // Dashboard.tsx
 import React, { useState } from 'react';
-import '../styles/tableStyles.css';
+import '../styles/networkLinks.css';
 import { MapInteractionCSS } from 'react-map-interaction'
 import Draggable from 'react-draggable'
 import Arrow from './Arrow'
 import { useData } from '../contexts/DataContext';
+import styled from 'styled-components';
+import {AiFillDashboard, AiOutlineMessage, AiOutlineCloseCircle } from "react-icons/ai"; // Example icons
+import { TbUniverse } from "react-icons/tb";
+import { Sidebar, Menu, MenuItem } from 'react-pro-sidebar';
+import { NavLink } from 'react-router-dom';
+import { ModeCommentSharp } from '@mui/icons-material';
 
 type Node = {
   id: string;
@@ -21,6 +27,7 @@ type DashboardProps = {
 
 
 const NetworkLinks: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes }) => {
+
   const { mapState, setMapState } = useData();
   const { mode, setMode } = useData();
   const { arrows, setArrows } = useData();
@@ -75,9 +82,7 @@ const NetworkLinks: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes 
   
   const renderContent = () => (
     <>
-      <button onClick={() => setMode('edit')}>Draw</button>
-      <button onClick={() => setMode('move')}>Move</button>
-      <button onClick={() => setMode('pan')}>Pan & Zoom</button>
+
       <MapInteractionCSS
         value={mapState}
         onChange={(value) => setMapState(value)}
@@ -114,12 +119,39 @@ const NetworkLinks: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes 
       return node;
     }));
   };
+
+  const getMenuItemClass = (menuMode) => {
+    return mode === menuMode ? 'activeLink' : 'normalLink';
+  };
   
+
   return (
-    <div className="dashboard">
+    <div className="network-dashboard">
+    <Sidebar style={{ height: "100vh" }}>
+        <Menu>
+          <MenuItem 
+            onClick={() => setMode('edit')}
+            className={getMenuItemClass('edit')}
+          >
+            <span>Draw</span>
+          </MenuItem>
+          <MenuItem 
+            onClick={() => setMode('move')}
+            className={getMenuItemClass('move')}
+          >
+            <span>Move</span>
+          </MenuItem>
+          <MenuItem 
+            onClick={() => setMode('pan')}
+            className={getMenuItemClass('pan')}
+          >
+            <span>Pan</span>
+          </MenuItem>
+        </Menu>
+      </Sidebar>
       <div className="content" onDoubleClick={handleContentDoubleClick}>
-      {renderArrow()}
-      {renderContent()}
+        {renderArrow()}
+        {renderContent()}
       </div>
     </div>
   );

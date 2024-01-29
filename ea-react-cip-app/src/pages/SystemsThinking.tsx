@@ -15,7 +15,7 @@ const SystemsThinking = () => {
       
     return (
 	<div>
-		<h1>Dashboard</h1>
+		<h1>Systems Planning</h1>
         <NetworkLinks
             nodes={nodes}
             onAddNode={handleAddNode}

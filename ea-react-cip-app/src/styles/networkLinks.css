@@ -1,0 +1,55 @@
+.network-dashboard {
+    position: fixed;
+    /* top: 10%;
+    left: 10%;
+    width: 80%;
+    height: 80%; */
+    height: 100%; 
+    width: 100%; 
+    /* background-color: rgb(255, 255, 255); */
+    display: flex;
+    /* flex-direction: row; Align items horizontally */
+    border: 2px solid rgb(255, 0, 0);
+  }
+
+/* .network-sidebar{
+    flex-direction: column;
+} */
+
+.activeLink {
+    background-color: #03C9D7; /* Active item background color */
+    color: #ffffff; /* Active item text color */
+    border-radius: 15px;
+    max-width: 90%;
+    margin-left: 10px;
+  }
+  
+  .normalLink {
+    /* Styles for normal (inactive) items */
+    color: #000000; /* Normal item text color */
+    border-radius: 15px;
+    max-width: 90%;
+    margin-left: 10px;
+
+  }
+
+.content {
+    flex-grow: 1; /* Grow to fill remaining space */
+    /* position: relative;
+    /* overflow: hidden; Optional: for controlling content overflow */
+    /* width: 100%;*/
+    overflow: hidden;
+    border: 2px solid rgb(0, 255, 42);
+    overflow: hidden;
+}
+
+.node {
+    position: absolute;
+    background-color: #a86c6c;
+    padding: 5px;
+    border-radius: 50%;
+    cursor: pointer;
+    width: 100px; 
+    height: 100px; 
+    
+}
