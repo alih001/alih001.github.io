@@ -6,6 +6,15 @@ import FileUpload from '../components/FileUpload';
 import AssetTable from '../components/AssetTable';
 import CostTable from '../components/CostTable';
 import CustomizedSwitches from '../assets/switch';
+import styled from 'styled-components';
+
+const Background = styled.div`
+  background-image: url('./src/assets/images/home_page_background.png');
+  background-size: cover;
+  background-repeat: no-repeat; 
+  background-position: center; 
+  min-height: 100vh;
+`;
 
 const Tables: React.FC = () => {
   const { table1Data, setTable1Data } = useData();
@@ -14,8 +23,8 @@ const Tables: React.FC = () => {
   const { setCollapsedAssetRows } = useData();
   const { setCollapsedCostGroups } = useData();
 
-  const handleSwitchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIsTable1Visible(event.target.checked);
+  const handleSwitchChange = () => {
+    setIsTable1Visible(prev => !prev); // Toggle the state
   };
 
   const readExcelFile = async (file) => {
@@ -63,11 +72,12 @@ const Tables: React.FC = () => {
 
   return (
     <div>
-        <h1>Customise weir rankings</h1>
+      <Background>
+        <h1>Asset Management</h1>
         <FileUpload onFileSelect={handleFileUpload} />
         <CustomizedSwitches 
-            onChange={handleSwitchChange} 
-            checked={isTable1Visible} 
+          onChange={handleSwitchChange} 
+          checked={isTable1Visible} 
         />
         {isTable1Visible ? (
             <>
@@ -88,7 +98,8 @@ const Tables: React.FC = () => {
             />
             </>
         )}
-  </div>
+      </Background>
+    </div>
 
   );
 };
