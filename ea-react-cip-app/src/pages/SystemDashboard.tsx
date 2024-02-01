@@ -31,16 +31,16 @@ const Background = styled.div`
   min-height: 100vh;
 `;
 
-const SummaryDashboard: React.FC = () => (
+const SystemDashboard: React.FC = () => (
 	<Background>
 		<HeroSection className="light hero">
 			<div className="heroInner">
 				<span>
-				<h1>Summary Dashboard</h1>
+				<h1>Systems Dashboard</h1>
 				</span>
 			</div>
 		</HeroSection>
 	</Background>
 );
 
-export default SummaryDashboard;
+export default SystemDashboard;

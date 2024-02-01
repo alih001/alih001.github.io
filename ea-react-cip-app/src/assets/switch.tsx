@@ -2,13 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 
 const SwitchContainer = styled.div`
-  width: 400px;
+  width: 300px;
   height: 40px;
   display: flex;
   cursor: pointer;
   position: relative;
   overflow: hidden; // Hide the overflow of pseudo-elements
-
+  margin-left: 10rem;
   &::before,
   &::after {
     content: '';
@@ -44,11 +44,13 @@ interface SectionProps {
 }
 
 const AssetSection = styled(Section)<SectionProps>`
-  background-color: ${(props) => (props.checked ? '#007BFF' : '#D3D3D3')};
+  background-color: ${(props) => (props.checked ? '#3D314A' : '#D3D3D3')};
+  color: ${(props) => (props.checked ? '#fff' : '#000')};
 `;
 
 const CostSection = styled(Section)<SectionProps>`
-  background-color: ${(props) => (props.checked ? '#D3D3D3' : '#007BFF')};
+  background-color: ${(props) => (props.checked ? '#D3D3D3' : '#3D314A')};
+  color: ${(props) => (props.checked ? '#000' : '#fff')};
 `;
 
 interface CustomizedSwitchesProps {

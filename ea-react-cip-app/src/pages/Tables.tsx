@@ -8,6 +8,42 @@ import CostTable from '../components/CostTable';
 import CustomizedSwitches from '../assets/switch';
 import styled from 'styled-components';
 
+const HeroSection = styled.section`
+  background-position: center, bottom left;
+  background-size: cover, cover;
+  height: fit-content;
+  color: #3C474B;
+  padding: 3rem 23rem 1rem;
+  .heroInner {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  span {
+    max-width: 50%;
+  }
+  h1 {
+    font-weight: 900;
+    font-size: clamp(2rem, 5.5vw, 3.25rem);
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+  }
+`;
+
+const TableSection = styled.div`
+background-color: rgba(255, 255, 255, 0.5);
+border-radius: 15px;
+padding: 6px;
+box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(0.5rem);
+&:hover {
+  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+}
+width: 95%;
+margin-left:2.5rem;
+margin-top:1.5rem;
+`;
+
 const Background = styled.div`
   background-image: url('./src/assets/images/home_page_background.png');
   background-size: cover;
@@ -73,31 +109,39 @@ const Tables: React.FC = () => {
   return (
     <div>
       <Background>
-        <h1>Asset Management</h1>
+        <HeroSection className="light hero">
+          <div className="heroInner">
+            <span>
+              <h1>Asset Management</h1>  
+            </span>
+          </div>
+        </HeroSection>
         <FileUpload onFileSelect={handleFileUpload} />
         <CustomizedSwitches 
           onChange={handleSwitchChange} 
           checked={isTable1Visible} 
         />
-        {isTable1Visible ? (
-            <>
-            <h3>Asset Table</h3>
-            <AssetTable 
-                data={table1Data} 
-                onDataChange={setTable1Data} 
-                tableId="table1"
-            />
-            </>
-        ) : (
-            <>
-            <h3>Cost Table</h3>
-            <CostTable 
-                data={table2Data} 
-                onDataChange={setTable2Data} 
-                tableId="table2" 
-            />
-            </>
-        )}
+        <TableSection>
+          {isTable1Visible ? (
+              <>
+              <h3>Asset Table</h3>
+              <AssetTable 
+                  data={table1Data} 
+                  onDataChange={setTable1Data} 
+                  tableId="table1"
+              />
+              </>
+          ) : (
+              <>
+              <h3>Cost Table</h3>
+              <CostTable 
+                  data={table2Data} 
+                  onDataChange={setTable2Data} 
+                  tableId="table2" 
+              />
+              </>
+          )}
+        </TableSection>
       </Background>
     </div>
 
