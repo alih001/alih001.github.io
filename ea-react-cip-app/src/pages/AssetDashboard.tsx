@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import DashboardCardComponent from '../components/DashboardCard';
 import DashboardPieChart from '../charts/BarChart';
+import { useData } from '../contexts/DataContext';
+import DashboardTable from '../charts/summaryTable';
 
 const HeroSection = styled.section`
   background-position: center, bottom left;
@@ -43,68 +45,110 @@ const DashboardSection = styled.div`
   margin-top:1.5rem;
 `;
 
-const AssetDashboard: React.FC = () => (
-	<Background>
-		<HeroSection className="light hero">
-			<div className="heroInner">
-				<span>
-				<h1>Assets Dashboard</h1>
-				</span>
-			</div>
-		</HeroSection>
-    <DashboardSection>
+const AssetDashboard: React.FC = () => {
+  const { table1Data } = useData();
+  
+  return (
+    <Background>
+      <HeroSection className="light hero">
+        <div className="heroInner">
+          <span>
+          <h1>Assets Dashboard</h1>
+          </span>
+        </div>
+      </HeroSection>
+      <DashboardSection>
 
-      <DashboardCardComponent
-        title="Top 10 Weir Complexes"
-        width = {34} height = {20}
-        left = {5} top = {3}
-      >
-        <DashboardPieChart width={350} height={350}/>
-      </DashboardCardComponent>
+        <DashboardCardComponent
+          title="Top 10 Weir Complexes"
+          width = {34} height = {50}
+          left = {5} top = {3}
+        >
+          <DashboardTable/>
+        </DashboardCardComponent>
 
-      <DashboardCardComponent
-        title="Top 10 Weir Assets"
-        width = {34} height = {20}
-        left = {5} top = {3}
-      >
-        <DashboardPieChart width={350} height={350}/>
-      </DashboardCardComponent>
+        <DashboardCardComponent
+          title="Top 10 Weir Assets"
+          width = {34} height = {50}
+          left = {5} top = {3}
+        >
+          <DashboardTable/>
+        </DashboardCardComponent>
 
-      <DashboardCardComponent
-        title="Scour, Corrosion and Tackle Rating Distribution"
-        width = {34} height = {20}
-        left = {5} top = {3}
-      >
-        <DashboardPieChart width={350} height={350}/>
-      </DashboardCardComponent>
+        <DashboardCardComponent
+          title="Weir Type Distribution"
+          width = {34} height = {20}
+          left = {5} top = {3}
+        >
+          <DashboardPieChart 
+            width={350} height={350} 
+            data={table1Data} rowReference={1}/>
+        </DashboardCardComponent>
 
-      <DashboardCardComponent
-        title="Average Scores by Weir Type"
-        width = {34} height = {20}
-        left = {5} top = {3}
-      >
-        <DashboardPieChart width={350} height={350}/>
-      </DashboardCardComponent>
+        <DashboardCardComponent
+          title="Scour Rating Distribution"
+          width = {34} height = {20}
+          left = {5} top = {3}
+        >
+          <DashboardPieChart 
+            width={350} height={350} 
+            data={table1Data} rowReference={2}/>
+        </DashboardCardComponent>
 
-      <DashboardCardComponent
-        title="Total Scores Distribution"
-        width = {34} height = {20}
-        left = {5} top = {3}
-      >
-        <DashboardPieChart width={350} height={350}/>
-      </DashboardCardComponent>
+        <DashboardCardComponent
+          title="Corrosion Rating Distribution"
+          width = {34} height = {20}
+          left = {5} top = {3}
+        >
+          <DashboardPieChart 
+            width={350} height={350} 
+            data={table1Data} rowReference={3}/>
+        </DashboardCardComponent>
 
-      <DashboardCardComponent
-        title="Filter and Search"
-        width = {34} height = {20}
-        left = {5} top = {3}
-      >
-        <DashboardPieChart width={350} height={350}/>
-      </DashboardCardComponent>
+        <DashboardCardComponent
+          title="Tackle Rating Distribution"
+          width = {34} height = {20}
+          left = {5} top = {3}
+        >
+          <DashboardPieChart 
+            width={350} height={350} 
+            data={table1Data} rowReference={4}/>
+        </DashboardCardComponent>
 
-    
-    </DashboardSection>
-	</Background>
-);
+        <DashboardCardComponent
+          title="Average Scores by Weir Type"
+          width = {34} height = {20}
+          left = {5} top = {3}
+        >
+          <DashboardPieChart 
+            width={350} height={350} 
+            data={table1Data} rowReference={1}/>
+        </DashboardCardComponent>
+
+        <DashboardCardComponent
+          title="Total Scores Distribution"
+          width = {34} height = {20}
+          left = {5} top = {3}
+        >
+          <DashboardPieChart 
+            width={350} height={350} 
+            data={table1Data} rowReference={1}/>
+        </DashboardCardComponent>
+
+        <DashboardCardComponent
+          title="Filter and Search"
+          width = {34} height = {20}
+          left = {5} top = {3}
+        >
+          <DashboardPieChart 
+            width={350} height={350} 
+            data={table1Data} rowReference={1}/>
+        </DashboardCardComponent>
+
+      
+      </DashboardSection>
+    </Background>
+  );
+}
 
 export default AssetDashboard;
