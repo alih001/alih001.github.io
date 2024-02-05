@@ -36,11 +36,11 @@ const DashboardTable = () => {
       <Table aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell>Dessert (100g serving)</TableCell>
-            <TableCell align="right">Calories</TableCell>
-            <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="right">Protein&nbsp;(g)</TableCell>
+            <TableCell>Weir Name</TableCell>
+            <TableCell align="right">Step 1 Score</TableCell>
+            <TableCell align="right">Step 2 Score</TableCell>
+            <TableCell align="right">Stage 1 Score</TableCell>
+            <TableCell align="right">Rank   </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

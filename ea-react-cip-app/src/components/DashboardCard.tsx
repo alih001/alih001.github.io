@@ -11,7 +11,8 @@ const MainContainer = styled.div`
   margin-left: ${props => props.left ? `${props.left}rem` : 'auto'};
   margin-top: ${props => props.top ? `${props.top}rem` : 'auto'};
   width: ${props => props.width ? `${props.width}rem` : 'auto'};
-  height: ${props => props.height ? `${props.height}rem` : 'auto'};  &:hover {
+  height: ${props => props.height ? `${props.height}rem` : 'auto'};  
+  &:hover {
     box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
     
   }

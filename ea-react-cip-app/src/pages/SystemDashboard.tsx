@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import MyGanttChart from '../charts/GanttChart';
 
 const HeroSection = styled.section`
   background-position: center, bottom left;
@@ -31,7 +32,14 @@ const Background = styled.div`
   min-height: 100vh;
 `;
 
+const DashboardSection = styled.div`
+  background-color: rgba(255, 255, 255, 1);
+  border-radius: 15px;
+  margin-top:1.5rem;
+`;
+
 const SystemDashboard: React.FC = () => (
+  <>
 	<Background>
 		<HeroSection className="light hero">
 			<div className="heroInner">
@@ -40,7 +48,12 @@ const SystemDashboard: React.FC = () => (
 				</span>
 			</div>
 		</HeroSection>
+
+    <DashboardSection>
+      <MyGanttChart/>
+    </DashboardSection>
 	</Background>
+  </>
 );
 
 export default SystemDashboard;

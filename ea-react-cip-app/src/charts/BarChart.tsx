@@ -1,99 +1,206 @@
-import React from "react";
-import { Pie } from "@visx/shape";
-import { Group } from "@visx/group";
-import { scaleOrdinal } from "@visx/scale";
-import { schemeCategory10 } from 'd3-scale-chromatic';
+// BarChart.tsx
+import React from 'react';
+import { BarStack } from '@visx/shape';
+import { SeriesPoint } from '@visx/shape/lib/types';
+import { Group } from '@visx/group';
+import { Grid } from '@visx/grid';
+import { AxisBottom } from '@visx/axis';
+import cityTemperature, { CityTemperature } from '@visx/mock-data/lib/mocks/cityTemperature';
+import { scaleBand, scaleLinear, scaleOrdinal } from '@visx/scale';
+import { timeParse, timeFormat } from '@visx/vendor/d3-time-format';
+import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip';
+import { LegendOrdinal } from '@visx/legend';
+import { localPoint } from '@visx/event';
 
-const getWeirTypeColor = scaleOrdinal({
-  domain: [],
-  range: schemeCategory10,
-});
+type CityName = 'New York' | 'San Francisco' | 'Austin';
 
-const weirTypeData = (data: any[], rowReference: number) => {
-  const counts = data.slice(1).reduce((acc, row) => {
-    const weirType = row[rowReference];
-    acc[weirType] = (acc[weirType] || 0) + 1;
-    return acc;
-  }, {});
-
-  return Object.keys(counts).map(key => ({
-    letter: key,
-    frequency: counts[key]
-  }));
+type TooltipData = {
+  bar: SeriesPoint<CityTemperature>;
+  key: CityName;
+  index: number;
+  height: number;
+  width: number;
+  x: number;
+  y: number;
+  color: string;
 };
 
-const frequencyAccessor = (d: { letter: string, frequency: number }) => d.frequency;
-
-const defaultMargin = { top: 20, right: 20, bottom: 20, left: 20 };
-
-export type PieProps = {
+export type BarStackProps = {
   width: number;
   height: number;
-  margin?: typeof defaultMargin;
-  data: any[];
-  rowReference: number;
+  margin?: { top: number; right: number; bottom: number; left: number };
+  events?: boolean;
 };
 
-const DashboardPieChart = ({
+const purple1 = '#6c5efb';
+const purple2 = '#c998ff';
+export const purple3 = '#a44afe';
+export const background = '#eaedff';
+const defaultMargin = { top: 40, right: 0, bottom: 0, left: 0 };
+const tooltipStyles = {
+  ...defaultStyles,
+  minWidth: 60,
+  backgroundColor: 'rgba(0,0,0,0.9)',
+  color: 'white',
+};
+
+const data = cityTemperature.slice(0, 12);
+const keys = Object.keys(data[0]).filter((d) => d !== 'date') as CityName[];
+
+const temperatureTotals = data.reduce((allTotals, currentDate) => {
+  const totalTemperature = keys.reduce((dailyTotal, k) => {
+    dailyTotal += Number(currentDate[k]);
+    return dailyTotal;
+  }, 0);
+  allTotals.push(totalTemperature);
+  return allTotals;
+}, [] as number[]);
+
+const parseDate = timeParse('%Y-%m-%d');
+const format = timeFormat('%b %d');
+const formatDate = (date: string) => format(parseDate(date) as Date);
+
+// accessors
+const getDate = (d: CityTemperature) => d.date;
+
+// scales
+const dateScale = scaleBand<string>({
+  domain: data.map(getDate),
+  padding: 0.2,
+});
+const temperatureScale = scaleLinear<number>({
+  domain: [0, Math.max(...temperatureTotals)],
+  nice: true,
+});
+const colorScale = scaleOrdinal<CityName, string>({
+  domain: keys,
+  range: [purple1, purple2, purple3],
+});
+
+let tooltipTimeout: number;
+
+export default function Example({
   width,
   height,
+  events = false,
   margin = defaultMargin,
-  data,
-  rowReference,
-}: PieProps) => {
+}: BarStackProps) {
+  const { tooltipOpen, tooltipLeft, tooltipTop, tooltipData, hideTooltip, showTooltip } =
+    useTooltip<TooltipData>();
 
-  console.log(data)
-  const processedData = weirTypeData(data, rowReference);
-  getWeirTypeColor.domain(processedData.map(d => d.letter));
+  const { containerRef, TooltipInPortal } = useTooltipInPortal({
+    // TooltipInPortal is rendered in a separate child of <body /> and positioned
+    // with page coordinates which should be updated on scroll. consider using
+    // Tooltip or TooltipWithBounds if you don't need to render inside a Portal
+    scroll: true,
+  });
 
-  const innerWidth = width - margin.left - margin.right;
-  const innerHeight = height - margin.top - margin.bottom;
-  const radius = Math.min(innerWidth, innerHeight) / 2;
-  const centerY = innerHeight / 2;
-  const centerX = innerWidth / 2;
-  const top = centerY + margin.top;
-  const left = centerX + margin.left;
-  const pieSortValues = (a, b) => b - a;
+  if (width < 10) return null;
+  // bounds
+  const xMax = width;
+  const yMax = height - margin.top - 100;
 
-  return (
-    <svg width={width} height={height}>
-      <Group top={top} left={left}>
-        <Pie
-          data={processedData}
-          pieValue={frequencyAccessor}
-          pieSortValues={pieSortValues}
-          outerRadius={radius}
-        >
-          {(pie) => {
-            return pie.arcs.map((arc, index) => {
-              const { letter } = arc.data;
-              const [centroidX, centroidY] = pie.path.centroid(arc);
-              const hasSpaceForLabel = arc.endAngle - arc.startAngle >= 0.1;
-              const arcPath = pie.path(arc);
-              const arcFill = getWeirTypeColor(arc.data.letter);
-              return (
-                <g key={`arc-${letter}-${index}`}>
-                  <path d={arcPath} fill={arcFill} />
-                  {hasSpaceForLabel && (
-                    <text
-                      x={centroidX}
-                      y={centroidY}
-                      dy=".33em"
-                      fill="#ffffff"
-                      fontSize={22}
-                      textAnchor="middle"
-                      pointerEvents="none"
-                    >
-                      {arc.data.letter}
-                    </text>
-                  )}
-                </g>
-              );
-            });
+  dateScale.rangeRound([0, xMax]);
+  temperatureScale.range([yMax, 0]);
+
+  return width < 10 ? null : (
+    <div style={{ position: 'relative' }}>
+      <svg ref={containerRef} width={width} height={height}>
+        <rect x={0} y={0} width={width} height={height} fill={background} rx={14} />
+        <Grid
+          top={margin.top}
+          left={margin.left}
+          xScale={dateScale}
+          yScale={temperatureScale}
+          width={xMax}
+          height={yMax}
+          stroke="black"
+          strokeOpacity={0.1}
+          xOffset={dateScale.bandwidth() / 2}
+        />
+        <Group top={margin.top}>
+          <BarStack<CityTemperature, CityName>
+            data={data}
+            keys={keys}
+            x={getDate}
+            xScale={dateScale}
+            yScale={temperatureScale}
+            color={colorScale}
+          >
+            {(barStacks) =>
+              barStacks.map((barStack) =>
+                barStack.bars.map((bar) => (
+                  <rect
+                    key={`bar-stack-${barStack.index}-${bar.index}`}
+                    x={bar.x}
+                    y={bar.y}
+                    height={bar.height}
+                    width={bar.width}
+                    fill={bar.color}
+                    onClick={() => {
+                      if (events) alert(`clicked: ${JSON.stringify(bar)}`);
+                    }}
+                    onMouseLeave={() => {
+                      tooltipTimeout = window.setTimeout(() => {
+                        hideTooltip();
+                      }, 300);
+                    }}
+                    onMouseMove={(event) => {
+                      if (tooltipTimeout) clearTimeout(tooltipTimeout);
+                      // TooltipInPortal expects coordinates to be relative to containerRef
+                      // localPoint returns coordinates relative to the nearest SVG, which
+                      // is what containerRef is set to in this example.
+                      const eventSvgCoords = localPoint(event);
+                      const left = bar.x + bar.width / 2;
+                      showTooltip({
+                        tooltipData: bar,
+                        tooltipTop: eventSvgCoords?.y,
+                        tooltipLeft: left,
+                      });
+                    }}
+                  />
+                )),
+              )
+            }
+          </BarStack>
+        </Group>
+        <AxisBottom
+          top={yMax + margin.top}
+          scale={dateScale}
+          tickFormat={formatDate}
+          stroke={purple3}
+          tickStroke={purple3}
+          tickLabelProps={{
+            fill: purple3,
+            fontSize: 11,
+            textAnchor: 'middle',
           }}
-        </Pie>
-      </Group>
-    </svg>
+        />
+      </svg>
+      <div
+        style={{
+          position: 'absolute',
+          top: margin.top / 2 - 10,
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          fontSize: '14px',
+        }}
+      >
+        <LegendOrdinal scale={colorScale} direction="row" labelMargin="0 15px 0 0" />
+      </div>
+
+      {tooltipOpen && tooltipData && (
+        <TooltipInPortal top={tooltipTop} left={tooltipLeft} style={tooltipStyles}>
+          <div style={{ color: colorScale(tooltipData.key) }}>
+            <strong>{tooltipData.key}</strong>
+          </div>
+          <div>{tooltipData.bar.data[tooltipData.key]}℉</div>
+          <div>
+            <small>{formatDate(getDate(tooltipData.bar.data))}</small>
+          </div>
+        </TooltipInPortal>
+      )}
+    </div>
   );
 }
-export default DashboardPieChart;

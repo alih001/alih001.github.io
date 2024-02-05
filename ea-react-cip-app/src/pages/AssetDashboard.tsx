@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import DashboardCardComponent from '../components/DashboardCard';
-import DashboardPieChart from '../charts/BarChart';
+import DashboardPieChart from '../charts/PieChart';
 import { useData } from '../contexts/DataContext';
 import DashboardTable from '../charts/summaryTable';
 
@@ -41,7 +41,6 @@ const DashboardSection = styled.div`
   grid-template-columns: repeat(2, 1fr);
   width: 95%;
   min-height: 75vh;
-  margin-left:2.5rem;
   margin-top:1.5rem;
 `;
 
@@ -61,16 +60,16 @@ const AssetDashboard: React.FC = () => {
 
         <DashboardCardComponent
           title="Top 10 Weir Complexes"
-          width = {34} height = {50}
-          left = {5} top = {3}
+          width = {34} height = {45}
+          left = {5} top = {0}
         >
           <DashboardTable/>
         </DashboardCardComponent>
 
         <DashboardCardComponent
           title="Top 10 Weir Assets"
-          width = {34} height = {50}
-          left = {5} top = {3}
+          width = {34} height = {45}
+          left = {5} top = {0}
         >
           <DashboardTable/>
         </DashboardCardComponent>
@@ -81,7 +80,7 @@ const AssetDashboard: React.FC = () => {
           left = {5} top = {3}
         >
           <DashboardPieChart 
-            width={350} height={350} 
+            width={300} height={300} 
             data={table1Data} rowReference={1}/>
         </DashboardCardComponent>
 
@@ -91,7 +90,7 @@ const AssetDashboard: React.FC = () => {
           left = {5} top = {3}
         >
           <DashboardPieChart 
-            width={350} height={350} 
+            width={300} height={300} 
             data={table1Data} rowReference={2}/>
         </DashboardCardComponent>
 
@@ -101,7 +100,7 @@ const AssetDashboard: React.FC = () => {
           left = {5} top = {3}
         >
           <DashboardPieChart 
-            width={350} height={350} 
+            width={300} height={300} 
             data={table1Data} rowReference={3}/>
         </DashboardCardComponent>
 
@@ -111,7 +110,7 @@ const AssetDashboard: React.FC = () => {
           left = {5} top = {3}
         >
           <DashboardPieChart 
-            width={350} height={350} 
+            width={300} height={300} 
             data={table1Data} rowReference={4}/>
         </DashboardCardComponent>
 
@@ -121,7 +120,7 @@ const AssetDashboard: React.FC = () => {
           left = {5} top = {3}
         >
           <DashboardPieChart 
-            width={350} height={350} 
+            width={300} height={300} 
             data={table1Data} rowReference={1}/>
         </DashboardCardComponent>
 
@@ -131,7 +130,7 @@ const AssetDashboard: React.FC = () => {
           left = {5} top = {3}
         >
           <DashboardPieChart 
-            width={350} height={350} 
+            width={300} height={300} 
             data={table1Data} rowReference={1}/>
         </DashboardCardComponent>
 
@@ -141,7 +140,7 @@ const AssetDashboard: React.FC = () => {
           left = {5} top = {3}
         >
           <DashboardPieChart 
-            width={350} height={350} 
+            width={300} height={300} 
             data={table1Data} rowReference={1}/>
         </DashboardCardComponent>
 
