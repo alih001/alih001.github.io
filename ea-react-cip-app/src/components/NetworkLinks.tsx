@@ -1,30 +1,12 @@
 // Dashboard.tsx
-import React, { useState } from 'react';
+import React from 'react';
 import '../styles/networkLinks.css';
 import { MapInteractionCSS } from 'react-map-interaction'
-import Draggable from 'react-draggable'
+import Draggable, { DraggableData, DraggableEventHandler } from 'react-draggable'
 import Arrow from './Arrow'
 import { useData } from '../contexts/DataContext';
-import styled from 'styled-components';
-import {AiFillDashboard, AiOutlineMessage, AiOutlineCloseCircle } from "react-icons/ai"; // Example icons
-import { TbUniverse } from "react-icons/tb";
 import { Sidebar, Menu, MenuItem } from 'react-pro-sidebar';
-import { NavLink } from 'react-router-dom';
-import { ModeCommentSharp } from '@mui/icons-material';
-
-type Node = {
-  id: string;
-  name: string;
-  x: number;
-  y: number;
-};
-
-type DashboardProps = {
-  nodes: Node[];
-  onAddNode: (x: number, y: number) => void;
-  updateNodes: (nodes: Node[]) => void;
-};
-
+import { Node, DashboardProps, mapStateValue} from '../types/public-types'
 
 const NetworkLinks: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes }) => {
 
@@ -33,7 +15,7 @@ const NetworkLinks: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes 
   const { arrows, setArrows } = useData();
   const { tempStart, setTempStart } = useData();
 
-  const handleDragStart = (e) => {
+  const handleDragStart: DraggableEventHandler = (e, _data) => {
     if (mode === 'pan') {
       e.stopPropagation();
     }
@@ -54,7 +36,7 @@ const NetworkLinks: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes 
   const renderNodes = () => nodes.map(node => (
     <Draggable
       key={node.id}
-      onStart={mode === 'move' ? handleDragStart : undefined}
+      onStart={(e, data) => mode === 'move' ? handleDragStart(e, data) : undefined}
       onStop={(e, data) => mode === 'move' ? handleDragStop(node.id, e, data) : undefined}
       position={{ x: node.x, y: node.y }}
       disabled={mode !== 'move'}
@@ -85,7 +67,7 @@ const NetworkLinks: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes 
 
       <MapInteractionCSS
         value={mapState}
-        onChange={(value) => setMapState(value)}
+        onChange={(value: mapStateValue) => setMapState(value)}
         minScale={mode === 'pan' ? 0.5 : 1}
         maxScale={mode === 'pan' ? 5 : 1}
         disablePan={mode !== 'pan'}
@@ -103,6 +85,7 @@ const NetworkLinks: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes 
       const halfNodeSize = nodeSize / 2;
 
 
+      console.log(mapState)
       // Adjusting the click position so that the node's center aligns with the cursor
       const x = (e.clientX - rect.left - mapState.translation.x) / mapState.scale - halfNodeSize;
       const y = (e.clientY - rect.top - mapState.translation.y) / mapState.scale - halfNodeSize;
@@ -111,7 +94,7 @@ const NetworkLinks: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes 
     }
   };
 
-  const handleDragStop = (nodeId, e, data) => {
+  const handleDragStop = (nodeId: string, _e: MouseEvent, data: DraggableData) => {
     updateNodes(prevNodes => prevNodes.map(node => {
       if (node.id === nodeId) {
         return { ...node, x: data.x, y: data.y };
@@ -120,7 +103,7 @@ const NetworkLinks: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes 
     }));
   };
 
-  const getMenuItemClass = (menuMode) => {
+  const getMenuItemClass = (menuMode: string) => {
     return mode === menuMode ? 'activeLink' : 'normalLink';
   };
   

@@ -24,16 +24,24 @@ const MyGanttChart = () => {
         console.log("On date change Id:" + task.id);
         let newTasks = tasks.map(t => (t.id === task.id ? task : t));
         if (task.project) {
-          const [start, end] = getStartEndDateForProject(newTasks, task.project);
-          const project = newTasks[newTasks.findIndex(t => t.id === task.project)];
-          if (
-            project.start.getTime() !== start.getTime() ||
-            project.end.getTime() !== end.getTime()
-          ) {
-            const changedProject = { ...project, start, end };
-            newTasks = newTasks.map(t =>
-              t.id === task.project ? changedProject : t
-            );
+          const dates = getStartEndDateForProject(newTasks, task.project);
+
+          if (dates.length === 0) {
+            console.log("Bro something went wrong with updating Gantt chart dates")
+          } else {
+
+            const [start, end] = dates;
+            const project = newTasks[newTasks.findIndex(t => t.id === task.project)];
+
+            if (
+              project.start.getTime() !== start.getTime() ||
+              project.end.getTime() !== end.getTime()
+            ) {
+              const changedProject = { ...project, start, end };
+              newTasks = newTasks.map(t =>
+                t.id === task.project ? changedProject : t
+              );
+            }
           }
         }
         setTasks(newTasks);
@@ -47,7 +55,7 @@ const MyGanttChart = () => {
         return conf;
       };
     
-      const handleProgressChange = async (task: Task) => {
+      const handleProgressChange = (task: Task) => {
         setTasks(tasks.map(t => (t.id === task.id ? task : t)));
         console.log("On progress change Id:" + task.id);
       };
@@ -76,7 +84,6 @@ const MyGanttChart = () => {
             onViewListChange={setIsChecked}
             isChecked={isChecked}
           />
-          <h3>Gantt With Unlimited Height</h3>
           <Gantt
             tasks={tasks}
             viewMode={view}

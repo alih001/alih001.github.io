@@ -1,12 +1,7 @@
 import React from "react";
 import "gantt-task-react/dist/index.css";
 import { ViewMode } from "gantt-task-react";
-
-type ViewSwitcherProps = {
-  isChecked: boolean;
-  onViewListChange: (isChecked: boolean) => void;
-  onViewModeChange: (viewMode: ViewMode) => void;
-};
+import { ViewSwitcherProps } from '../types/public-types'
 
 export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
   onViewModeChange,
@@ -51,12 +46,6 @@ export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
       <button
         className="Button"
         onClick={() => onViewModeChange(ViewMode.Year)}
-      >
-        Year
-      </button>
-      <button
-        className="Button"
-        onClick={() => onViewModeChange(ViewMode.QuarterYear)}
       >
         Year
       </button>
