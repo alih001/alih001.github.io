@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
+import { DashboardCardProps, MainContainerProps } from '../types/public-types';
 
-const MainContainer = styled.div`
+const MainContainer = styled.div<MainContainerProps>`
 
   background-color: rgba(255, 255, 255, 0.5);
   border-radius: 15px;
@@ -30,15 +31,6 @@ const ContentContainer = styled.div`
   justify-content: center; // Centers items horizontally in the container
 
 `;
-
-interface DashboardCardProps {
-    title: string;
-    children?: React.ReactNode;
-    width: number;
-    height: number;
-    left: number;
-    top: number;
-}
 
 const DashboardCardComponent: React.FC<DashboardCardProps> = ({ title, width, height, left, top, children }) => {
     return (

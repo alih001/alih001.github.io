@@ -1,7 +1,6 @@
 // DataContext.tsx
 import React, { createContext, useState, useContext, ReactNode } from 'react';
-
-type TableRow = (string | number)[];
+import { TableRow } from '../types/public-types'
 
 type DataContextType = {
     // Populate Table Props
@@ -16,7 +15,7 @@ type DataContextType = {
     showModal: boolean;
     setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
     sliderValue: number;
-    setSliderValue: React.Dispatch<React.SetStateAction<number>>;
+    setSliderValue: React.Dispatch<React.SetStateAction<number | null>>;
     editingRowIndex: number | null;
     setEditingRowIndex: React.Dispatch<React.SetStateAction<number | null>>;
     selectedPackages: Set<string>;

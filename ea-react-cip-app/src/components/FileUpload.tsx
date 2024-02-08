@@ -1,10 +1,7 @@
 // FileUpload.tsx
 import React from 'react';
 import styled from 'styled-components';
-
-type FileUploadProps = {
-  onFileSelect: (file: File) => void;
-};
+import { FileUploadProps } from '../types/public-types'
 
 const Input = styled.input.attrs({
   type: 'file'
@@ -40,7 +37,6 @@ const Button = styled.label`
   }
 `;
 
-
 const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect }) => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -49,7 +45,6 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect }) => {
     }
   };
 
-  // return <input type="file" onChange={handleFileChange} accept=".xlsx, .xls" />;
   return (
     <>
       <Input id="file-upload" onChange={handleFileChange} accept=".xlsx, .xls"  />

@@ -2,14 +2,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import '../styles/tableStyles.css';
 import CustomModal from './CustomModal';
-import { Button, Form, Modal } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import { useData } from '../contexts/DataContext';
-
-type CostTableProps = {
-  data: string[][];
-  onDataChange: (newData: string[][]) => void;
-  tableId: string;
-};
+import { TableCell, TableRow, TableData, CostTableProps } from '../types/public-types';
 
 const CostTable: React.FC<CostTableProps> = ({
     data, onDataChange, tableId,
@@ -36,9 +31,9 @@ const CostTable: React.FC<CostTableProps> = ({
         return <div>No data available</div>;
     }
   
-    const handleSliderChange = (e) => setSliderValue(e.target.value);
+    const handleSliderChange = (e: MouseEvent) => setSliderValue(e.target.value);
   
-    const openModal = (rowIndex) => {
+    const openModal = (rowIndex: number) => {
       setEditingRowIndex(rowIndex);
       setShowModal(true);
     };
@@ -66,8 +61,8 @@ const CostTable: React.FC<CostTableProps> = ({
                 <div key={packageName}>
                   <input
                     type="checkbox"
-                    checked={selectedPackages.has(packageName)}
-                    onChange={(e) => handlePackageCheckChange(packageName, e.target.checked)}
+                    checked={selectedPackages.has(numToStringTypeConverter(packageName))}
+                    onChange={(e) => handlePackageCheckChange(numToStringTypeConverter(packageName), e.target.checked)}
                   />
                   {packageName}
                 </div>
@@ -79,7 +74,7 @@ const CostTable: React.FC<CostTableProps> = ({
       };
       
 
-    const handlePackageCheckChange = (packageName, isChecked) => {
+    const handlePackageCheckChange = (packageName: string, isChecked: boolean) => {
         setSelectedPackages(prev => {
         const newSelected = new Set(prev);
         if (isChecked) {
@@ -94,7 +89,6 @@ const CostTable: React.FC<CostTableProps> = ({
     const filteredData = data.filter((row, rowIndex) => {
         // Skip header row
         if (rowIndex === 0) return true;
-      
         // Include rows whose package is selected
         return selectedPackages.has(row[0]);
       });
@@ -103,7 +97,7 @@ const CostTable: React.FC<CostTableProps> = ({
 
         if (rowIndex !== null) {
 
-            let updatedData = [...data];
+            const updatedData = [...data];
 
             for (let i = 1; i <= 3; i++) {
               if (rowIndex + i < updatedData.length) {
@@ -131,7 +125,7 @@ const CostTable: React.FC<CostTableProps> = ({
       };
 
     // Function to check if a row is a group header
-    const isGroupHeader = (row: string[]) => {
+    const isGroupHeader = (row: TableRow) => {
         return row[1].includes("Package Summary");
         };
 
@@ -148,7 +142,7 @@ const CostTable: React.FC<CostTableProps> = ({
         });
     };
 
-    const shouldDisplayRow = (row, rowIndex) => {
+    const shouldDisplayRow = (row: TableRow, rowIndex: number) => {
         // Always show header rows
         if (rowIndex === 0 || isGroupHeader(row)) return true;
         const isPackageSelected = selectedPackages.has(row[0]);
@@ -157,11 +151,11 @@ const CostTable: React.FC<CostTableProps> = ({
       };
       
 
-    const handleYearChange = (rowIndex: number, colIndex: number,newValue: string) => {
+    const handleYearChange = (rowIndex: number, colIndex: number, newValue: string) => {
         const newYear = parseInt(newValue, 10);
         const updatedRow = shiftRowDataForYear(data[rowIndex], newYear);
         
-        let updatedData = [...data];
+        const updatedData = [...data];
         updatedData[rowIndex] = updatedRow;
         updatedData[rowIndex][colIndex] = newYear;
 
@@ -193,11 +187,11 @@ const CostTable: React.FC<CostTableProps> = ({
         return 6 + (year - baseYear);
     };
 
-    const shiftRowDataForYear = (row: any[], startYear: number) => {
+    const shiftRowDataForYear = (row: TableRow, startYear: number) => {
         const columnIndex = yearToColumnIndex(startYear);
         const newRow = row.slice(6).filter(value => value !== 0 && value !== "-");
       
-        let updatedRow = [...row];
+        const updatedRow = [...row];
 
         for (let i = 6; i < updatedRow.length; i++) {
             updatedRow[i] = "-";
@@ -212,7 +206,7 @@ const CostTable: React.FC<CostTableProps> = ({
         return updatedRow;
       };
       
-    const renderYearDropdown = (rowIndex: number, colIndex: number, currentValue: any) => {
+    const renderYearDropdown = (rowIndex: number, colIndex: number, currentValue: number) => {
         return (
         <select
             value={currentValue}
@@ -225,12 +219,12 @@ const CostTable: React.FC<CostTableProps> = ({
         );
     };
 
-    const shiftRowDataForDuration = (row: any[], currentTotal: number, newDuration: number, startYear: number) => {
+    const shiftRowDataForDuration = (row: TableRow, currentTotal: number, newDuration: number, startYear: number) => {
 
-        const assignedValue = parseInt(currentTotal / newDuration, 10)
+        const assignedValue = Math.round(currentTotal / newDuration)
         const columnIndex = yearToColumnIndex(startYear);
       
-        let updatedRow = [...row];
+        const updatedRow = [...row];
 
         for (let i = 6; i < updatedRow.length; i++) {
             updatedRow[i] = "-";
@@ -245,21 +239,39 @@ const CostTable: React.FC<CostTableProps> = ({
         return updatedRow;
       };
 
-    const handleDurationChange = (rowIndex: number, colIndex: number,newValue: string) => {
-        const newDuration = parseInt(newValue, 10);
+    const stringToNumTypeConverter = (value: string | number) => {
+      const convertedValue = typeof value === 'string' ? parseFloat(value) : value;
+
+      return convertedValue
+    }
+
+    const numToStringTypeConverter = (value: string | number): string => {
+      const convertedValue = typeof value === 'number' ? value.toString() : value;
+    
+      return convertedValue;
+    }
+    
+
+    const handleDurationChange = (rowIndex: number, colIndex: number, newValue: string) => {
         const currentTotal = data[rowIndex][5]
         const startYear = data[rowIndex][2]
-        const updatedRow = shiftRowDataForDuration(data[rowIndex], currentTotal, newDuration, startYear);
+
+        // Handle potential string issues
+        const currentTotalNumber = stringToNumTypeConverter(currentTotal)
+        const startYearNumber = stringToNumTypeConverter(startYear)
+        const newDurationNumber = stringToNumTypeConverter(newValue)
+
+        const updatedRow = shiftRowDataForDuration(data[rowIndex], currentTotalNumber, newDurationNumber, startYearNumber);
 
 
-        let updatedData = [...data];
+        const updatedData = [...data];
         updatedData[rowIndex] = updatedRow;
         updatedData[rowIndex][colIndex] = newValue;
         onDataChange(updatedData);
         updateTotalCosts(rowIndex, updatedData)
       };
 
-    const renderDurationDropdown = (rowIndex: number, colIndex: number, currentValue: any) => {
+    const renderDurationDropdown = (rowIndex: number, colIndex: number, currentValue: number) => {
         return (
         <select
             value={currentValue}
@@ -272,8 +284,8 @@ const CostTable: React.FC<CostTableProps> = ({
         );
     };
 
-    const handleCostSplitChange = (rowIndex: number, colIndex: number, newValue: string) => {
-        const sliderValue = parseInt(newValue, 10);
+    const handleCostSplitChange = (rowIndex: number, _colIndex: number, newValue: string) => {
+        const sliderValue = stringToNumTypeConverter(newValue)
         const currentGroupName = data[rowIndex][0];
 
         // Find the related group header row by searching from the start
@@ -287,16 +299,21 @@ const CostTable: React.FC<CostTableProps> = ({
           return;
         }
       
-        const totalPackageCost = parseInt(data[headerRowIndex][5], 10);
+        const totalPackageCost = stringToNumTypeConverter(data[headerRowIndex][5]);
         const newPackageCost = (totalPackageCost * sliderValue) / 100;
       
         // Update the data
-        let updatedData = [...data];
+        const updatedData = [...data];
         updatedData[rowIndex][4] = newValue; // Update package cost for this row
         updatedData[rowIndex][5] = newPackageCost; // Update package cost for this row
 
         // Update Duration Split with new Cost Split
-        const updatedRow = shiftRowDataForDuration(updatedData[rowIndex], newPackageCost, updatedData[rowIndex][3], updatedData[rowIndex][2]);
+        const updatedRow = shiftRowDataForDuration(updatedData[rowIndex], 
+                                                   newPackageCost, 
+                                                   stringToNumTypeConverter(updatedData[rowIndex][3]), 
+                                                   stringToNumTypeConverter(updatedData[rowIndex][2])
+                                                   );
+
         updatedData[rowIndex] = updatedRow;
         onDataChange(updatedData);
 
@@ -304,7 +321,7 @@ const CostTable: React.FC<CostTableProps> = ({
 
       };
       
-    const updateTotalCosts = (rowIndex:number, updatedData) => {
+    const updateTotalCosts = (rowIndex:number, updatedData: TableData) => {
         const currentGroupName = updatedData[rowIndex][0]
         let headerRowIndex = 0
         while (headerRowIndex < updatedData.length && updatedData[headerRowIndex][0] !== currentGroupName) {
@@ -324,9 +341,9 @@ const CostTable: React.FC<CostTableProps> = ({
 
         // Start from column index 7
         for (let colIndex = 6; colIndex < totalRow.length; colIndex++) {
-            const feasibilityValue = parseInt(feasibilityRow[colIndex], 10) || 0;
-            const designValue = parseInt(designRow[colIndex], 10) || 0;
-            const constructionValue = parseInt(constructionRow[colIndex], 10) || 0;
+            const feasibilityValue = stringToNumTypeConverter(feasibilityRow[colIndex]) || 0;
+            const designValue = stringToNumTypeConverter(designRow[colIndex]) || 0;
+            const constructionValue = stringToNumTypeConverter(constructionRow[colIndex]) || 0;
 
             totalRow[colIndex] = feasibilityValue + designValue + constructionValue;
         }
@@ -347,13 +364,13 @@ const CostTable: React.FC<CostTableProps> = ({
         );
       };
       
-    const renderCellContent = (row: string[], rowIndex: number, colIndex: number, cell: any) => {
+    const renderCellContent = (row: TableRow, rowIndex: number, colIndex: number, cell: TableCell) => {
         if (colIndex === 2 && !isGroupHeader(row)) {
-            return renderYearDropdown(rowIndex, colIndex, cell);
+            return renderYearDropdown(rowIndex, colIndex, stringToNumTypeConverter(cell));
         } else if (colIndex === 3 && !isGroupHeader(row)) {
-            return renderDurationDropdown(rowIndex, colIndex, cell);
+            return renderDurationDropdown(rowIndex, colIndex, stringToNumTypeConverter(cell));
         } else if (colIndex === 4 && !isGroupHeader(row)) {
-            return rendercostSplitSlider(rowIndex, colIndex, cell);
+            return rendercostSplitSlider(rowIndex, colIndex, stringToNumTypeConverter(cell));
         }
         else if (cell === 0) {
             return '-';
