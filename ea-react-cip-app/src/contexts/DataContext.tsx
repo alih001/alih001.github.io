@@ -1,6 +1,6 @@
 // DataContext.tsx
 import React, { createContext, useState, useContext, ReactNode } from 'react';
-import { TableRow } from '../types/public-types'
+import { TableRow, CustomNode } from '../types/public-types'
 
 type DataContextType = {
     // Populate Table Props
@@ -30,8 +30,8 @@ type DataContextType = {
     setDropdownValues: React.Dispatch<React.SetStateAction<{ [key: string]: string }>>;
     collapsedAssetRows: Set<number>;
     setCollapsedAssetRows: React.Dispatch<React.SetStateAction<Set<number>>>;
-    outputValues: { [key: string]: string };
-    setOutputValues: React.Dispatch<React.SetStateAction<{ [key: string]: string }>>;
+    outputValues: { [key: string]: number };
+    setOutputValues: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>;
 
     // New states for NetworkLinks
     mapState: { scale: number; translation: { x: number; y: number } };
@@ -42,8 +42,8 @@ type DataContextType = {
     setArrows: React.Dispatch<React.SetStateAction<typeof arrows>>;
     tempStart: string | null;
     setTempStart: React.Dispatch<React.SetStateAction<string | null>>;
-    nodes: Node[];
-    setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
+    nodes: CustomNode[];
+    setNodes: React.Dispatch<React.SetStateAction<CustomNode[]>>;
   };
   
 
@@ -58,7 +58,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Asset Table States
   const [dropdownValues, setDropdownValues] = useState<{ [key: string]: string }>({});
-  const [outputValues, setOutputValues] = useState<{ [key: string]: string }>({});
+  const [outputValues, setOutputValues] = useState<{ [key: string]: number }>({});
   const [collapsedAssetRows, setCollapsedAssetRows] = useState<Set<number>>(
     new Set(table1Data.map((_, rowIndex) => rowIndex).slice(1))  // Exclude header row
   );
@@ -78,7 +78,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [mode, setMode] = useState('edit');
   const [arrows, setArrows] = useState<Array<{ startId: string; endId: string }>>([]);
   const [tempStart, setTempStart] = useState<string | null>(null);
-  const [nodes, setNodes] = useState<Node[]>([]);
+  const [nodes, setNodes] = useState<CustomNode[]>([]);
 
   const contextValue: DataContextType = {
     // Table States

@@ -1,36 +1,16 @@
 // BarChart.tsx
 import React from 'react';
 import { BarStack } from '@visx/shape';
-import { SeriesPoint } from '@visx/shape/lib/types';
 import { Group } from '@visx/group';
 import { Grid } from '@visx/grid';
 import { AxisBottom } from '@visx/axis';
-import cityTemperature, { CityTemperature } from '@visx/mock-data/lib/mocks/cityTemperature';
 import { scaleBand, scaleLinear, scaleOrdinal } from '@visx/scale';
 import { timeParse, timeFormat } from '@visx/vendor/d3-time-format';
 import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip';
 import { LegendOrdinal } from '@visx/legend';
 import { localPoint } from '@visx/event';
-
-type CityName = 'New York' | 'San Francisco' | 'Austin';
-
-type TooltipData = {
-  bar: SeriesPoint<CityTemperature>;
-  key: CityName;
-  index: number;
-  height: number;
-  width: number;
-  x: number;
-  y: number;
-  color: string;
-};
-
-export type BarStackProps = {
-  width: number;
-  height: number;
-  margin?: { top: number; right: number; bottom: number; left: number };
-  events?: boolean;
-};
+import { CityName, TooltipData, BarStackProps } from '../types/public-types'
+import cityTemperature, { CityTemperature } from '@visx/mock-data/lib/mocks/cityTemperature';
 
 const purple1 = '#6c5efb';
 const purple2 = '#c998ff';

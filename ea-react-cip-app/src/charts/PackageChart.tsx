@@ -5,15 +5,8 @@ import { AxisBottom } from '@visx/axis';
 import cityTemperature, { CityTemperature } from '@visx/mock-data/lib/mocks/cityTemperature';
 import { scaleBand, scaleLinear, scaleOrdinal } from '@visx/scale';
 import { timeParse, timeFormat } from '@visx/vendor/d3-time-format';
+import { BarGroupProps, CityName } from '../types/public-types';
 
-export type BarGroupProps = {
-  width: number;
-  height: number;
-  margin?: { top: number; right: number; bottom: number; left: number };
-  events?: boolean;
-};
-
-type CityName = 'New York' | 'San Francisco' | 'Austin';
 
 const blue = '#aeeef8';
 export const green = '#e5fd3d';

@@ -2,12 +2,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import '../styles/tableStyles.css';
 import { useData } from '../contexts/DataContext';
+import { TableRow, AssetTableProps, DropdownValueMapType, StagesFactorMapType } from '../types/public-types'
 
-type AssetTableProps = {
-  data: string[][];
-  onDataChange: (newData: string[][]) => void;
-  tableId: string;
-};
 
 const AssetTable: React.FC<AssetTableProps> = ({
     data, onDataChange, tableId
@@ -15,20 +11,20 @@ const AssetTable: React.FC<AssetTableProps> = ({
 
   const arrayCollapsibleColumnIndexes = useMemo (() => [2, 3, 4, 5], []);
 
-  const dropdownValueMap = useMemo(() => ({
+  const dropdownValueMap: DropdownValueMapType = useMemo(() => ({
       "None": 0,
       "Low": 2,
       "Medium": 4,
       "High": 6
     }), []);
 
-  const stage1FactorsMap = useMemo(() => ({
+  const stage1FactorsMap: StagesFactorMapType = useMemo(() => ({
       2: 0.5,
       3: 1.5,
       4: 0.2,
     }), []);
   
-  const stage2FactorsMap = useMemo(() => ({
+  const stage2FactorsMap: StagesFactorMapType = useMemo(() => ({
       2: 0.9,
       4: 2.3,
     }), []);
@@ -46,11 +42,12 @@ const AssetTable: React.FC<AssetTableProps> = ({
   useEffect(() => {
     const initialOutputValues: { [key: string]: number } = {};
 
-    data.forEach((row, rowIndex) => {
+    data.forEach((row: TableRow, rowIndex: number) => {
       if (rowIndex > 0) { // Skip the header row
-        dropdownColumnIndexes.forEach(columnIndex => {
+        dropdownColumnIndexes.forEach((columnIndex: number) => {
           const key = `${tableId}-${rowIndex}-${columnIndex}-output`;
-          initialOutputValues[key] = dropdownValueMap[row[columnIndex]] || row[columnIndex];
+          const value = dropdownValueMap[row[columnIndex]] ?? Number(row[columnIndex]);
+          initialOutputValues[key] = !isNaN(value) ? value : 0;
         });
       }
     });
@@ -82,7 +79,7 @@ const AssetTable: React.FC<AssetTableProps> = ({
     const key = `${tableId}-${rowIndex}-${columnIndex}`;
     setDropdownValues({ ...dropdownValues, [key]: newValue });
   
-    let updatedData = [...data];
+    const updatedData = [...data];
     updatedData[rowIndex] = [...updatedData[rowIndex]];
 
     // Update the output value for score change
@@ -99,10 +96,10 @@ const AssetTable: React.FC<AssetTableProps> = ({
       let stage2Score = 0;
       console.log("About to loop through all explicity defined ddms")
       // Loop through dropdown columns to calculate scores
-      dropdownColumnIndexes.forEach((dropdownColIndex, idx) => {
+      dropdownColumnIndexes.forEach((dropdownColIndex, _idx) => {
         const outputKey = `${tableId}-${rowIndex}-${dropdownColIndex}-output`;
-        let stage1Factor = stage1FactorsMap[dropdownColIndex] || 0;
-        let stage2Factor = stage2FactorsMap[dropdownColIndex] || 0;
+        const stage1Factor = stage1FactorsMap[dropdownColIndex] || 0;
+        const stage2Factor = stage2FactorsMap[dropdownColIndex] || 0;
     
         // let outputValue = outputValues[outputKey] || dropdownValue;
         let outputValue = (dropdownValueMap[newValue] || newValue);
@@ -169,11 +166,11 @@ const AssetTable: React.FC<AssetTableProps> = ({
   };
   
 
-  const renderCollapsibleRow = (row, rowIndex, collapsibleColumnIndexes) => {
+  const renderCollapsibleRow = (row: TableRow, rowIndex: number, collapsibleColumnIndexes:number[]) => {
       return (
           <>
             {/* Render the header row for the collapsible set */}
-            {renderCollapsibleRowHeader(collapsibleColumnIndexes)}
+            {renderCollapsibleRowHeader()}
             {/* Render the collapsible rows */}
             {collapsibleColumnIndexes.map(columnIndex => (
                 <tr key={`${rowIndex}-collapsible-${columnIndex}`}>

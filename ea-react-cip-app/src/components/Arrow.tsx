@@ -1,14 +1,6 @@
 import React from 'react';
+import { ArrowProps } from '../types/public-types'
 
-type Point = {
-  x: number;
-  y: number;
-};
-
-type ArrowProps = {
-  startPoint: Point;
-  endPoint: Point;
-};
 
 const Arrow: React.FC<ArrowProps> = ({ startPoint, endPoint }) => {
   // Calculations for the SVG canvas size and position

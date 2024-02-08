@@ -2,11 +2,11 @@
 import React from 'react';
 import '../styles/networkLinks.css';
 import { MapInteractionCSS } from 'react-map-interaction'
-import Draggable, { DraggableData, DraggableEventHandler } from 'react-draggable'
+import Draggable, { DraggableData, DraggableEvent, DraggableEventHandler } from 'react-draggable'
 import Arrow from './Arrow'
 import { useData } from '../contexts/DataContext';
 import { Sidebar, Menu, MenuItem } from 'react-pro-sidebar';
-import { Node, DashboardProps, mapStateValue} from '../types/public-types'
+import { CustomNode, DashboardProps, mapStateValue} from '../types/public-types'
 
 const NetworkLinks: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes }) => {
 
@@ -21,9 +21,9 @@ const NetworkLinks: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes 
     }
   };
 
-  const handleNodeClick = (node: Node) => {
+  const handleNodeClick = (node: CustomNode) => {
     if (!tempStart) {
-      setTempStart(node.id);
+      setTempStart(String(node.id));
     } else {
       setArrows([...arrows, { startId: tempStart, endId: node.id }]);
       setTempStart(null);
@@ -94,7 +94,7 @@ const NetworkLinks: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes 
     }
   };
 
-  const handleDragStop = (nodeId: string, _e: MouseEvent, data: DraggableData) => {
+  const handleDragStop = (nodeId: string, _e: DraggableEvent, data: DraggableData) => {
     updateNodes(prevNodes => prevNodes.map(node => {
       if (node.id === nodeId) {
         return { ...node, x: data.x, y: data.y };

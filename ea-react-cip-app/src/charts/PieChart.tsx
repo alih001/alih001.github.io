@@ -3,14 +3,13 @@ import { Pie } from "@visx/shape";
 import { Group } from "@visx/group";
 import { scaleOrdinal } from "@visx/scale";
 import { schemeCategory10 } from 'd3-scale-chromatic';
+import { TableData, CountMap, PieProps } from '../types/public-types'
 
-const getWeirTypeColor = scaleOrdinal({
-  domain: [],
-  range: schemeCategory10,
-});
 
-const weirTypeData = (data: any[], rowReference: number) => {
-  const counts = data.slice(1).reduce((acc, row) => {
+const getWeirTypeColor = scaleOrdinal<string, string>().domain([]).range(schemeCategory10);
+
+const weirTypeData = (data: TableData, rowReference: number) => {
+  const counts = data.slice(1).reduce((acc: CountMap, row) => {
     const weirType = row[rowReference];
     acc[weirType] = (acc[weirType] || 0) + 1;
     return acc;
@@ -23,17 +22,7 @@ const weirTypeData = (data: any[], rowReference: number) => {
 };
 
 const frequencyAccessor = (d: { letter: string, frequency: number }) => d.frequency;
-
 const defaultMargin = { top: 20, right: 20, bottom: 20, left: 20 };
-
-export type PieProps = {
-  width: number;
-  height: number;
-  margin?: typeof defaultMargin;
-  data: any[];
-  rowReference: number;
-};
-
 const DashboardPieChart = ({
   width,
   height,
@@ -43,7 +32,9 @@ const DashboardPieChart = ({
 }: PieProps) => {
 
   const processedData = weirTypeData(data, rowReference);
+
   getWeirTypeColor.domain(processedData.map(d => d.letter));
+  getWeirTypeColor.range(schemeCategory10);
 
   const innerWidth = width - margin.left - margin.right;
   const innerHeight = height - margin.top - margin.bottom;
@@ -52,7 +43,6 @@ const DashboardPieChart = ({
   const centerX = innerWidth / 2;
   const top = centerY + margin.top;
   const left = centerX + margin.left;
-  const pieSortValues = (a, b) => b - a;
 
   return (
     <svg width={width} height={height}>
@@ -60,7 +50,7 @@ const DashboardPieChart = ({
         <Pie
           data={processedData}
           pieValue={frequencyAccessor}
-          pieSortValues={pieSortValues}
+          pieSortValues={() => -1}
           outerRadius={radius}
         >
           {(pie) => {

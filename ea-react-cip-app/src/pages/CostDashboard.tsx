@@ -5,6 +5,7 @@ import { useData } from '../contexts/DataContext';
 import { Button, Form, Modal } from 'react-bootstrap';
 import Example from '../charts/BarChart';
 import PackageChart from '../charts/PackageChart';
+import { TableData, TableRow, DynamicRow } from '../types/public-types'
 
 
 const HeroSection = styled.section`
@@ -45,9 +46,9 @@ const CostCard = styled.div`
 `;
 
 
-const CustomButton = styled.button`
-  margin-left: 1rem;
-`;
+// const CustomButton = styled.button`
+//   margin-left: 1rem;
+// `;
 
 const CostDashboard: React.FC = () => {
 
@@ -56,12 +57,13 @@ const CostDashboard: React.FC = () => {
   const [selectedWeirs, setSelectedWeirs] = useState([]);
   const [chartData, setChartData] = useState([]);
 
-  const parseData = (data) => {
+  const parseData = (data: TableData) => {
     const headers = data[0];
-    return data.slice(1).map(row => {
-      let obj = {};
+    return data.slice(1).map((row:TableRow) => {
+      const obj: DynamicRow = {};
       row.forEach((value, index) => {
-        obj[headers[index]] = value;
+        const header = String(headers[index]);
+        obj[header] = value;
       });
       return obj;
     });
@@ -69,11 +71,11 @@ const CostDashboard: React.FC = () => {
   
   const parsedData = parseData(table2Data);
 
-  const handleCheckboxChange = (weirName) => {
+  const handleCheckboxChange = (weirName: string) => {
     toggleWeirSelection(weirName);
   };
 
-  const toggleWeirSelection = (weirName) => {
+  const toggleWeirSelection = (weirName: string) => {
     if (selectedWeirs.includes(weirName)) {
       setSelectedWeirs(prev => prev.filter(name => name !== weirName));
     } else {
@@ -95,7 +97,7 @@ const CostDashboard: React.FC = () => {
 
   };
 
-  const getTotalCostForWeirs = (weirNames, parsedData) => {
+  const getTotalCostForWeirs = (weirNames: string[], parsedData: DynamicRow[]) => {
     return parsedData
       .filter(row => weirNames.includes(row['Weir Name']))
       .reduce((total, row) => total + parseInt(row['Package Cost']), 0);

@@ -1,7 +1,9 @@
 import { ViewMode } from "gantt-task-react";
+import { SeriesPoint } from '@visx/shape/lib/types';
+import { CityTemperature } from '@visx/mock-data/lib/mocks/cityTemperature';
 
 // NetworkLinks Types 
-export type Node = {
+export type CustomNode = {
     id: string;
     name: string;
     x: number;
@@ -9,9 +11,9 @@ export type Node = {
 };
   
 export type DashboardProps = {
-    nodes: Node[];
+    nodes: CustomNode[];
     onAddNode: (x: number, y: number) => void;
-    updateNodes: (updateFn: (prevNodes: Node[]) => Node[]) => void;
+    updateNodes: (updateFn: (prevNodes: CustomNode[]) => CustomNode[]) => void;
 };
 
 export type mapStateValue = {
@@ -88,3 +90,78 @@ export type CostTableProps = {
     tableId: string;
   };
 
+// AssetTable Types
+export type AssetTableProps = {
+    data: TableData;
+    onDataChange: (newData: TableData) => void;
+    tableId: string;
+  };
+
+export type DropdownValueMapType = { [key: string]: number };
+export type StagesFactorMapType = { [key: number]: number };
+
+// Arrow Props
+export type Point = {
+    x: number;
+    y: number;
+  };
+  
+export type ArrowProps = {
+    startPoint: Point;
+    endPoint: Point;
+  };
+
+export type defaultMargin = {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+}
+
+// PieChart types
+export interface CountMap {
+    [key: string]: number;
+  }  
+
+export type PieProps = {
+    width: number;
+    height: number;
+    margin?: defaultMargin;
+    data: TableData;
+    rowReference: number;
+  };
+
+
+// BarChart Props
+export type BarGroupProps = {
+    width: number;
+    height: number;
+    margin?: { top: number; right: number; bottom: number; left: number };
+    events?: boolean;
+};
+  
+export type CityName = 'New York' | 'San Francisco' | 'Austin';
+
+export type TooltipData = {
+    bar: SeriesPoint<CityTemperature>;
+    key: CityName;
+    index: number;
+    height: number;
+    width: number;
+    x: number;
+    y: number;
+    color: string;
+};
+  
+export type BarStackProps = {
+    width: number;
+    height: number;
+    margin?: { top: number; right: number; bottom: number; left: number };
+    events?: boolean;
+};
+
+// CostDashboard Types
+
+export interface DynamicRow {
+    [key: string]: string | number;
+  }
