@@ -1,5 +1,5 @@
 // AssetTable.tsx
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import '../styles/tableStyles.css';
 import { useData } from '../contexts/DataContext';
 import { TableRow, AssetTableProps, DropdownValueMapType, StagesFactorMapType } from '../types/public-types'
@@ -53,7 +53,7 @@ const AssetTable: React.FC<AssetTableProps> = ({
     });
 
     setOutputValues(initialOutputValues);
-  }, [data, tableId, dropdownValueMap, dropdownColumnIndexes]);
+  }, [data, tableId, dropdownValueMap, dropdownColumnIndexes, setOutputValues]);
 
   if (!data || data.length === 0) {
     return <div>No data available</div>;
@@ -85,7 +85,7 @@ const AssetTable: React.FC<AssetTableProps> = ({
     // Update the output value for score change
     updatedData[rowIndex][columnIndex] = dropdownValueMap[newValue] || newValue;
     const outputKey = `${tableId}-${rowIndex}-${columnIndex}-output`;
-    const outputValue = dropdownValueMap[newValue] || newValue;
+    const outputValue = dropdownValueMap[newValue] || 0;
     setOutputValues({ ...outputValues, [outputKey]: outputValue });
     updatedData[rowIndex] = [...updatedData[rowIndex]];
     updatedData[rowIndex][columnIndex] = outputValue;
@@ -101,8 +101,7 @@ const AssetTable: React.FC<AssetTableProps> = ({
         const stage1Factor = stage1FactorsMap[dropdownColIndex] || 0;
         const stage2Factor = stage2FactorsMap[dropdownColIndex] || 0;
     
-        // let outputValue = outputValues[outputKey] || dropdownValue;
-        let outputValue = (dropdownValueMap[newValue] || newValue);
+        let outputValue = (dropdownValueMap[newValue] || 0);
 
         if (dropdownColIndex === columnIndex) {
           // Current dropdown change

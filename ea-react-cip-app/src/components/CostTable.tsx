@@ -1,10 +1,10 @@
 // CostTable.tsx
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import '../styles/tableStyles.css';
 import CustomModal from './CustomModal';
 import { Button, Modal } from 'react-bootstrap';
 import { useData } from '../contexts/DataContext';
-import { TableCell, TableRow, TableData, CostTableProps } from '../types/public-types';
+import { TableCell, CostTableProps, CostTableRow, CostTableData } from '../types/public-types';
 
 const CostTable: React.FC<CostTableProps> = ({
     data, onDataChange, tableId,
@@ -101,7 +101,8 @@ const CostTable: React.FC<CostTableProps> = ({
 
             for (let i = 1; i <= 3; i++) {
               if (rowIndex + i < updatedData.length) {
-                updatedData[rowIndex + i][5] = (totalPackageCost * updatedData[rowIndex + i][4]) / 100;
+                const updatedPackageSplit = stringToNumTypeConverter(updatedData[rowIndex + i][4])
+                updatedData[rowIndex + i][5] = (totalPackageCost * updatedPackageSplit) / 100;
                 const updatedPackageCost = updatedData[rowIndex+i][5]
                 const updatedRow = shiftRowDataForDuration(updatedData[rowIndex+i], updatedPackageCost, updatedData[rowIndex+i][3], updatedData[rowIndex+i][2]);
                 updatedData[rowIndex + i] = updatedRow;
@@ -125,7 +126,7 @@ const CostTable: React.FC<CostTableProps> = ({
       };
 
     // Function to check if a row is a group header
-    const isGroupHeader = (row: TableRow) => {
+    const isGroupHeader = (row: CostTableRow) => {
         return row[1].includes("Package Summary");
         };
 
@@ -142,7 +143,7 @@ const CostTable: React.FC<CostTableProps> = ({
         });
     };
 
-    const shouldDisplayRow = (row: TableRow, rowIndex: number) => {
+    const shouldDisplayRow = (row: CostTableRow, rowIndex: number) => {
         // Always show header rows
         if (rowIndex === 0 || isGroupHeader(row)) return true;
         const isPackageSelected = selectedPackages.has(row[0]);
@@ -187,7 +188,7 @@ const CostTable: React.FC<CostTableProps> = ({
         return 6 + (year - baseYear);
     };
 
-    const shiftRowDataForYear = (row: TableRow, startYear: number) => {
+    const shiftRowDataForYear = (row: CostTableRow, startYear: number) => {
         const columnIndex = yearToColumnIndex(startYear);
         const newRow = row.slice(6).filter(value => value !== 0 && value !== "-");
       
@@ -219,7 +220,7 @@ const CostTable: React.FC<CostTableProps> = ({
         );
     };
 
-    const shiftRowDataForDuration = (row: TableRow, currentTotal: number, newDuration: number, startYear: number) => {
+    const shiftRowDataForDuration = (row: CostTableRow, currentTotal: number, newDuration: number, startYear: number) => {
 
         const assignedValue = Math.round(currentTotal / newDuration)
         const columnIndex = yearToColumnIndex(startYear);
@@ -251,18 +252,11 @@ const CostTable: React.FC<CostTableProps> = ({
       return convertedValue;
     }
     
-
-    const handleDurationChange = (rowIndex: number, colIndex: number, newValue: string) => {
+    const handleDurationChange = (rowIndex: number, colIndex: number, newValue: number) => {
         const currentTotal = data[rowIndex][5]
         const startYear = data[rowIndex][2]
 
-        // Handle potential string issues
-        const currentTotalNumber = stringToNumTypeConverter(currentTotal)
-        const startYearNumber = stringToNumTypeConverter(startYear)
-        const newDurationNumber = stringToNumTypeConverter(newValue)
-
-        const updatedRow = shiftRowDataForDuration(data[rowIndex], currentTotalNumber, newDurationNumber, startYearNumber);
-
+        const updatedRow = shiftRowDataForDuration(data[rowIndex], currentTotal, newValue, startYear);
 
         const updatedData = [...data];
         updatedData[rowIndex] = updatedRow;
@@ -275,7 +269,7 @@ const CostTable: React.FC<CostTableProps> = ({
         return (
         <select
             value={currentValue}
-            onChange={(e) => handleDurationChange(rowIndex, colIndex, e.target.value)}
+            onChange={(e) => handleDurationChange(rowIndex, colIndex, stringToNumTypeConverter(e.target.value))}
         >
             {startDurationOptions.map(duration => (
             <option key={duration} value={duration}>{duration}</option>
@@ -284,8 +278,8 @@ const CostTable: React.FC<CostTableProps> = ({
         );
     };
 
-    const handleCostSplitChange = (rowIndex: number, _colIndex: number, newValue: string) => {
-        const sliderValue = stringToNumTypeConverter(newValue)
+    const handleCostSplitChange = (rowIndex: number, _colIndex: number, newValue: number) => {
+        const sliderValue = newValue
         const currentGroupName = data[rowIndex][0];
 
         // Find the related group header row by searching from the start
@@ -299,7 +293,7 @@ const CostTable: React.FC<CostTableProps> = ({
           return;
         }
       
-        const totalPackageCost = stringToNumTypeConverter(data[headerRowIndex][5]);
+        const totalPackageCost = data[headerRowIndex][5];
         const newPackageCost = (totalPackageCost * sliderValue) / 100;
       
         // Update the data
@@ -310,8 +304,8 @@ const CostTable: React.FC<CostTableProps> = ({
         // Update Duration Split with new Cost Split
         const updatedRow = shiftRowDataForDuration(updatedData[rowIndex], 
                                                    newPackageCost, 
-                                                   stringToNumTypeConverter(updatedData[rowIndex][3]), 
-                                                   stringToNumTypeConverter(updatedData[rowIndex][2])
+                                                   updatedData[rowIndex][3], 
+                                                   updatedData[rowIndex][2],
                                                    );
 
         updatedData[rowIndex] = updatedRow;
@@ -321,7 +315,7 @@ const CostTable: React.FC<CostTableProps> = ({
 
       };
       
-    const updateTotalCosts = (rowIndex:number, updatedData: TableData) => {
+    const updateTotalCosts = (rowIndex:number, updatedData: CostTableData) => {
         const currentGroupName = updatedData[rowIndex][0]
         let headerRowIndex = 0
         while (headerRowIndex < updatedData.length && updatedData[headerRowIndex][0] !== currentGroupName) {
@@ -359,12 +353,12 @@ const CostTable: React.FC<CostTableProps> = ({
             min="0" 
             max="100"  // Assuming a maximum duration of 15
             value={currentValue} 
-            onChange={(e) => handleCostSplitChange(rowIndex, colIndex, e.target.value)}
+            onChange={(e) => handleCostSplitChange(rowIndex, colIndex, stringToNumTypeConverter(e.target.value))}
           />
         );
       };
       
-    const renderCellContent = (row: TableRow, rowIndex: number, colIndex: number, cell: TableCell) => {
+    const renderCellContent = (row: CostTableRow, rowIndex: number, colIndex: number, cell: TableCell) => {
         if (colIndex === 2 && !isGroupHeader(row)) {
             return renderYearDropdown(rowIndex, colIndex, stringToNumTypeConverter(cell));
         } else if (colIndex === 3 && !isGroupHeader(row)) {

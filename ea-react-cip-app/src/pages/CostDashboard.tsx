@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import DashboardCardComponent from '../components/DashboardCard';
 import { useData } from '../contexts/DataContext';
 import { Button, Form, Modal } from 'react-bootstrap';
 import Example from '../charts/BarChart';
 import PackageChart from '../charts/PackageChart';
-import { TableData, TableRow, DynamicRow } from '../types/public-types'
+import { TableData, TableRow, WeirRow } from '../types/public-types'
 
 
 const HeroSection = styled.section`
@@ -53,14 +53,17 @@ const CostCard = styled.div`
 const CostDashboard: React.FC = () => {
 
   const { table2Data } = useData();
-  const [showModal, setShowModal] = useState(false);
-  const [selectedWeirs, setSelectedWeirs] = useState([]);
-  const [chartData, setChartData] = useState([]);
+  const { showCostPackageModal, setShowCostPackageModal } = useData();
+  const { selectedWeirs, setSelectedWeirs } = useData();
+  const { chartData, setChartData } = useData();
 
   const parseData = (data: TableData) => {
     const headers = data[0];
     return data.slice(1).map((row:TableRow) => {
-      const obj: DynamicRow = {};
+      const obj: WeirRow = {
+        'Weir Name': '',
+        'Package Cost': 0,
+      };
       row.forEach((value, index) => {
         const header = String(headers[index]);
         obj[header] = value;
@@ -97,10 +100,10 @@ const CostDashboard: React.FC = () => {
 
   };
 
-  const getTotalCostForWeirs = (weirNames: string[], parsedData: DynamicRow[]) => {
+  const getTotalCostForWeirs = (weirNames: string[], parsedData: WeirRow[]) => {
     return parsedData
       .filter(row => weirNames.includes(row['Weir Name']))
-      .reduce((total, row) => total + parseInt(row['Package Cost']), 0);
+      .reduce((total, row) => total + (row['Package Cost']), 0);
   };
 
   return(
@@ -114,9 +117,9 @@ const CostDashboard: React.FC = () => {
         </div>
       </HeroSection>
 
-      <Button onClick={() => setShowModal(true)}>Select Weirs</Button>
+      <Button onClick={() => setShowCostPackageModal(true)}>Select Weirs</Button>
 
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
+      <Modal show={showCostPackageModal} onHide={() => setShowCostPackageModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Package 1</Modal.Title>
         </Modal.Header>
@@ -134,7 +137,7 @@ const CostDashboard: React.FC = () => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
+          <Button variant="secondary" onClick={() => setShowCostPackageModal(false)}>
             Close
           </Button>
           <Button variant="primary" onClick={displayTotalCosts}>

@@ -84,11 +84,31 @@ export type TableRow = TableCell[];
 export type TableData = TableRow[];
 
 // CostTable Types
+export type CostTableRow = [
+    string, // Weir Name
+    string, // Cost Type
+    number, // Start Year
+    number, // Duration
+    string | number, // Package Split
+    number, // Package Cost
+    ...number[] // Yearly Costs
+    ];
+
+export type CostTableData = CostTableRow[];
+
 export type CostTableProps = {
-    data: TableData;
-    onDataChange: (newData: TableData) => void;
+    data: CostTableData;
+    onDataChange: (newData: CostTableData) => void;
     tableId: string;
   };
+
+export interface CustomModalProps {
+    showModal: boolean;
+    closeModal: () => void;
+    sliderValue: number;
+    handleSliderChange: (newValue: number) => void; // Adjust based on the actual signature of your function
+    handleSave: () => void;
+  }
 
 // AssetTable Types
 export type AssetTableProps = {
@@ -161,7 +181,8 @@ export type BarStackProps = {
 };
 
 // CostDashboard Types
-
-export interface DynamicRow {
+export interface WeirRow {
+    'Weir Name': string;
+    'Package Cost': number;
     [key: string]: string | number;
   }

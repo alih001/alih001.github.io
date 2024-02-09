@@ -44,6 +44,15 @@ type DataContextType = {
     setTempStart: React.Dispatch<React.SetStateAction<string | null>>;
     nodes: CustomNode[];
     setNodes: React.Dispatch<React.SetStateAction<CustomNode[]>>;
+
+    // States for CostDashboard
+    showCostPackageModal: boolean;
+    setShowCostPackageModal: React.Dispatch<React.SetStateAction<boolean>>;
+    selectedWeirs: string[];
+    setSelectedWeirs: React.Dispatch<React.SetStateAction<string[]>>;
+    chartData: number | null;
+    setChartData: React.Dispatch<React.SetStateAction<number | null>>;
+
   };
   
 
@@ -79,6 +88,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [arrows, setArrows] = useState<Array<{ startId: string; endId: string }>>([]);
   const [tempStart, setTempStart] = useState<string | null>(null);
   const [nodes, setNodes] = useState<CustomNode[]>([]);
+
+  // CostDashboard States
+  const [showCostPackageModal, setShowCostPackageModal] = useState(false);
+  const [selectedWeirs, setSelectedWeirs] = useState<string[]>([]);
+  const [chartData, setChartData] = useState<number | null>(null);
 
   const contextValue: DataContextType = {
     // Table States
@@ -121,7 +135,15 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     tempStart,
     setTempStart,
     nodes,
-    setNodes
+    setNodes,
+
+    // CostDashboard States
+    showCostPackageModal,
+    setShowCostPackageModal,
+    selectedWeirs,
+    setSelectedWeirs,
+    chartData,
+    setChartData,
   };
 
   return (

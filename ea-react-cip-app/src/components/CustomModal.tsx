@@ -1,8 +1,15 @@
 // CustomModal.tsx
 import React from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+import { CustomModalProps } from '../types/public-types';
 
-const CustomModal = ({ showModal, closeModal, sliderValue, handleSliderChange, handleSave }) => {
+const CustomModal: React.FC<CustomModalProps> = ({ 
+  showModal, 
+  closeModal, 
+  sliderValue, 
+  handleSliderChange, 
+  handleSave 
+  }) => {
   return (
     <Modal show={showModal} onHide={closeModal}>
       <Modal.Header closeButton>
