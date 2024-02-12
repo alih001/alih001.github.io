@@ -106,7 +106,7 @@ export interface CustomModalProps {
     showModal: boolean;
     closeModal: () => void;
     sliderValue: number;
-    handleSliderChange: (newValue: number) => void; // Adjust based on the actual signature of your function
+    handleSliderChange: (newValue: MouseEvent) => void; // Adjust based on the actual signature of your function
     handleSave: () => void;
   }
 

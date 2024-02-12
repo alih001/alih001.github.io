@@ -3,7 +3,7 @@ import React, { useEffect, useMemo } from 'react';
 import '../styles/tableStyles.css';
 import CustomModal from './CustomModal';
 import { Button, Modal } from 'react-bootstrap';
-import { useData } from '../contexts/DataContext';
+import { useData } from '../contexts/useDataContext';
 import { TableCell, CostTableProps, CostTableRow, CostTableData } from '../types/public-types';
 
 const CostTable: React.FC<CostTableProps> = ({
@@ -25,7 +25,7 @@ const CostTable: React.FC<CostTableProps> = ({
         // Initialize selected packages only once
         const allPackages = new Set(data.map(row => row[0]));
         setSelectedPackages(allPackages);
-    }, []);
+    }, [data, setSelectedPackages]);
     
     if (!data || data.length === 0) {
         return <div>No data available</div>;

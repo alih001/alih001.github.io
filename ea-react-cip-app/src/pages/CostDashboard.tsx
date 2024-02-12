@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import DashboardCardComponent from '../components/DashboardCard';
-import { useData } from '../contexts/DataContext';
+import { useData } from '../contexts/useDataContext';
 import { Button, Form, Modal } from 'react-bootstrap';
 import Example from '../charts/BarChart';
 import PackageChart from '../charts/PackageChart';

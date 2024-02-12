@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import DashboardCardComponent from '../components/DashboardCard';
 import DashboardPieChart from '../charts/PieChart';
-import { useData } from '../contexts/DataContext';
+import { useData } from '../contexts/useDataContext';
 import DashboardTable from '../charts/summaryTable';
 
 const HeroSection = styled.section`

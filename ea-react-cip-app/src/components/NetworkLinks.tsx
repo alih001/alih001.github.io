@@ -4,7 +4,7 @@ import '../styles/networkLinks.css';
 import { MapInteractionCSS } from 'react-map-interaction'
 import Draggable, { DraggableData, DraggableEvent, DraggableEventHandler } from 'react-draggable'
 import Arrow from './Arrow'
-import { useData } from '../contexts/DataContext';
+import { useData } from '../contexts/useDataContext';
 import { Sidebar, Menu, MenuItem } from 'react-pro-sidebar';
 import { CustomNode, DashboardProps, mapStateValue} from '../types/public-types'
 

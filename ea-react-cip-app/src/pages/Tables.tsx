@@ -1,12 +1,13 @@
 // PopulateTables.tsx
 import React from 'react';
-import { useData } from '../contexts/DataContext';
+import { useData } from '../contexts/useDataContext';
 import ExcelJS from 'exceljs'
 import FileUpload from '../components/FileUpload';
 import AssetTable from '../components/AssetTable';
 import CostTable from '../components/CostTable';
 import CustomizedSwitches from '../assets/switch';
 import styled from 'styled-components';
+// import { TableData, TableRow, CostTableData, CostTableRow} from '../types/public-types'
 
 const HeroSection = styled.section`
   background-position: center, bottom left;
@@ -63,14 +64,14 @@ const Tables: React.FC = () => {
     setIsTable1Visible(prev => !prev); // Toggle the state
   };
 
-  const readExcelFile = async (file) => {
+  const readExcelFile = async (file: File) => {
     const workbook = new ExcelJS.Workbook();
     const arrayBuffer = await file.arrayBuffer();
     await workbook.xlsx.load(arrayBuffer);
   
-    const processSheet = (sheet) => {
-      let data = [];
-      let headers = [];
+    const processSheet = (sheet: ExcelJS.Worksheet) => {
+      const data = [];
+      const headers = [];
   
       sheet.eachRow((row, rowNumber) => {
         if (rowNumber === 0) {
@@ -78,7 +79,7 @@ const Tables: React.FC = () => {
           headers = row.values;
         } else {
           // Pushing row values as an array to match the structure used by XLSX
-          let rowData = [];
+          const rowData = [];
           row.eachCell((cell) => {
             rowData.push(cell.value);
           });

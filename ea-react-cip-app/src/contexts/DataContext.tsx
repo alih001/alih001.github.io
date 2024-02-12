@@ -1,20 +1,20 @@
 // DataContext.tsx
-import React, { createContext, useState, useContext, ReactNode } from 'react';
-import { TableRow, CustomNode } from '../types/public-types'
+import React, { createContext, useState } from 'react';
+import { TableRow, CostTableRow, CustomNode } from '../types/public-types'
 
 type DataContextType = {
     // Populate Table Props
     table1Data: TableRow[];
     setTable1Data: (data: TableRow[]) => void;
-    table2Data: TableRow[];
-    setTable2Data: (data: TableRow[]) => void;
+    table2Data: CostTableRow[];
+    setTable2Data: (data: CostTableRow[]) => void;
     isTable1Visible: boolean;
-    setIsTable1Visible: (visible: boolean) => void;
+    setIsTable1Visible: React.Dispatch<React.SetStateAction<boolean>>;
 
     // States from CostTable
     showModal: boolean;
     setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-    sliderValue: number;
+    sliderValue: number | null;
     setSliderValue: React.Dispatch<React.SetStateAction<number | null>>;
     editingRowIndex: number | null;
     setEditingRowIndex: React.Dispatch<React.SetStateAction<number | null>>;
@@ -35,11 +35,11 @@ type DataContextType = {
 
     // New states for NetworkLinks
     mapState: { scale: number; translation: { x: number; y: number } };
-    setMapState: React.Dispatch<React.SetStateAction<typeof mapState>>;
+    setMapState: React.Dispatch<React.SetStateAction<{ scale: number; translation: { x: number; y: number } }>>;
     mode: string;
     setMode: React.Dispatch<React.SetStateAction<string>>;
     arrows: Array<{ startId: string; endId: string }>;
-    setArrows: React.Dispatch<React.SetStateAction<typeof arrows>>;
+    setArrows: React.Dispatch<React.SetStateAction<Array<{ startId: string; endId: string }>>>;
     tempStart: string | null;
     setTempStart: React.Dispatch<React.SetStateAction<string | null>>;
     nodes: CustomNode[];
@@ -57,12 +57,13 @@ type DataContextType = {
   
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
+export default DataContext;
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
   // Populate Table States
   const [table1Data, setTable1Data] = useState<TableRow[]>([]);
-  const [table2Data, setTable2Data] = useState<TableRow[]>([]);
+  const [table2Data, setTable2Data] = useState<CostTableRow[]>([]);
   const [isTable1Visible, setIsTable1Visible] = useState(true);
 
   // Asset Table States
@@ -74,7 +75,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Cost Table States
   const [showModal, setShowModal] = useState(false);
-  const [sliderValue, setSliderValue] = useState(50);
+  const [sliderValue, setSliderValue] = useState<number | null>(50);
   const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null);
   const [selectedPackages, setSelectedPackages] = useState<Set<string>>(new Set());
   const [showChecklistModal, setShowChecklistModal] = useState(false);
@@ -151,12 +152,4 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       {children}
     </DataContext.Provider>
   );
-};
-
-export const useData = () => {
-  const context = useContext(DataContext);
-  if (context === undefined) {
-    throw new Error('useData must be used within a DataProvider');
-  }
-  return context;
 };
