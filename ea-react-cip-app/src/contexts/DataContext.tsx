@@ -14,8 +14,8 @@ type DataContextType = {
     // States from CostTable
     showModal: boolean;
     setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-    sliderValue: number | null;
-    setSliderValue: React.Dispatch<React.SetStateAction<number | null>>;
+    sliderValue: number;
+    setSliderValue: React.Dispatch<React.SetStateAction<number>>;
     editingRowIndex: number | null;
     setEditingRowIndex: React.Dispatch<React.SetStateAction<number | null>>;
     selectedPackages: Set<string>;
@@ -75,7 +75,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Cost Table States
   const [showModal, setShowModal] = useState(false);
-  const [sliderValue, setSliderValue] = useState<number | null>(50);
+  const [sliderValue, setSliderValue] = useState<number>(50);
   const [editingRowIndex, setEditingRowIndex] = useState<number | null>(null);
   const [selectedPackages, setSelectedPackages] = useState<Set<string>>(new Set());
   const [showChecklistModal, setShowChecklistModal] = useState(false);

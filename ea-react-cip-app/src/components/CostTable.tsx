@@ -31,8 +31,12 @@ const CostTable: React.FC<CostTableProps> = ({
         return <div>No data available</div>;
     }
   
-    const handleSliderChange = (e: MouseEvent) => setSliderValue(e.target.value);
-  
+    const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = e.target.value;    
+      const numericValue = Number(newValue);
+      setSliderValue(numericValue);
+    };
+      
     const openModal = (rowIndex: number) => {
       setEditingRowIndex(rowIndex);
       setShowModal(true);
@@ -105,7 +109,7 @@ const CostTable: React.FC<CostTableProps> = ({
                 updatedData[rowIndex + i][5] = (totalPackageCost * updatedPackageSplit) / 100;
                 const updatedPackageCost = updatedData[rowIndex+i][5]
                 const updatedRow = shiftRowDataForDuration(updatedData[rowIndex+i], updatedPackageCost, updatedData[rowIndex+i][3], updatedData[rowIndex+i][2]);
-                updatedData[rowIndex + i] = updatedRow;
+                updatedData[rowIndex + i] = updatedRow as CostTableRow;
                 }
             }
             onDataChange(updatedData);
@@ -157,7 +161,7 @@ const CostTable: React.FC<CostTableProps> = ({
         const updatedRow = shiftRowDataForYear(data[rowIndex], newYear);
         
         const updatedData = [...data];
-        updatedData[rowIndex] = updatedRow;
+        updatedData[rowIndex] = updatedRow as CostTableRow;
         updatedData[rowIndex][colIndex] = newYear;
 
         const currentGroupName = updatedData[rowIndex][0];
@@ -259,7 +263,7 @@ const CostTable: React.FC<CostTableProps> = ({
         const updatedRow = shiftRowDataForDuration(data[rowIndex], currentTotal, newValue, startYear);
 
         const updatedData = [...data];
-        updatedData[rowIndex] = updatedRow;
+        updatedData[rowIndex] = updatedRow as CostTableRow;
         updatedData[rowIndex][colIndex] = newValue;
         onDataChange(updatedData);
         updateTotalCosts(rowIndex, updatedData)
@@ -308,7 +312,7 @@ const CostTable: React.FC<CostTableProps> = ({
                                                    updatedData[rowIndex][2],
                                                    );
 
-        updatedData[rowIndex] = updatedRow;
+        updatedData[rowIndex] = updatedRow as CostTableRow;
         onDataChange(updatedData);
 
         updateTotalCosts(rowIndex, updatedData)

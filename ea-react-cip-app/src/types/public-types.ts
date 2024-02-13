@@ -106,7 +106,7 @@ export interface CustomModalProps {
     showModal: boolean;
     closeModal: () => void;
     sliderValue: number;
-    handleSliderChange: (newValue: MouseEvent) => void; // Adjust based on the actual signature of your function
+    handleSliderChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleSave: () => void;
   }
 
