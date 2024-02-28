@@ -1,5 +1,5 @@
 // Dashboard.tsx
-import React from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import '../styles/networkLinks.css';
 import { MapInteractionCSS } from 'react-map-interaction'
 import Draggable, { DraggableData, DraggableEvent, DraggableEventHandler } from 'react-draggable'
@@ -15,6 +15,25 @@ const NetworkLinks: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes 
   const { arrows, setArrows } = useData();
   const { tempStart, setTempStart } = useData();
 
+  const [editNode, setEditNode] = useState({
+    id: "",
+    isEditing: false,
+    tempName: "",
+    });
+
+  const editNodeRef = useRef(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (editNodeRef.current && !editNodeRef.current.contains(event.target)) {
+        setEditNode({ ...editNode, isEditing: false });
+      }
+    };
+  
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []); // Assuming editNodeRef doesn’t change, this effect only needs to mount and unmount.
+  
   const handleDragStart: DraggableEventHandler = (e, _data) => {
     if (mode === 'pan') {
       e.stopPropagation();
@@ -32,6 +51,14 @@ const NetworkLinks: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes 
   
   const findNodeById = (id: string) => nodes.find(node => node.id === id);
 
+  const handleNodeEdits = (node: CustomNode, e: React.MouseEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setEditNode({
+      id: node.id,
+      isEditing: true,
+      tempName: node.name,
+    });
+  };
 
   const renderNodes = () => nodes.map(node => (
     <Draggable
@@ -41,7 +68,11 @@ const NetworkLinks: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes 
       position={{ x: node.x, y: node.y }}
       disabled={mode !== 'move'}
     >
-      <div className="node" onClick={() => handleNodeClick(node)}>
+      <div 
+        className="node" 
+        onClick={() => handleNodeClick(node)}
+        onContextMenu={(e) => handleNodeEdits(node, e)}
+      >
         {node.name}
       </div>
     </Draggable>
@@ -77,6 +108,44 @@ const NetworkLinks: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes 
       </MapInteractionCSS>
     </>
   );
+
+  const renderDescription = () => (
+    <div>
+      This section will provide a brief overview 
+      on what's possible in this dashboard
+    </div>
+  );
+
+  const renderEditNodes = () => (
+    <div onClick={(e) => e.stopPropagation()}>
+      <input
+        type="text"
+        defaultValue={editNode.tempName}
+        onBlur={(e) => updateNodeName(editNode.id, e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            updateNodeName(editNode.id, e.target.value);
+          }
+        }}
+        autoFocus
+      />
+      hehey oyyoyo
+    </div>
+  );
+  
+  const updateNodeName = (nodeId: string, newName: string) => {
+    updateNodes(prevNodes => prevNodes.map(node =>
+      node.id === nodeId ? { ...node, name: newName } : node
+    ));
+    setEditNode({ id: "", isEditing: true, tempName: "" });
+  };
+  
+  const renderDynamicSection = () => {
+    if (editNode.isEditing) {
+      return renderEditNodes();
+    }
+    return renderDescription();
+  };
 
   const handleContentDoubleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (mode === 'edit') {
@@ -135,6 +204,9 @@ const NetworkLinks: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes 
       <div className="content" onDoubleClick={handleContentDoubleClick}>
         {renderArrow()}
         {renderContent()}
+      </div>
+      <div className='networkDescription' ref={editNodeRef}>
+        {renderDynamicSection()}
       </div>
     </div>
   );

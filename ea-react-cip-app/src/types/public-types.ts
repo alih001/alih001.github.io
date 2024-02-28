@@ -8,6 +8,7 @@ export type CustomNode = {
     name: string;
     x: number;
     y: number;
+    color: string;
 };
   
 export type DashboardProps = {
