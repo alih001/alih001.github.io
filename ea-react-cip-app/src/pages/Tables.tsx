@@ -71,7 +71,7 @@ const Tables: React.FC = () => {
   
     const processSheet = (sheet: ExcelJS.Worksheet) => {
       const data = [];
-      const headers = [];
+      let headers = [];
   
       sheet.eachRow((row, rowNumber) => {
         if (rowNumber === 0) {

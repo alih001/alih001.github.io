@@ -43,7 +43,7 @@
 
 .networkDescription {
   /* flex-grow: 1; Grow to fill remaining space */
-  /* background-color: #9e9e9e; */
+  background-color: #9e9e9e;
   border: 2px solid rgb(0, 255, 42);
   cursor:pointer;
   width:20%;

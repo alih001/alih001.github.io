@@ -35,15 +35,6 @@ const Background = styled.div`
 
 const SystemsThinking = () => {
 
-  const { nodes, setNodes } = useData();
-
-  const handleAddNode = (x: number, y: number) => {
-      setNodes(prevNodes => [
-        ...prevNodes, 
-        { id: `node-${prevNodes.length + 1}`, name: `Node ${prevNodes.length + 1}`, x, y }
-      ]);
-    };
-    
   return (
 
 	<div>
@@ -55,11 +46,7 @@ const SystemsThinking = () => {
           </span>
         </div>
       </HeroSection>
-      <NetworkLinks
-          nodes={nodes}
-          onAddNode={handleAddNode}
-          updateNodes={setNodes}
-      />
+      <NetworkLinks/>
     </Background>
 	</div>
 );

@@ -1,213 +1,82 @@
-// Dashboard.tsx
-import React, {useState, useEffect, useRef} from 'react';
-import '../styles/networkLinks.css';
-import { MapInteractionCSS } from 'react-map-interaction'
-import Draggable, { DraggableData, DraggableEvent, DraggableEventHandler } from 'react-draggable'
-import Arrow from './Arrow'
-import { useData } from '../contexts/useDataContext';
-import { Sidebar, Menu, MenuItem } from 'react-pro-sidebar';
-import { CustomNode, DashboardProps, mapStateValue} from '../types/public-types'
+import React, { useCallback } from 'react';
 
-const NetworkLinks: React.FC<DashboardProps> = ({ nodes, onAddNode, updateNodes }) => {
+import ReactFlow, { addEdge, useNodesState, useEdgesState, MarkerType } from 'reactflow';
 
-  const { mapState, setMapState } = useData();
-  const { mode, setMode } = useData();
-  const { arrows, setArrows } = useData();
-  const { tempStart, setTempStart } = useData();
+import CustomNode from './node_scripts/CustomNode';
+import FloatingEdge from './node_scripts/FloatingEdge';
+import CustomConnectionLine from './node_scripts/CustomConnectionLine';
 
-  const [editNode, setEditNode] = useState({
-    id: "",
-    isEditing: false,
-    tempName: "",
-    });
+import 'reactflow/dist/style.css';
+import './node_scripts/nodeStyles.css';
 
-  const editNodeRef = useRef(null)
+const initialNodes = [
+  {
+    id: '1',
+    type: 'custom',
+    position: { x: 0, y: 0 },
+  },
+  {
+    id: '2',
+    type: 'custom',
+    position: { x: 250, y: 320 },
+  },
+  {
+    id: '3',
+    type: 'custom',
+    position: { x: 40, y: 300 },
+  },
+  {
+    id: '4',
+    type: 'custom',
+    position: { x: 300, y: 0 },
+  },
+];
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (editNodeRef.current && !editNodeRef.current.contains(event.target)) {
-        setEditNode({ ...editNode, isEditing: false });
-      }
-    };
-  
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []); // Assuming editNodeRef doesn’t change, this effect only needs to mount and unmount.
-  
-  const handleDragStart: DraggableEventHandler = (e, _data) => {
-    if (mode === 'pan') {
-      e.stopPropagation();
-    }
-  };
+const initialEdges = [];
 
-  const handleNodeClick = (node: CustomNode) => {
-    if (!tempStart) {
-      setTempStart(String(node.id));
-    } else {
-      setArrows([...arrows, { startId: tempStart, endId: node.id }]);
-      setTempStart(null);
-    }
-  };
-  
-  const findNodeById = (id: string) => nodes.find(node => node.id === id);
+const connectionLineStyle = {
+  strokeWidth: 3,
+  stroke: 'black',
+};
 
-  const handleNodeEdits = (node: CustomNode, e: React.MouseEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setEditNode({
-      id: node.id,
-      isEditing: true,
-      tempName: node.name,
-    });
-  };
+const nodeTypes = {
+  custom: CustomNode,
+};
 
-  const renderNodes = () => nodes.map(node => (
-    <Draggable
-      key={node.id}
-      onStart={(e, data) => mode === 'move' ? handleDragStart(e, data) : undefined}
-      onStop={(e, data) => mode === 'move' ? handleDragStop(node.id, e, data) : undefined}
-      position={{ x: node.x, y: node.y }}
-      disabled={mode !== 'move'}
-    >
-      <div 
-        className="node" 
-        onClick={() => handleNodeClick(node)}
-        onContextMenu={(e) => handleNodeEdits(node, e)}
-      >
-        {node.name}
-      </div>
-    </Draggable>
-  ));
+const edgeTypes = {
+  floating: FloatingEdge,
+};
 
-  const renderArrow = () => arrows.map((arrow, index) => {
-    const startNode = findNodeById(arrow.startId);
-    const endNode = findNodeById(arrow.endId);
-    if (startNode && endNode) {
-      return (
-        <Arrow 
-          key={index} 
-          startPoint={{ x: startNode.x, y: startNode.y }} 
-          endPoint={{ x: endNode.x, y: endNode.y }} 
-        />
-      );
-    }
-    return null;
-  });
-  
-  const renderContent = () => (
-    <>
+const defaultEdgeOptions = {
+  style: { strokeWidth: 3, stroke: 'black' },
+  type: 'floating',
+  markerEnd: {
+    type: MarkerType.ArrowClosed,
+    color: 'black',
+  },
+};
 
-      <MapInteractionCSS
-        value={mapState}
-        onChange={(value: mapStateValue) => setMapState(value)}
-        minScale={mode === 'pan' ? 0.5 : 1}
-        maxScale={mode === 'pan' ? 5 : 1}
-        disablePan={mode !== 'pan'}
-        disableZoom={mode !== 'pan'}
-      >
-        {renderNodes()}
-      </MapInteractionCSS>
-    </>
-  );
+const NetworkLinks = () => {
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
-  const renderDescription = () => (
-    <div>
-      This section will provide a brief overview 
-      on what's possible in this dashboard
-    </div>
-  );
-
-  const renderEditNodes = () => (
-    <div onClick={(e) => e.stopPropagation()}>
-      <input
-        type="text"
-        defaultValue={editNode.tempName}
-        onBlur={(e) => updateNodeName(editNode.id, e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            updateNodeName(editNode.id, e.target.value);
-          }
-        }}
-        autoFocus
-      />
-      hehey oyyoyo
-    </div>
-  );
-  
-  const updateNodeName = (nodeId: string, newName: string) => {
-    updateNodes(prevNodes => prevNodes.map(node =>
-      node.id === nodeId ? { ...node, name: newName } : node
-    ));
-    setEditNode({ id: "", isEditing: true, tempName: "" });
-  };
-  
-  const renderDynamicSection = () => {
-    if (editNode.isEditing) {
-      return renderEditNodes();
-    }
-    return renderDescription();
-  };
-
-  const handleContentDoubleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (mode === 'edit') {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const nodeSize = 100;
-      const halfNodeSize = nodeSize / 2;
-
-
-      console.log(mapState)
-      // Adjusting the click position so that the node's center aligns with the cursor
-      const x = (e.clientX - rect.left - mapState.translation.x) / mapState.scale - halfNodeSize;
-      const y = (e.clientY - rect.top - mapState.translation.y) / mapState.scale - halfNodeSize;
-
-      onAddNode(x, y);
-    }
-  };
-
-  const handleDragStop = (nodeId: string, _e: DraggableEvent, data: DraggableData) => {
-    updateNodes(prevNodes => prevNodes.map(node => {
-      if (node.id === nodeId) {
-        return { ...node, x: data.x, y: data.y };
-      }
-      return node;
-    }));
-  };
-
-  const getMenuItemClass = (menuMode: string) => {
-    return mode === menuMode ? 'activeLink' : 'normalLink';
-  };
-  
+  const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
 
   return (
-    <div className="network-dashboard">
-    <Sidebar style={{ height: "100vh" }}>
-        <Menu>
-          <MenuItem 
-            onClick={() => setMode('edit')}
-            className={getMenuItemClass('edit')}
-          >
-            <span>Draw</span>
-          </MenuItem>
-          <MenuItem 
-            onClick={() => setMode('move')}
-            className={getMenuItemClass('move')}
-          >
-            <span>Move</span>
-          </MenuItem>
-          <MenuItem 
-            onClick={() => setMode('pan')}
-            className={getMenuItemClass('pan')}
-          >
-            <span>Pan</span>
-          </MenuItem>
-        </Menu>
-      </Sidebar>
-      <div className="content" onDoubleClick={handleContentDoubleClick}>
-        {renderArrow()}
-        {renderContent()}
-      </div>
-      <div className='networkDescription' ref={editNodeRef}>
-        {renderDynamicSection()}
-      </div>
+    <div style={{ height: 500 }}>
+    <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      onConnect={onConnect}
+      fitView
+      nodeTypes={nodeTypes}
+      edgeTypes={edgeTypes}
+      defaultEdgeOptions={defaultEdgeOptions}
+      connectionLineComponent={CustomConnectionLine}
+      connectionLineStyle={connectionLineStyle}
+    />
     </div>
   );
 };
