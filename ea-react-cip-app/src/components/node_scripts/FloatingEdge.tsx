@@ -1,3 +1,4 @@
+// FloatingEdge.tsx
 import { useCallback } from 'react';
 import { useStore, getStraightPath } from 'reactflow';
 

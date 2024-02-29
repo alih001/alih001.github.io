@@ -1,6 +1,7 @@
 // DataContext.tsx
 import React, { createContext, useState } from 'react';
 import { TableRow, CostTableRow, CustomNode } from '../types/public-types'
+import { Node, Edge } from 'reactflow'
 
 type DataContextType = {
     // Populate Table Props
@@ -42,8 +43,6 @@ type DataContextType = {
     setArrows: React.Dispatch<React.SetStateAction<Array<{ startId: string; endId: string }>>>;
     tempStart: string | null;
     setTempStart: React.Dispatch<React.SetStateAction<string | null>>;
-    nodes: CustomNode[];
-    setNodes: React.Dispatch<React.SetStateAction<CustomNode[]>>;
 
     // States for CostDashboard
     showCostPackageModal: boolean;
@@ -53,6 +52,12 @@ type DataContextType = {
     chartData: number | null;
     setChartData: React.Dispatch<React.SetStateAction<number | null>>;
 
+    // Reacflow States
+    nodes: Node[];
+    setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
+    edges: Edge[];
+    setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
+
   };
   
 
@@ -60,6 +65,29 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 export default DataContext;
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+
+  const initialNodes = [
+    {
+      id: '1',
+      type: 'custom',
+      position: { x: 0, y: 0 },
+    },
+    {
+      id: '2',
+      type: 'custom',
+      position: { x: 250, y: 320 },
+    },
+    {
+      id: '3',
+      type: 'custom',
+      position: { x: 40, y: 300 },
+    },
+    {
+      id: '4',
+      type: 'custom',
+      position: { x: 300, y: 0 },
+    },
+  ];
 
   // Populate Table States
   const [table1Data, setTable1Data] = useState<TableRow[]>([]);
@@ -88,12 +116,15 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [mode, setMode] = useState('edit');
   const [arrows, setArrows] = useState<Array<{ startId: string; endId: string }>>([]);
   const [tempStart, setTempStart] = useState<string | null>(null);
-  const [nodes, setNodes] = useState<CustomNode[]>([]);
 
   // CostDashboard States
   const [showCostPackageModal, setShowCostPackageModal] = useState(false);
   const [selectedWeirs, setSelectedWeirs] = useState<string[]>([]);
   const [chartData, setChartData] = useState<number | null>(null);
+
+  // Reactflow States
+  const [nodes, setNodes] = useState<Node[]>(initialNodes);
+  const [edges, setEdges] = useState<Edge[]>([]);
 
   const contextValue: DataContextType = {
     // Table States
@@ -135,8 +166,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setArrows,
     tempStart,
     setTempStart,
-    nodes,
-    setNodes,
 
     // CostDashboard States
     showCostPackageModal,
@@ -145,6 +174,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setSelectedWeirs,
     chartData,
     setChartData,
+
+    // Reacflow states
+    nodes,
+    setNodes,
+    edges,
+    setEdges,
+
   };
 
   return (

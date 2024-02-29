@@ -1,3 +1,4 @@
+// CustomNode.tsx
 import { Handle, Position, useStore } from 'reactflow';
 
 const connectionNodeIdSelector = (state) => state.connectionNodeId;
