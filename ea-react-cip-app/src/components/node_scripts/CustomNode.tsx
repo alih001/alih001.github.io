@@ -7,7 +7,6 @@ const connectionNodeIdSelector = (state) => state.connectionNodeId;
 export default function CustomNode({ id, data, onEdit }) {
   const connectionNodeId = useStore(connectionNodeIdSelector);
 
-  const { setNodes } = useData();
   const { nodeName } = data;
 
   const isConnecting = !!connectionNodeId;
@@ -19,16 +18,6 @@ export default function CustomNode({ id, data, onEdit }) {
     onEdit(id)
   }
 
-//   const handleBlur = () => {
-//     setIsEditing(false);
-//     // Update the global state with the new nodeName
-//     setNodes((prevNodes) =>
-//       prevNodes.map((node) =>
-//         node.id === id ? { ...node, nodeName: editableName } : node
-//       )
-//     );
-//   };
-
   return (
     <div className="customNode">
       <div
@@ -36,7 +25,7 @@ export default function CustomNode({ id, data, onEdit }) {
         onContextMenu={handleContextMenu}
         style={{
           borderStyle: isTarget ? 'dashed' : 'solid',
-          backgroundColor: isTarget ? '#ffcce3' : '#ccd9f6',
+          backgroundColor: isTarget ? '#ffcce3' : data.nodeColour,
         }}
       >
         <span>{nodeName}</span>

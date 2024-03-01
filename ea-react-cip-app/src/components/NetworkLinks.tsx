@@ -7,6 +7,7 @@ import '../styles/networkLinks.css';
 import CustomNode from './node_scripts/CustomNode';
 import FloatingEdge from './node_scripts/FloatingEdge';
 import CustomConnectionLine from './node_scripts/CustomConnectionLine';
+import { Circle } from '@uiw/react-color';
 
 import 'reactflow/dist/style.css';
 import './node_scripts/nodeStyles.css';
@@ -33,9 +34,10 @@ const NetworkLinks = () => {
   const { nodes, setNodes, edges, setEdges } = useData();
   const [editingNode, setEditingNode] = useState({ isEditing: false, nodeId: null });
   const [nodeNameInput, setNodeNameInput] = useState('');
-
   const editNodeRef = useRef(null)
   const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
+
+  const [selectedColor, setSelectedColor] = useState('#FE9200');
 
   const nodeTypes = {
     custom: (nodeProps) => <CustomNode {...nodeProps} onEdit={handleNodeEdit} />,
@@ -58,26 +60,26 @@ const NetworkLinks = () => {
   const handleNodeEdit = useCallback((nodeId) => {
     const nodeToEdit = nodes.find((node) => node.id === nodeId);
     if (nodeToEdit) {
-      setNodeNameInput(nodeToEdit.data.nodeName); // Pre-populate input with current node name
+      setNodeNameInput(nodeToEdit.data.nodeName);
+      setSelectedColor(nodeToEdit.data.nodeColour || '');
     }
     setEditingNode({ isEditing: true, nodeId });
   }, [nodes]);
   
   
-
   const renderEditNodes = (nodeId) => {
     const handleInputChange = (event) => {
       setNodeNameInput(event.target.value);
     };
   
+    const handleColorChange = (color) => {
+      setSelectedColor(color.hex);
+    };
+
     const handleSubmit = () => {
-      console.log(nodeNameInput)
-      console.log(nodeId)
       const updatedNodes = nodes.map((node) =>
-        node.id === nodeId ? { ...node, data: { ...node.data, nodeName: nodeNameInput } } : node
+        node.id === nodeId ? { ...node, data: { ...node.data, nodeName: nodeNameInput, nodeColour: selectedColor } } : node
       );
-  
-      console.log()
 
       setNodes(updatedNodes);
       setEditingNode({ isEditing: false, nodeId: null }); // Reset editing state
@@ -91,6 +93,13 @@ const NetworkLinks = () => {
           value={nodeNameInput}
           onChange={handleInputChange}
           autoFocus
+        />
+        <Circle
+          colors={[ '#F44E3B', '#FE9200', '#FCDC00', '#DBDF00' ]}
+          color={selectedColor}
+          onChange={(color) => {
+            handleColorChange(color);
+          }}
         />
         <button onClick={handleSubmit}>Update Name</button>
       </div>

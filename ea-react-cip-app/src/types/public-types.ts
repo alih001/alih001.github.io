@@ -182,8 +182,10 @@ export interface WeirRow {
 
 export interface CustomNodeData {
   nodeName: string;
+  nodeColour: string;
 }
 
 interface CustomNode extends Node {
-  nodeName?: CustomNodeData
+  nodeName?: CustomNodeData;
+  nodeColour?: CustomNodeData;
 }
