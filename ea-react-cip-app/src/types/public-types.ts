@@ -1,15 +1,7 @@
 import { ViewMode } from "gantt-task-react";
 import { SeriesPoint } from '@visx/shape/lib/types';
 import { CityTemperature } from '@visx/mock-data/lib/mocks/cityTemperature';
-
-// NetworkLinks Types 
-export type CustomNode = {
-    id: string;
-    name: string;
-    x: number;
-    y: number;
-    color: string;
-};
+import { Node } from 'reactflow'
   
 export type DashboardProps = {
     nodes: CustomNode[];
@@ -187,3 +179,11 @@ export interface WeirRow {
     'Package Cost': number;
     [key: string]: string | number;
   }
+
+export interface CustomNodeData {
+  nodeName: string;
+}
+
+interface CustomNode extends Node {
+  nodeName?: CustomNodeData
+}

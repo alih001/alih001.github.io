@@ -57,6 +57,8 @@ type DataContextType = {
     setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
     edges: Edge[];
     setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
+    isEditing: boolean;
+    setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
 
   };
   
@@ -71,21 +73,25 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       id: '1',
       type: 'custom',
       position: { x: 0, y: 0 },
+      data: { label: 'Node 1', nodeName: 'Custom Node 1' }, // Adjusted structure
     },
     {
       id: '2',
       type: 'custom',
       position: { x: 250, y: 320 },
+      data: { label: 'Node 2', nodeName: 'Custom Node 2' }, // Adjusted structure
     },
     {
       id: '3',
       type: 'custom',
       position: { x: 40, y: 300 },
+      data: { label: 'Node 3', nodeName: 'Custom Node 3' }, // Adjusted structure
     },
     {
       id: '4',
       type: 'custom',
       position: { x: 300, y: 0 },
+      data: { label: 'Node 4', nodeName: 'Custom Node 4' }, // Adjusted structure
     },
   ];
 
@@ -125,6 +131,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Reactflow States
   const [nodes, setNodes] = useState<Node[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>([]);
+  const [isEditing, setIsEditing] = useState(false);
 
   const contextValue: DataContextType = {
     // Table States
@@ -180,6 +187,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setNodes,
     edges,
     setEdges,
+    isEditing,
+    setIsEditing,
 
   };
 

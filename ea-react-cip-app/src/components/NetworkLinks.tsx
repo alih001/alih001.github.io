@@ -1,9 +1,9 @@
 // NetworkLinks.tsx
-import React, { useCallback } from 'react';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 import { useData } from '../contexts/useDataContext';
 import ReactFlow, { addEdge, useNodesState, useEdgesState, MarkerType } from 'reactflow';
 import { applyNodeChanges, applyEdgeChanges } from 'reactflow';
-
+import '../styles/networkLinks.css';
 import CustomNode from './node_scripts/CustomNode';
 import FloatingEdge from './node_scripts/FloatingEdge';
 import CustomConnectionLine from './node_scripts/CustomConnectionLine';
@@ -14,10 +14,6 @@ import './node_scripts/nodeStyles.css';
 const connectionLineStyle = {
   strokeWidth: 3,
   stroke: 'black',
-};
-
-const nodeTypes = {
-  custom: CustomNode,
 };
 
 const edgeTypes = {
@@ -35,8 +31,15 @@ const defaultEdgeOptions = {
 
 const NetworkLinks = () => {
   const { nodes, setNodes, edges, setEdges } = useData();
+  const [editingNode, setEditingNode] = useState({ isEditing: false, nodeId: null });
+  const [nodeNameInput, setNodeNameInput] = useState('');
 
+  const editNodeRef = useRef(null)
   const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
+
+  const nodeTypes = {
+    custom: (nodeProps) => <CustomNode {...nodeProps} onEdit={handleNodeEdit} />,
+  };
 
   const onNodesChange = useCallback(
     (changes) => {
@@ -51,24 +54,89 @@ const NetworkLinks = () => {
     },
     [setEdges]
   );
+
+  const handleNodeEdit = useCallback((nodeId) => {
+    const nodeToEdit = nodes.find((node) => node.id === nodeId);
+    if (nodeToEdit) {
+      setNodeNameInput(nodeToEdit.data.nodeName); // Pre-populate input with current node name
+    }
+    setEditingNode({ isEditing: true, nodeId });
+  }, [nodes]);
+  
+  
+
+  const renderEditNodes = (nodeId) => {
+    const handleInputChange = (event) => {
+      setNodeNameInput(event.target.value);
+    };
+  
+    const handleSubmit = () => {
+      console.log(nodeNameInput)
+      console.log(nodeId)
+      const updatedNodes = nodes.map((node) =>
+        node.id === nodeId ? { ...node, data: { ...node.data, nodeName: nodeNameInput } } : node
+      );
+  
+      console.log()
+
+      setNodes(updatedNodes);
+      setEditingNode({ isEditing: false, nodeId: null }); // Reset editing state
+      setNodeNameInput(''); // Clear input field
+    };
+  
+    return (
+      <div>
+        <input
+          type="text"
+          value={nodeNameInput}
+          onChange={handleInputChange}
+          autoFocus
+        />
+        <button onClick={handleSubmit}>Update Name</button>
+      </div>
+    );
+  };
+  
+
+  const renderDescription = () => (
+    <div>
+      This section will provide a brief overview 
+      on what's possible in this dashboard
+    </div>
+  );
+
+  const renderDynamicSection = () => {
+    if (editingNode.isEditing) {
+      return renderEditNodes(editingNode.nodeId);
+    }
+    return renderDescription();
+  };
   
 
   return (
-    <div style={{ height: 500 }}>
-    <ReactFlow
-      nodes={nodes}
-      edges={edges}
-      onNodesChange={onNodesChange}
-      onEdgesChange={onEdgesChange}
-      onConnect={onConnect}
-      fitView
-      nodeTypes={nodeTypes}
-      edgeTypes={edgeTypes}
-      defaultEdgeOptions={defaultEdgeOptions}
-      connectionLineComponent={CustomConnectionLine}
-      connectionLineStyle={connectionLineStyle}
-    />
+    <>
+    <div className='network-dashboard'>
+      <div className='content'>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onConnect={onConnect}
+          fitView
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          defaultEdgeOptions={defaultEdgeOptions}
+          connectionLineComponent={CustomConnectionLine}
+          connectionLineStyle={connectionLineStyle}
+        />
+      </div>
+      <div className='networkDescription' ref={editNodeRef}>
+        {renderDynamicSection()}
+      </div>
     </div>
+
+    </>
   );
 };
 
