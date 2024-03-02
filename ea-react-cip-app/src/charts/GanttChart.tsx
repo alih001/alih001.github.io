@@ -1,14 +1,15 @@
 import React from 'react';
 import { Gantt, Task, ViewMode } from 'gantt-task-react';
 import 'gantt-task-react/dist/index.css';
-import { getStartEndDateForProject, initTasks } from "../components/GanttHelper";
+import { getStartEndDateForProject } from "../components/GanttHelper";
 import { ViewSwitcher } from '../components/view-switcher';
+import { useData } from '../contexts/useDataContext';
 
 const MyGanttChart = () => {
 
-    const [view, setView] = React.useState<ViewMode>(ViewMode.Day);
-    const [tasks, setTasks] = React.useState<Task[]>(initTasks());
-    const [isChecked, setIsChecked] = React.useState(true);
+    const { view, setView } = useData()
+    const { tasks, setTasks } = useData()
+    const { isChecked, setIsChecked} = useData()
 
     let columnWidth = 65;
     

@@ -2,35 +2,8 @@
 import React, { createContext, useState } from 'react';
 import { TableRow, CostTableRow, CustomNodeProps } from '../types/public-types'
 import { Edge } from 'reactflow'
-
-
-const initialNodes = [
-  {
-    id: '1',
-    type: 'custom',
-    position: { x: 0, y: 0 },
-    data: { label: 'Node 1', nodeName: 'Custom Node 1', nodeColour: 'green' }, // Adjusted structure
-  },
-  {
-    id: '2',
-    type: 'custom',
-    position: { x: 250, y: 320 },
-    data: { label: 'Node 2', nodeName: 'Custom Node 2', nodeColour: 'brown'  }, // Adjusted structure
-  },
-  {
-    id: '3',
-    type: 'custom',
-    position: { x: 40, y: 300 },
-    data: { label: 'Node 3', nodeName: 'Custom Node 3', nodeColour: 'brown'  }, // Adjusted structure
-  },
-  {
-    id: '4',
-    type: 'custom',
-    position: { x: 300, y: 0 },
-    data: { label: 'Node 4', nodeName: 'Custom Node 4', nodeColour: 'brown'  }, // Adjusted structure
-  },
-];
-
+import { Task, ViewMode } from 'gantt-task-react'
+import { initTasks } from '../components/GanttHelper'
 
 type DataContextType = {
     // Populate Table Props
@@ -89,6 +62,13 @@ type DataContextType = {
     isEditing: boolean;
     setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
 
+    // Gantt chart states
+    view: ViewMode;
+    setView: React.Dispatch<React.SetStateAction<ViewMode>>;
+    tasks: Task[];
+    setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+    isChecked: boolean;
+    setIsChecked: React.Dispatch<React.SetStateAction<boolean>>;
   };
   
 
@@ -96,8 +76,6 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 export default DataContext;
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-
-
 
   // Populate Table States
   const [table1Data, setTable1Data] = useState<TableRow[]>([]);
@@ -133,9 +111,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [chartData, setChartData] = useState<number | null>(null);
 
   // Reactflow States
-  const [nodes, setNodes] = useState<CustomNodeProps[]>(initialNodes);
+  const [nodes, setNodes] = useState<CustomNodeProps[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
   const [isEditing, setIsEditing] = useState(false);
+
+  // Gantt chart States
+  const [view, setView] = useState<ViewMode>(ViewMode.Day);
+  const [tasks, setTasks] = useState<Task[]>(initTasks());
+  const [isChecked, setIsChecked] = useState(true);
 
   const contextValue: DataContextType = {
     // Table States
@@ -193,6 +176,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setEdges,
     isEditing,
     setIsEditing,
+
+    // Gantt chart states
+    view,
+    setView,
+    tasks,
+    setTasks,
+    isChecked,
+    setIsChecked,
 
   };
 
