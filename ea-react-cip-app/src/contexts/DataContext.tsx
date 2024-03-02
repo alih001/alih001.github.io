@@ -3,6 +3,35 @@ import React, { createContext, useState } from 'react';
 import { TableRow, CostTableRow, CustomNode } from '../types/public-types'
 import { Node, Edge } from 'reactflow'
 
+
+const initialNodes = [
+  {
+    id: '1',
+    type: 'custom',
+    position: { x: 0, y: 0 },
+    data: { label: 'Node 1', nodeName: 'Custom Node 1', nodeColour: 'green' }, // Adjusted structure
+  },
+  {
+    id: '2',
+    type: 'custom',
+    position: { x: 250, y: 320 },
+    data: { label: 'Node 2', nodeName: 'Custom Node 2', nodeColour: 'brown'  }, // Adjusted structure
+  },
+  {
+    id: '3',
+    type: 'custom',
+    position: { x: 40, y: 300 },
+    data: { label: 'Node 3', nodeName: 'Custom Node 3', nodeColour: 'brown'  }, // Adjusted structure
+  },
+  {
+    id: '4',
+    type: 'custom',
+    position: { x: 300, y: 0 },
+    data: { label: 'Node 4', nodeName: 'Custom Node 4', nodeColour: 'brown'  }, // Adjusted structure
+  },
+];
+
+
 type DataContextType = {
     // Populate Table Props
     table1Data: TableRow[];
@@ -68,32 +97,7 @@ export default DataContext;
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
-  const initialNodes = [
-    {
-      id: '1',
-      type: 'custom',
-      position: { x: 0, y: 0 },
-      data: { label: 'Node 1', nodeName: 'Custom Node 1', nodeColour: 'green' }, // Adjusted structure
-    },
-    {
-      id: '2',
-      type: 'custom',
-      position: { x: 250, y: 320 },
-      data: { label: 'Node 2', nodeName: 'Custom Node 2', nodeColour: 'brown'  }, // Adjusted structure
-    },
-    {
-      id: '3',
-      type: 'custom',
-      position: { x: 40, y: 300 },
-      data: { label: 'Node 3', nodeName: 'Custom Node 3', nodeColour: 'brown'  }, // Adjusted structure
-    },
-    {
-      id: '4',
-      type: 'custom',
-      position: { x: 300, y: 0 },
-      data: { label: 'Node 4', nodeName: 'Custom Node 4', nodeColour: 'brown'  }, // Adjusted structure
-    },
-  ];
+
 
   // Populate Table States
   const [table1Data, setTable1Data] = useState<TableRow[]>([]);

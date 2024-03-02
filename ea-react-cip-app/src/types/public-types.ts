@@ -186,6 +186,5 @@ export interface CustomNodeData {
 }
 
 interface CustomNode extends Node {
-  nodeName?: CustomNodeData;
-  nodeColour?: CustomNodeData;
+  data: CustomNodeData;
 }
