@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { DragEvent } from 'react';
 
-function NodeSidebar () {
-  const onDragStart = (event, nodeType) => {
+
+const NodeSidebar: React.FC = () => {
+  const onDragStart = (event: DragEvent<HTMLDivElement>, nodeType: string) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
     event.dataTransfer.effectAllowed = 'move';
   };
@@ -16,4 +17,4 @@ function NodeSidebar () {
   );
 };
 
-export default NodeSidebar
+export default NodeSidebar;

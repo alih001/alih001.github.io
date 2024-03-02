@@ -2,12 +2,7 @@ import { ViewMode } from "gantt-task-react";
 import { SeriesPoint } from '@visx/shape/lib/types';
 import { CityTemperature } from '@visx/mock-data/lib/mocks/cityTemperature';
 import { Node } from 'reactflow'
-  
-export type DashboardProps = {
-    nodes: CustomNode[];
-    onAddNode: (x: number, y: number) => void;
-    updateNodes: (updateFn: (prevNodes: CustomNode[]) => CustomNode[]) => void;
-};
+import React from 'react';
 
 export type mapStateValue = {
     scale: number;
@@ -185,6 +180,35 @@ export interface CustomNodeData {
   nodeColour: string;
 }
 
-interface CustomNode extends Node {
+export interface CustomNodeProps extends Node {
   data: CustomNodeData;
+  onEdit?: string;
+}
+
+export interface ConnectionPath {
+  id: string;
+  source: string;
+  target: string;
+  markerEnd: string;
+  style: React.CSSProperties;
+}
+
+export type EdgeTuple = {
+  sx: number;
+  sy: number;
+  tx: number;
+  ty: number;
+}
+
+export type IntersectionType = {
+  x: number;
+  y: number;
+}
+
+export interface CustomConnectionProps {
+  fromX: number;
+  fromY: number;
+  toX: number;
+  toY: number;
+  connectionLineStyle: React.CSSProperties;
 }

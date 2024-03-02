@@ -1,7 +1,7 @@
 // DataContext.tsx
 import React, { createContext, useState } from 'react';
-import { TableRow, CostTableRow, CustomNode } from '../types/public-types'
-import { Node, Edge } from 'reactflow'
+import { TableRow, CostTableRow, CustomNodeProps } from '../types/public-types'
+import { Edge } from 'reactflow'
 
 
 const initialNodes = [
@@ -82,8 +82,8 @@ type DataContextType = {
     setChartData: React.Dispatch<React.SetStateAction<number | null>>;
 
     // Reacflow States
-    nodes: Node[];
-    setNodes: React.Dispatch<React.SetStateAction<Node[]>>;
+    nodes: CustomNodeProps[];
+    setNodes: React.Dispatch<React.SetStateAction<CustomNodeProps[]>>;
     edges: Edge[];
     setEdges: React.Dispatch<React.SetStateAction<Edge[]>>;
     isEditing: boolean;
@@ -133,7 +133,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [chartData, setChartData] = useState<number | null>(null);
 
   // Reactflow States
-  const [nodes, setNodes] = useState<Node[]>(initialNodes);
+  const [nodes, setNodes] = useState<CustomNodeProps[]>(initialNodes);
   const [edges, setEdges] = useState<Edge[]>([]);
   const [isEditing, setIsEditing] = useState(false);
 

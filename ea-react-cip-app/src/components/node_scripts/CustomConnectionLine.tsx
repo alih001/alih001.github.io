@@ -1,9 +1,11 @@
 // CustomConnectionLine.tsx
 import React from 'react';
 import { getStraightPath } from 'reactflow';
+import { CustomConnectionProps } from '../../types/public-types';
 
-function CustomConnectionLine({ fromX, fromY, toX, toY, connectionLineStyle }) {
-  const [edgePath] = getStraightPath({
+const CustomConnectionLine: React.FC<CustomConnectionProps> = ({  fromX, fromY, toX, toY, connectionLineStyle }) => {
+  
+    const [edgePath] = getStraightPath({
     sourceX: fromX,
     sourceY: fromY,
     targetX: toX,

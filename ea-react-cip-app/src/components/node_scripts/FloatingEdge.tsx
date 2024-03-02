@@ -3,8 +3,9 @@ import { useCallback } from 'react';
 import { useStore, getStraightPath } from 'reactflow';
 
 import { getEdgeParams } from './utils.tsx';
+import { ConnectionPath } from '../../types/public-types.ts';
 
-function FloatingEdge({ id, source, target, markerEnd, style }) {
+const FloatingEdge: React.FC<ConnectionPath> = ({ id, source, target, markerEnd, style }) => {
   const sourceNode = useStore(useCallback((store) => store.nodeInternals.get(source), [source]));
   const targetNode = useStore(useCallback((store) => store.nodeInternals.get(target), [target]));
 

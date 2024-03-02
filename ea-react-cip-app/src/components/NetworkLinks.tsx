@@ -7,7 +7,7 @@ import CustomNode from './node_scripts/CustomNode';
 import FloatingEdge from './node_scripts/FloatingEdge';
 import CustomConnectionLine from './node_scripts/CustomConnectionLine';
 import { Circle } from '@uiw/react-color';
-
+import { CustomNodeProps } from '../types/public-types';
 import 'reactflow/dist/style.css';
 import './node_scripts/nodeStyles.css';
 
@@ -33,7 +33,7 @@ const defaultEdgeOptions = {
 
 const NetworkLinks = () => {
   const { nodes, setNodes, edges, setEdges } = useData();
-  const [editingNode, setEditingNode] = useState({ isEditing: false, nodeId: null });
+  const [editingNode, setEditingNode] = useState({ isEditing: false, nodeId: '' });
   const [nodeNameInput, setNodeNameInput] = useState('');
   const editNodeRef = useRef(null)
 
@@ -46,7 +46,7 @@ const NetworkLinks = () => {
 
 
   const handleNodeEdit = useCallback((nodeId: string) => {
-    const nodeToEdit = nodes.find((node) => node.id === nodeId);
+    const nodeToEdit: CustomNodeProps = nodes.find((node) => node.id === nodeId);
     if (nodeToEdit) {
       setNodeNameInput(nodeToEdit.data.nodeName);
       setSelectedColor(nodeToEdit.data.nodeColour || '');
@@ -94,7 +94,7 @@ const NetworkLinks = () => {
         y: event.clientY,
       });
 
-      const newNode = {
+      const newNode: CustomNodeProps = {
         id: Date.now().toString(),
         type,
         position,
@@ -108,13 +108,13 @@ const NetworkLinks = () => {
     [reactFlowInstance, setNodes]
   );
   
-  const renderEditNodes = (nodeId) => {
+  const renderEditNodes = (nodeId: string) => {
     const handleInputChange = (event) => {
       setNodeNameInput(event.target.value);
     };
   
-    const handleColorChange = (color) => {
-      setSelectedColor(color.hex);
+    const handleColorChange = (colorHex: string) => {
+      setSelectedColor(colorHex);
     };
 
     const handleSubmit = () => {
@@ -123,7 +123,7 @@ const NetworkLinks = () => {
       );
 
       setNodes(updatedNodes);
-      setEditingNode({ isEditing: false, nodeId: null }); // Reset editing state
+      setEditingNode({ isEditing: false, nodeId: '' }); // Reset editing state
       setNodeNameInput(''); // Clear input field
     };
   
@@ -139,7 +139,7 @@ const NetworkLinks = () => {
           colors={[ '#F44E3B', '#FE9200', '#FCDC00', '#DBDF00' ]}
           color={selectedColor}
           onChange={(color) => {
-            handleColorChange(color);
+            handleColorChange(color.hex);
           }}
         />
         <button onClick={handleSubmit}>Update Name</button>

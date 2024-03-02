@@ -1,6 +1,5 @@
 import React from 'react';
 import NetworkLinks from '../components/NetworkLinks';
-import { useData } from '../contexts/useDataContext';
 import styled from 'styled-components';
 
 const HeroSection = styled.section`
