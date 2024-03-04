@@ -9,7 +9,9 @@ const AssetTable: React.FC<AssetTableProps> = ({
     data, onDataChange, tableId
   }) => {
 
-  const arrayCollapsibleColumnIndexes = useMemo (() => [2, 3, 4, 5], []);
+  const arrayCollapsibleColumnIndexes = useMemo (() => [
+    4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
+  ], []);
 
   const dropdownValueMap: DropdownValueMapType = useMemo(() => ({
       "None": 0,
@@ -18,13 +20,16 @@ const AssetTable: React.FC<AssetTableProps> = ({
       "High": 6
     }), []);
 
-  const stage1FactorsMap: StagesFactorMapType = useMemo(() => ({
+  const category1FactorsMap: StagesFactorMapType = useMemo(() => ({
       2: 0.5,
       3: 1.5,
       4: 0.2,
+      5: 0.2,
+      6: 0.2,
+      7: 0.2,
     }), []);
   
-  const stage2FactorsMap: StagesFactorMapType = useMemo(() => ({
+  const category2FactorsMap: StagesFactorMapType = useMemo(() => ({
       2: 0.9,
       4: 2.3,
     }), []);
@@ -33,6 +38,9 @@ const AssetTable: React.FC<AssetTableProps> = ({
       arrayCollapsibleColumnIndexes[0],
       arrayCollapsibleColumnIndexes[1],
       arrayCollapsibleColumnIndexes[2],
+      arrayCollapsibleColumnIndexes[3],
+      arrayCollapsibleColumnIndexes[4],
+      arrayCollapsibleColumnIndexes[5],
     ], [arrayCollapsibleColumnIndexes]);
 
   const { dropdownValues, setDropdownValues } = useData();
@@ -59,9 +67,9 @@ const AssetTable: React.FC<AssetTableProps> = ({
     return <div>No data available</div>;
   }
 
-  const stage1ScoreColumnIndex = data[0].indexOf("Stage 1 Score");
-  const stage2ScoreColumnIndex = data[0].indexOf("Stage 2 Score");
-  const totalScoreColumnIndex = data[0].indexOf("Total");
+  const category1ScoreColumnIndex = data[0].indexOf("Category (I) Score");
+  const category2ScoreColumnIndex = data[0].indexOf("Category (II) Score");
+  const totalScoreColumnIndex = data[0].indexOf("Step (I) Score");
 
   const toggleRowCollapse = (rowIndex: number) => {
     setCollapsedAssetRows(prev => {
@@ -92,14 +100,14 @@ const AssetTable: React.FC<AssetTableProps> = ({
 
     // Update scores if the changed column is one of the dropdown columns
     if (dropdownColumnIndexes.includes(columnIndex)) {
-      let stage1Score = 0;
-      let stage2Score = 0;
+      let category1Score = 0;
+      let category2Score = 0;
       console.log("About to loop through all explicity defined ddms")
       // Loop through dropdown columns to calculate scores
       dropdownColumnIndexes.forEach((dropdownColIndex, _idx) => {
         const outputKey = `${tableId}-${rowIndex}-${dropdownColIndex}-output`;
-        const stage1Factor = stage1FactorsMap[dropdownColIndex] || 0;
-        const stage2Factor = stage2FactorsMap[dropdownColIndex] || 0;
+        const category1Factor = category1FactorsMap[dropdownColIndex] || 0;
+        const category2Factor = category2FactorsMap[dropdownColIndex] || 0;
     
         let outputValue = (dropdownValueMap[newValue] || 0);
 
@@ -112,22 +120,22 @@ const AssetTable: React.FC<AssetTableProps> = ({
           
         }
 
-        stage1Score += outputValue * stage1Factor;
-        stage2Score += outputValue * stage2Factor;
+        category1Score += outputValue * category1Factor;
+        category2Score += outputValue * category2Factor;
 
 
       });
 
       // Update Stage 1 Score and Stage 2 Score
-      if (stage1ScoreColumnIndex !== -1) {
-        updatedData[rowIndex][stage1ScoreColumnIndex] = stage1Score.toFixed(2);
+      if (category1ScoreColumnIndex !== -1) {
+        updatedData[rowIndex][category1ScoreColumnIndex] = category1Score.toFixed(2);
       }
-      if (stage2ScoreColumnIndex !== -1) {
-        updatedData[rowIndex][stage2ScoreColumnIndex] = stage2Score.toFixed(2);
+      if (category2ScoreColumnIndex !== -1) {
+        updatedData[rowIndex][category2ScoreColumnIndex] = category2Score.toFixed(2);
       }
       // Check if we need to update Total Score
       if (totalScoreColumnIndex !== -1) {
-        updatedData[rowIndex][totalScoreColumnIndex] = stage1Score + stage2Score
+        updatedData[rowIndex][totalScoreColumnIndex] = category1Score + category2Score
       }
 
     }
