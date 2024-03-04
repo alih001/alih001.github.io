@@ -1,0 +1,14 @@
+.custom-column {
+    border-left: 1px solid #ccc; /* Match Gantt chart's styling */
+    background-color: #f9f9f9; /* Match Gantt chart's background */
+  }
+  
+  .custom-column-row {
+    height: 50px; /* Match Gantt chart's row height */
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #eee; /* Match Gantt chart's row styling */
+    padding-left: 10px;
+    width: 150px;
+  }
+  

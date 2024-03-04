@@ -1,7 +1,7 @@
 import React from "react";
 import "gantt-task-react/dist/index.css";
 import { ViewMode } from "gantt-task-react";
-import { ViewSwitcherProps } from '../types/public-types'
+import { ViewSwitcherProps } from '../../types/public-types'
 
 export const ViewSwitcher: React.FC<ViewSwitcherProps> = ({
   onViewModeChange,

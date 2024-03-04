@@ -1,5 +1,5 @@
 // GanttHelper.tsx
-import { Task } from '../types/public-types';
+import { Task } from '../../types/public-types';
 
 export function initTasks() {
   const currentDate = new Date();
@@ -47,7 +47,7 @@ export function initTasks() {
       name: "Benson Weir Construction",
       id: "BensonConstruction",
       progress: 10,
-      dependencies: ["BensonFeasibility"],
+      dependencies: ["BensonDesign", "BensonFeasibility"],
       type: "task",
       project: "BensonWeir",
       displayOrder: 4,

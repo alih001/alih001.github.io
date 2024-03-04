@@ -3,7 +3,7 @@ import React, { createContext, useState } from 'react';
 import { TableRow, CostTableRow, CustomNodeProps } from '../types/public-types'
 import { Edge } from 'reactflow'
 import { Task, ViewMode } from 'gantt-task-react'
-import { initTasks } from '../components/GanttHelper'
+import { initTasks } from '../components/gantt_scripts/GanttHelper'
 
 type DataContextType = {
     // Populate Table Props
@@ -69,6 +69,10 @@ type DataContextType = {
     setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
     isChecked: boolean;
     setIsChecked: React.Dispatch<React.SetStateAction<boolean>>;
+    isGanttOpen: boolean;
+    setIsGanttOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    isSubTaskOpen: boolean;
+    setIsSubTaskOpen: React.Dispatch<React.SetStateAction<boolean>>;
   };
   
 
@@ -119,6 +123,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [view, setView] = useState<ViewMode>(ViewMode.Day);
   const [tasks, setTasks] = useState<Task[]>(initTasks());
   const [isChecked, setIsChecked] = useState(true);
+  const [isGanttOpen, setIsGanttOpen] = useState(false);
+  const [isSubTaskOpen, setIsSubTaskOpen] = useState(false);
 
   const contextValue: DataContextType = {
     // Table States
@@ -184,6 +190,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setTasks,
     isChecked,
     setIsChecked,
+    isGanttOpen,
+    setIsGanttOpen,
+    isSubTaskOpen,
+    setIsSubTaskOpen,
 
   };
 

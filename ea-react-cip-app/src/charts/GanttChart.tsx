@@ -1,16 +1,39 @@
 import React from 'react';
 import { Gantt, Task, ViewMode } from 'gantt-task-react';
 import 'gantt-task-react/dist/index.css';
-import { getStartEndDateForProject } from "../components/GanttHelper";
-import { ViewSwitcher } from '../components/view-switcher';
+import { getStartEndDateForProject } from "../components/gantt_scripts/GanttHelper";
+import { ViewSwitcher } from '../components/gantt_scripts/view-switcher';
 import { useData } from '../contexts/useDataContext';
+
+import { useCallback, useState } from "react";
+import { CgArrowsExpandUpRight } from "react-icons/cg";
+import Modal from "../components/gantt_scripts/GanttModal";
+import SubTaskModal from '../components/gantt_scripts/SubTaskModal';
+import CustomColumn from '../components/gantt_scripts/GanttColumn';
+import { Button } from 'react-bootstrap';
 
 const MyGanttChart = () => {
 
     const { view, setView } = useData()
     const { tasks, setTasks } = useData()
     const { isChecked, setIsChecked} = useData()
+    const { isGanttOpen, setIsGanttOpen } = useData()
 
+    const [selectedTask, setSelectedTask] = useState(null)
+
+    const handleDisplayModal = useCallback(() => {
+      setIsGanttOpen((prev) => (prev = !prev));
+    }, []);
+
+    const { isSubTaskOpen, setIsSubTaskOpen } = useData();
+    const handleSubTaskModal = useCallback(() => {
+      setIsSubTaskOpen((prev) => (prev = !prev));
+    }, []);
+
+    const handleSelectTask = useCallback((task) => {
+      setSelectedTask(task);
+    }, []);
+  
     let columnWidth = 65;
     
     if (view === ViewMode.Year) {
@@ -85,6 +108,21 @@ const MyGanttChart = () => {
             onViewListChange={setIsChecked}
             isChecked={isChecked}
           />
+
+          <Button onClick={handleDisplayModal}>Add Weir Project</Button>
+          {isGanttOpen && <Modal handleDisplayModal={handleDisplayModal} />}
+          {isSubTaskOpen && 
+            <SubTaskModal 
+              handleSubTaskModal={handleSubTaskModal}
+              task={selectedTask}
+            />}
+
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+
+          <CustomColumn 
+            tasks={tasks}
+            onSelectTask={handleSelectTask}
+          />
           <Gantt
             tasks={tasks}
             viewMode={view}
@@ -98,6 +136,7 @@ const MyGanttChart = () => {
             listCellWidth={isChecked ? "155px" : ""}
             columnWidth={columnWidth}
           />
+          </div>
         </div>
       );
     };
