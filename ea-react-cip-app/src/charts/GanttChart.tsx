@@ -1,14 +1,14 @@
 import React from 'react';
 import { Gantt, ViewMode } from 'gantt-task-react';
 import 'gantt-task-react/dist/index.css';
-import { getStartEndDateForProject } from "../components/gantt_scripts/GanttHelper";
-import { ViewSwitcher } from '../components/gantt_scripts/view-switcher';
+import { getStartEndDateForProject } from "../components/gantt_components/GanttHelper";
+import { ViewSwitcher } from '../components/gantt_components/view-switcher';
 import { useData } from '../contexts/useDataContext';
 
 import { useCallback } from "react";
-import Modal from "../components/gantt_scripts/GanttModal";
-import SubTaskModal from '../components/gantt_scripts/SubTaskModal';
-import CustomColumn from '../components/gantt_scripts/GanttColumn';
+import Modal from "../components/gantt_components/GanttModal";
+import SubTaskModal from '../components/gantt_components/SubTaskModal';
+import CustomColumn from '../components/gantt_components/GanttColumn';
 import { Button } from 'react-bootstrap';
 import { Task } from '../types/public-types';
 

@@ -1,7 +1,7 @@
 // CustomModal.tsx
 import React from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import { CustomModalProps } from '../types/public-types';
+import { CustomModalProps } from '../../types/public-types';
 
 const CustomModal: React.FC<CustomModalProps> = ({ 
   showModal, 

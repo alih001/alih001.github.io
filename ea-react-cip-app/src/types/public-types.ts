@@ -109,15 +109,6 @@ export type DropdownValueMapType = { [key: string]: number };
 export type StagesFactorMapType = { [key: number]: number };
 
 // Arrow Props
-export type Point = {
-    x: number;
-    y: number;
-  };
-  
-export type ArrowProps = {
-    startPoint: Point;
-    endPoint: Point;
-  };
 
 export type defaultMargin = {
     top: number;

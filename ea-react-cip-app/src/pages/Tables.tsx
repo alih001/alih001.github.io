@@ -2,10 +2,10 @@
 import React from 'react';
 import { useData } from '../contexts/useDataContext';
 import ExcelJS from 'exceljs'
-import FileUpload from '../components/FileUpload';
-import AssetTable from '../components/AssetTable';
-import CostTable from '../components/CostTable';
-import CustomizedSwitches from '../assets/switch';
+import FileUpload from '../components/table_components/FileUpload';
+import AssetTable from '../components/table_components/AssetTable';
+import CostTable from '../components/table_components/CostTable';
+import CustomizedSwitches from '../components/table_components/TableSwitch';
 import styled from 'styled-components';
 // import { TableData, TableRow, CostTableData, CostTableRow} from '../types/public-types'
 

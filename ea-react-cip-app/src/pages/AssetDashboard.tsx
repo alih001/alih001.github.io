@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import DashboardCardComponent from '../components/DashboardCard';
+import DashboardCardComponent from '../components/custom_components/DashboardCard';
 import DashboardPieChart from '../charts/PieChart';
 import { useData } from '../contexts/useDataContext';
 import DashboardTable from '../charts/summaryTable';

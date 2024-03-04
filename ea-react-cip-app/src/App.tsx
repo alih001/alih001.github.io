@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { DataProvider } from './contexts/DataContext';
-import CustomSidebar from './components/Navbar';
+import CustomSidebar from './components/custom_components/Navbar';
 import './styles/MainPage.css';
 import AppRoutes from './routes';
 import { BrowserRouter } from "react-router-dom";

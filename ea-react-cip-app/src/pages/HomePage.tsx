@@ -1,5 +1,5 @@
 import React from 'react';
-import CardComponent from "../components/CustomCard";
+import CardComponent from "../components/custom_components/CustomCard";
 import styled from 'styled-components';
 
 const HeroSection = styled.section`

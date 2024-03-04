@@ -3,7 +3,7 @@ import React, { createContext, useState } from 'react';
 import { TableRow, CostTableRow, CustomNodeProps } from '../types/public-types'
 import { Edge } from 'reactflow'
 import { ViewMode } from 'gantt-task-react'
-import { initTasks } from '../components/gantt_scripts/GanttHelper'
+import { initTasks } from '../components/gantt_components/GanttHelper'
 import { Task } from '../types/public-types';
 
 type DataContextType = {
@@ -36,16 +36,6 @@ type DataContextType = {
     setCollapsedAssetRows: React.Dispatch<React.SetStateAction<Set<number>>>;
     outputValues: { [key: string]: number };
     setOutputValues: React.Dispatch<React.SetStateAction<{ [key: string]: number }>>;
-
-    // New states for NetworkLinks
-    mapState: { scale: number; translation: { x: number; y: number } };
-    setMapState: React.Dispatch<React.SetStateAction<{ scale: number; translation: { x: number; y: number } }>>;
-    mode: string;
-    setMode: React.Dispatch<React.SetStateAction<string>>;
-    arrows: Array<{ startId: string; endId: string }>;
-    setArrows: React.Dispatch<React.SetStateAction<Array<{ startId: string; endId: string }>>>;
-    tempStart: string | null;
-    setTempStart: React.Dispatch<React.SetStateAction<string | null>>;
 
     // States for CostDashboard
     showCostPackageModal: boolean;
@@ -111,12 +101,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     new Set(table2Data.map(row => row[0]))
   );
 
-  // Network Link States
-  const [mapState, setMapState] = useState({ scale: 1, translation: { x: 0, y: 0 } });
-  const [mode, setMode] = useState('edit');
-  const [arrows, setArrows] = useState<Array<{ startId: string; endId: string }>>([]);
-  const [tempStart, setTempStart] = useState<string | null>(null);
-
   // CostDashboard States
   const [showCostPackageModal, setShowCostPackageModal] = useState(false);
   const [selectedWeirs, setSelectedWeirs] = useState<string[]>([]);
@@ -168,16 +152,6 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setShowChecklistModal,
     collapsedCostGroups,
     setCollapsedCostGroups,
-
-    // Network Link States
-    mapState,
-    setMapState,
-    mode,
-    setMode,
-    arrows,
-    setArrows,
-    tempStart,
-    setTempStart,
 
     // CostDashboard States
     showCostPackageModal,

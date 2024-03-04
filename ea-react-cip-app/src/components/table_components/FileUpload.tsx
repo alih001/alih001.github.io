@@ -1,7 +1,7 @@
 // FileUpload.tsx
 import React from 'react';
 import styled from 'styled-components';
-import { FileUploadProps } from '../types/public-types'
+import { FileUploadProps } from '../../types/public-types'
 
 const Input = styled.input.attrs({
   type: 'file'

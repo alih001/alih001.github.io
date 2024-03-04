@@ -1,8 +1,8 @@
 // AssetTable.tsx
 import React, { useEffect, useMemo } from 'react';
-import '../styles/tableStyles.css';
-import { useData } from '../contexts/useDataContext';
-import { TableRow, AssetTableProps, DropdownValueMapType, StagesFactorMapType } from '../types/public-types'
+import '../../styles/tableStyles.css';
+import { useData } from '../../contexts/useDataContext';
+import { TableRow, AssetTableProps, DropdownValueMapType, StagesFactorMapType } from '../../types/public-types'
 
 
 const AssetTable: React.FC<AssetTableProps> = ({

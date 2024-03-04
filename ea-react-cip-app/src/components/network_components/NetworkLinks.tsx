@@ -1,17 +1,17 @@
 // NetworkLinks.tsx
 import React, { useCallback, useRef, useState, useMemo } from 'react';
-import { useData } from '../contexts/useDataContext';
+import { useData } from '../../contexts/useDataContext';
 import ReactFlow, { applyNodeChanges, applyEdgeChanges, addEdge, MarkerType, ReactFlowProvider } from 'reactflow';
-import '../styles/networkLinks.css';
-import CustomNode from './node_scripts/CustomNode';
-import FloatingEdge from './node_scripts/FloatingEdge';
-import CustomConnectionLine from './node_scripts/CustomConnectionLine';
+import '../../styles/networkLinks.css';
+import CustomNode from './CustomNode';
+import FloatingEdge from './FloatingEdge';
+import CustomConnectionLine from './CustomConnectionLine';
 import { Circle } from '@uiw/react-color';
-import { CustomNodeProps } from '../types/public-types';
+import { CustomNodeProps } from '../../types/public-types';
 import 'reactflow/dist/style.css';
-import './node_scripts/nodeStyles.css';
+import '../../styles/nodeStyles.css';
 
-import NodeSidebar from './node_scripts/AddNodeSidebar';
+import NodeSidebar from './AddNodeSidebar';
 
 const connectionLineStyle = {
   strokeWidth: 3,

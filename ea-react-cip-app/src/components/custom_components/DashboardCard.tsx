@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { DashboardCardProps, MainContainerProps } from '../types/public-types';
+import { DashboardCardProps, MainContainerProps } from '../../types/public-types';
 
 const MainContainer = styled.div<MainContainerProps>`
 
