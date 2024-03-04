@@ -3,6 +3,7 @@ import { styled } from "styled-components";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import { Button } from 'react-bootstrap';
 import { useData } from '../../contexts/useDataContext';
+import { GanttModalProps } from '../../types/public-types';
 
 export const Label = styled.label`
   font-size: 1rem;
@@ -76,40 +77,39 @@ const ModalTitle = styled.h2`
   align-self: flex-start;
 `;
 
-const Modal = ({ handleDisplayModal }) => {
-
+const Modal: React.FC<GanttModalProps> = ({ handleDisplayModal }) => {
 
     const { tasks, setTasks } = useData();
-    const [projectName, setProjectName] = useState('')
-    const [selectedStartDate, setSelectedStartDate] = useState(null);
-    const [selectedEndDate, setSelectedEndDate] = useState(null);
-    const [progress, setProgress] = useState(0);
+    const { selectedStartDate, setSelectedStartDate } = useData();
+    const { selectedEndDate, setSelectedEndDate } = useData();
 
-    const handleProgressChange = (event) => {
-        setProgress(event.target.value);
-    };
-    
-    const handleStartDateChange = (event) => {
-        setSelectedStartDate(event.target.value);
-    };
+    const [projectName, setProjectName] = useState<string>('');
+    const [progress, setProgress] = useState<number>(0);
 
-    const handleEndDateChange = (event) => {
-        setSelectedEndDate(event.target.value);
+    const handleProgressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setProgress(parseFloat(event.target.value));
+  };
+  
+    const handleStartDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectedStartDate(new Date(event.target.value));
     };
 
-    const handleProjectNameChange = (event) => {
+    const handleEndDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectedEndDate(new Date(event.target.value));
+    };
+
+    const handleProjectNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setProjectName(event.target.value);
     };
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
+    const handleSubmit = () => {
   
         const newTask = {
-          start: new Date(selectedStartDate),
-          end: new Date(selectedEndDate),
+          start: selectedStartDate,
+          end: selectedEndDate,
           name: projectName,
           id: projectName.replace(/\s+/g, ''),
-          progress: parseInt(progress, 10),
+          progress: progress,
           type: "project",
           hideChildren: false,
           displayOrder: tasks.length + 1,

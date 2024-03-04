@@ -1,38 +1,37 @@
 import React from 'react';
-import { Gantt, Task, ViewMode } from 'gantt-task-react';
+import { Gantt, ViewMode } from 'gantt-task-react';
 import 'gantt-task-react/dist/index.css';
 import { getStartEndDateForProject } from "../components/gantt_scripts/GanttHelper";
 import { ViewSwitcher } from '../components/gantt_scripts/view-switcher';
 import { useData } from '../contexts/useDataContext';
 
-import { useCallback, useState } from "react";
-import { CgArrowsExpandUpRight } from "react-icons/cg";
+import { useCallback } from "react";
 import Modal from "../components/gantt_scripts/GanttModal";
 import SubTaskModal from '../components/gantt_scripts/SubTaskModal';
 import CustomColumn from '../components/gantt_scripts/GanttColumn';
 import { Button } from 'react-bootstrap';
+import { Task } from '../types/public-types';
 
-const MyGanttChart = () => {
+const MyGanttChart: React.FC = () => {
 
     const { view, setView } = useData()
     const { tasks, setTasks } = useData()
     const { isChecked, setIsChecked} = useData()
     const { isGanttOpen, setIsGanttOpen } = useData()
-
-    const [selectedTask, setSelectedTask] = useState(null)
+    const { selectedTask, setSelectedTask } = useData()
 
     const handleDisplayModal = useCallback(() => {
       setIsGanttOpen((prev) => (prev = !prev));
-    }, []);
+    }, [setIsGanttOpen]);
 
     const { isSubTaskOpen, setIsSubTaskOpen } = useData();
     const handleSubTaskModal = useCallback(() => {
       setIsSubTaskOpen((prev) => (prev = !prev));
-    }, []);
+    }, [setIsSubTaskOpen]);
 
-    const handleSelectTask = useCallback((task) => {
+    const handleSelectTask = useCallback((task: Task) => {
       setSelectedTask(task);
-    }, []);
+    }, [setSelectedTask]);
   
     let columnWidth = 65;
     
@@ -110,7 +109,10 @@ const MyGanttChart = () => {
           />
 
           <Button onClick={handleDisplayModal}>Add Weir Project</Button>
-          {isGanttOpen && <Modal handleDisplayModal={handleDisplayModal} />}
+          {isGanttOpen && 
+            <Modal 
+              handleDisplayModal={handleDisplayModal} 
+            />}
           {isSubTaskOpen && 
             <SubTaskModal 
               handleSubTaskModal={handleSubTaskModal}

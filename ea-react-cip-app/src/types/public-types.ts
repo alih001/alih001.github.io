@@ -2,7 +2,7 @@ import { ViewMode } from "gantt-task-react";
 import { SeriesPoint } from '@visx/shape/lib/types';
 import { CityTemperature } from '@visx/mock-data/lib/mocks/cityTemperature';
 import { Node } from 'reactflow'
-import React from 'react';
+import React, { MouseEventHandler } from 'react';
 
 export type mapStateValue = {
     scale: number;
@@ -211,4 +211,18 @@ export interface CustomConnectionProps {
   toX: number;
   toY: number;
   connectionLineStyle: React.CSSProperties;
+}
+
+export interface SubTaskModalProps {
+  handleSubTaskModal: MouseEventHandler<SVGElement>;
+  task: Task;
+}
+
+export interface GanttModalProps {
+  handleDisplayModal: MouseEventHandler<SVGElement>;
+}
+
+export interface ExtendGanttProps {
+  tasks: Task[];
+  onSelectTask: (value: React.SetStateAction<Task | null>) => void;
 }

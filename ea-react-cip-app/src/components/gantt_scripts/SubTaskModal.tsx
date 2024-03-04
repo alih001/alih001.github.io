@@ -5,6 +5,8 @@ import { Button } from 'react-bootstrap';
 import { useData } from '../../contexts/useDataContext';
 import Select from 'react-select'
 
+import { Task, SubTaskModalProps } from '../../types/public-types';
+
 export const Label = styled.label`
   font-size: 1rem;
   font-weight: thin;
@@ -77,53 +79,50 @@ const ModalTitle = styled.h2`
   align-self: flex-start;
 `;
 
-const SubTaskModal = ({handleSubTaskModal, task}) => {
+const SubTaskModal: React.FC<SubTaskModalProps> = ({handleSubTaskModal, task}) => {
 
     const { tasks, setTasks } = useData();
-    const [projectName, setProjectName] = useState('')
-    const [selectedStartDate, setSelectedStartDate] = useState(null);
-    const [selectedEndDate, setSelectedEndDate] = useState(null);
-    const [progress, setProgress] = useState(0);
-    const [selectedOptions, setSelectedOptions] = useState([]);
+    const { selectedStartDate, setSelectedStartDate } = useData();
+    const { selectedEndDate, setSelectedEndDate } = useData();
+    
+    const [projectName, setProjectName] = useState<string>('');
+    const [progress, setProgress] = useState<number>(0);
+    const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
 
-    const options = [
-        { value: 'chocolate', label: 'Chocolate' },
-        { value: 'strawberry', label: 'Strawberry' },
-        { value: 'vanilla', label: 'Vanilla' }
-      ]
+    const options = tasks.map(singleTask => ({ value: singleTask.id, label: singleTask.name }));
 
-    const handleProgressChange = (event) => {
-        setProgress(event.target.value);
+    const handleProgressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setProgress(parseFloat(event.target.value));
     };
     
-    const handleStartDateChange = (event) => {
-        setSelectedStartDate(event.target.value);
+    const handleStartDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectedStartDate(new Date(event.target.value));
     };
 
-    const handleEndDateChange = (event) => {
-        setSelectedEndDate(event.target.value);
+    const handleEndDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectedEndDate(new Date(event.target.value));
     };
 
-    const handleProjectNameChange = (event) => {
+    const handleProjectNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setProjectName(event.target.value);
     };
 
-    const handleDropdownChange = (selectedOptions) => {
+    const handleDropdownChange = (selectedOptions: string[]) => {
         setSelectedOptions(selectedOptions || []);
     };
 
-    const handleSubmit = (task) => {
+    const handleSubmit = (task: Task) => {
         // event.preventDefault();
 
         const selectedValues = selectedOptions.map(option => option.value);
-        // console.log("project is")
-        // console.log(task)
+        console.log("project is")
+        console.log(task)
         const newTask = {
-          start: new Date(selectedStartDate),
-          end: new Date(selectedEndDate),
+          start: selectedStartDate,
+          end: selectedEndDate,
           name: projectName,
           id: projectName.replace(/\s+/g, ''),
-          progress: parseInt(progress, 10),
+          progress: progress,
           type: "task",
           displayOrder: tasks.length + 1,
           dependencies: selectedValues,

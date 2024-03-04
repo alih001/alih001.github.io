@@ -3,15 +3,16 @@ import { useCallback } from "react";
 import '../../styles/ganttStyles.css';
 import { Button } from 'react-bootstrap';
 import { useData } from '../../contexts/useDataContext';
+import { ExtendGanttProps, Task } from '../../types/public-types';
 
-export const CustomColumn = ({ tasks, onSelectTask }) => {
+export const CustomColumn: React.FC<ExtendGanttProps> = ({ tasks, onSelectTask }) => {
     const { setIsSubTaskOpen } = useData();
 
     const handleSubTaskModal = useCallback(() => {
         setIsSubTaskOpen(prev => !prev);
     }, [setIsSubTaskOpen]);
 
-    const onAddSubTaskClick = (task) => {
+    const onAddSubTaskClick = (task: Task) => {
         handleSubTaskModal();
         onSelectTask(task);
     };

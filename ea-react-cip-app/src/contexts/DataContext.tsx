@@ -2,8 +2,9 @@
 import React, { createContext, useState } from 'react';
 import { TableRow, CostTableRow, CustomNodeProps } from '../types/public-types'
 import { Edge } from 'reactflow'
-import { Task, ViewMode } from 'gantt-task-react'
+import { ViewMode } from 'gantt-task-react'
 import { initTasks } from '../components/gantt_scripts/GanttHelper'
+import { Task } from '../types/public-types';
 
 type DataContextType = {
     // Populate Table Props
@@ -73,6 +74,13 @@ type DataContextType = {
     setIsGanttOpen: React.Dispatch<React.SetStateAction<boolean>>;
     isSubTaskOpen: boolean;
     setIsSubTaskOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    selectedTask: Task | null;
+    setSelectedTask: React.Dispatch<React.SetStateAction<Task | null>>;
+    // Gantt modal states
+    selectedStartDate: Date | null;
+    setSelectedStartDate: React.Dispatch<React.SetStateAction<Date | null>>;
+    selectedEndDate: Date | null;
+    setSelectedEndDate: React.Dispatch<React.SetStateAction<Date | null>>;
   };
   
 
@@ -120,11 +128,15 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isEditing, setIsEditing] = useState(false);
 
   // Gantt chart States
-  const [view, setView] = useState<ViewMode>(ViewMode.Day);
+  const [view, setView] = useState<ViewMode>(ViewMode.Month);
   const [tasks, setTasks] = useState<Task[]>(initTasks());
   const [isChecked, setIsChecked] = useState(true);
   const [isGanttOpen, setIsGanttOpen] = useState(false);
   const [isSubTaskOpen, setIsSubTaskOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  // Gantt modal states
+  const [selectedStartDate, setSelectedStartDate] = useState<Date | null>(null);
+  const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null);
 
   const contextValue: DataContextType = {
     // Table States
@@ -194,6 +206,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsGanttOpen,
     isSubTaskOpen,
     setIsSubTaskOpen,
+    selectedTask,
+    setSelectedTask,
+    // Gantt modal names
+    selectedStartDate,
+    setSelectedStartDate,
+    selectedEndDate,
+    setSelectedEndDate,
 
   };
 
