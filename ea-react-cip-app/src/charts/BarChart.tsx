@@ -82,7 +82,8 @@ export default function Example({
 
   dateScale.rangeRound([0, xMax]);
   temperatureScale.range([yMax, 0]);
-
+  console.log("input data for graph is: ")
+  console.log(data)
   return width < 10 ? null : (
     <div style={{ position: 'relative' }}>
       <svg ref={containerRef} width={width} height={height}>

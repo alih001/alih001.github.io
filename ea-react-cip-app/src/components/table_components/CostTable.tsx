@@ -4,7 +4,15 @@ import '../../styles/tableStyles.css';
 import CustomModal from '../custom_components/CustomModal';
 import { Button, Modal } from 'react-bootstrap';
 import { useData } from '../../contexts/useDataContext';
-import { TableCell, CostTableProps, CostTableRow, CostTableData } from '../../types/public-types';
+import { TableCell as CostTableCell, CostTableProps, CostTableRow, CostTableData } from '../../types/public-types';
+
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
 const CostTable: React.FC<CostTableProps> = ({
     data, onDataChange, tableId,
@@ -362,7 +370,7 @@ const CostTable: React.FC<CostTableProps> = ({
         );
       };
       
-    const renderCellContent = (row: CostTableRow, rowIndex: number, colIndex: number, cell: TableCell) => {
+    const renderCellContent = (row: CostTableRow, rowIndex: number, colIndex: number, cell: CostTableCell) => {
         if (colIndex === 2 && !isGroupHeader(row)) {
             return renderYearDropdown(rowIndex, colIndex, stringToNumTypeConverter(cell));
         } else if (colIndex === 3 && !isGroupHeader(row)) {
@@ -380,62 +388,64 @@ const CostTable: React.FC<CostTableProps> = ({
 
     return (
     <>
-    <Button onClick={() => setShowChecklistModal(true)}>Filter Packages</Button>
-    {renderChecklistModal()}
-        <table>
-        <thead>
-            <tr>
-                {data[0].map((header, index) => {
-                return <th key={index}>{header}</th>;
-                })}
-            </tr>
-        </thead>
-        <tbody>
+      <Button onClick={() => setShowChecklistModal(true)}>Filter Packages</Button>
+      {renderChecklistModal()}
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              {data[0].map((header, index) => {
+              return <TableCell key={index}>{header}</TableCell>;
+              })}
+            </TableRow>
+          </TableHead>
+          <TableBody>
             {filteredData.map((row, rowIndex) => {
             if (!shouldDisplayRow(row, rowIndex)) return null;
 
             return (
-                <React.Fragment key={rowIndex}>
-                {rowIndex > 0 && (
-                <>
-                    {/* Use the CustomModal component */}
-                    <CustomModal 
-                        showModal={showModal}
-                        closeModal={closeModal}
-                        sliderValue={sliderValue}
-                        handleSliderChange={handleSliderChange}
-                        handleSave={handleSave}
-                    />
-                    <tr>
-                        {/* Render cells */}
-                        {row.map((cell, colIndex) => (
-                            <td key={`${tableId}-${rowIndex}-${colIndex}`}>
-                                {renderCellContent(row, rowIndex, colIndex, cell)}
-                            </td>
-                        ))}
+              <React.Fragment key={rowIndex}>
+              {rowIndex > 0 && (
+              <>
+                {/* Use the CustomModal component */}
+                <CustomModal 
+                    showModal={showModal}
+                    closeModal={closeModal}
+                    sliderValue={sliderValue}
+                    handleSliderChange={handleSliderChange}
+                    handleSave={handleSave}
+                />
+                <TableRow>
+                  {/* Render cells */}
+                  {row.map((cell, colIndex) => (
+                      <TableCell key={`${tableId}-${rowIndex}-${colIndex}`}>
+                          {renderCellContent(row, rowIndex, colIndex, cell)}
+                      </TableCell>
+                  ))}
 
-                        {/* Toggle button for group headers */}
-                        {isGroupHeader(row) && (
-                        <>
-                        <td>
-                            <button onClick={() => toggleGroup(row[0])}>
-                            {collapsedCostGroups.has(row[0]) ? 'Expand' : 'Collapse'}
-                            </button>
-                        </td>
-                        <td>
-                            <Button onClick={() => openModal(rowIndex)}>Edit Total Cost</Button>
-                        </td>
-                        </>
-                        )}
-                    </tr>
-                </>
-                )}
-                {/* ... [rest of the row rendering logic] */}
-                </React.Fragment>
+                  {/* Toggle button for group headers */}
+                  {isGroupHeader(row) && (
+                  <>
+                  <TableCell>
+                      <button onClick={() => toggleGroup(row[0])}>
+                      {collapsedCostGroups.has(row[0]) ? 'Expand' : 'Collapse'}
+                      </button>
+                  </TableCell>
+                  <TableCell>
+                      <Button onClick={() => openModal(rowIndex)}>Edit Total Cost</Button>
+                  </TableCell>
+                  </>
+                  )}
+                </TableRow>
+              </>
+              )}
+              {/* ... [rest of the row rendering logic] */}
+              </React.Fragment>
             );
             })}
-        </tbody>
-    </table>
+          </TableBody>
+        </Table>
+      </TableContainer>
     </>
     );
 };
