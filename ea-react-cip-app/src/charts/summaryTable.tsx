@@ -30,7 +30,8 @@ const rows = [
   createData('  rbread', 356, 16.0, 49, 3.9),
 ];
 
-const DashboardTable = () => {
+const DashboardTable = ({tableData}) => {
+
   return (
     <TableContainer component={Paper}>
       <Table aria-label="simple table">
@@ -40,22 +41,20 @@ const DashboardTable = () => {
             <TableCell align="right">Step 1 Score</TableCell>
             <TableCell align="right">Step 2 Score</TableCell>
             <TableCell align="right">Stage 1 Score</TableCell>
-            <TableCell align="right">Rank   </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {tableData.map((row) => (
             <TableRow
-              key={row.name}
+              key={row[2]}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell component="th" scope="row">
-                {row.name}
+                {row[2]}
               </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
-              <TableCell align="right">{row.protein}</TableCell>
+              <TableCell align="right">{row[15]}</TableCell>
+              <TableCell align="right">{row[16]}</TableCell>
+              <TableCell align="right">{row[17]}</TableCell>
             </TableRow>
           ))}
         </TableBody>

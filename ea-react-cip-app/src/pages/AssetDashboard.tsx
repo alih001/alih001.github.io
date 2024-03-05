@@ -63,7 +63,7 @@ const AssetDashboard: React.FC = () => {
           width = {34} height = {45}
           left = {5} top = {0}
         >
-          <DashboardTable/>
+          <DashboardTable tableData={table1Data}/>
         </DashboardCardComponent>
 
         <DashboardCardComponent
@@ -71,7 +71,7 @@ const AssetDashboard: React.FC = () => {
           width = {34} height = {45}
           left = {5} top = {0}
         >
-          <DashboardTable/>
+          <DashboardTable tableData={table1Data}/>
         </DashboardCardComponent>
 
         <DashboardCardComponent
@@ -81,7 +81,7 @@ const AssetDashboard: React.FC = () => {
         >
           <DashboardPieChart 
             width={300} height={300} 
-            data={table1Data} rowReference={1}/>
+            data={table1Data} rowReference={10}/>
         </DashboardCardComponent>
 
         <DashboardCardComponent
@@ -91,7 +91,7 @@ const AssetDashboard: React.FC = () => {
         >
           <DashboardPieChart 
             width={300} height={300} 
-            data={table1Data} rowReference={2}/>
+            data={table1Data} rowReference={4}/>
         </DashboardCardComponent>
 
         <DashboardCardComponent
@@ -101,7 +101,7 @@ const AssetDashboard: React.FC = () => {
         >
           <DashboardPieChart 
             width={300} height={300} 
-            data={table1Data} rowReference={3}/>
+            data={table1Data} rowReference={6}/>
         </DashboardCardComponent>
 
         <DashboardCardComponent
@@ -111,7 +111,7 @@ const AssetDashboard: React.FC = () => {
         >
           <DashboardPieChart 
             width={300} height={300} 
-            data={table1Data} rowReference={4}/>
+            data={table1Data} rowReference={7}/>
         </DashboardCardComponent>
 
         <DashboardCardComponent
