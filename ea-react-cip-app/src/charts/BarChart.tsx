@@ -9,11 +9,9 @@ import { timeParse, timeFormat } from '@visx/vendor/d3-time-format';
 import { useTooltip, useTooltipInPortal, defaultStyles } from '@visx/tooltip';
 import { LegendOrdinal } from '@visx/legend';
 import { localPoint } from '@visx/event';
-import { CityName, TooltipData, BarStackProps } from '../types/public-types'
-import cityTemperature, { CityTemperature } from '@visx/mock-data/lib/mocks/cityTemperature';
+import { BarStackProps } from '../types/public-types'
+import { schemeCategory10 } from 'd3-scale-chromatic';
 
-const purple1 = '#6c5efb';
-const purple2 = '#c998ff';
 export const purple3 = '#a44afe';
 export const background = '#eaedff';
 const defaultMargin = { top: 40, right: 0, bottom: 0, left: 0 };
@@ -24,54 +22,23 @@ const tooltipStyles = {
   color: 'white',
 };
 
-const data = cityTemperature.slice(0, 12);
-const keys = Object.keys(data[0]).filter((d) => d !== 'date') as CityName[];
-
-const temperatureTotals = data.reduce((allTotals, currentDate) => {
-  const totalTemperature = keys.reduce((dailyTotal, k) => {
-    dailyTotal += Number(currentDate[k]);
-    return dailyTotal;
-  }, 0);
-  allTotals.push(totalTemperature);
-  return allTotals;
-}, [] as number[]);
-
-const parseDate = timeParse('%Y-%m-%d');
-const format = timeFormat('%b %d');
+const parseDate = timeParse('%Y');
+const format = timeFormat('%Y');
 const formatDate = (date: string) => format(parseDate(date) as Date);
-
-// accessors
-const getDate = (d: CityTemperature) => d.date;
-
-// scales
-const dateScale = scaleBand<string>({
-  domain: data.map(getDate),
-  padding: 0.2,
-});
-const temperatureScale = scaleLinear<number>({
-  domain: [0, Math.max(...temperatureTotals)],
-  nice: true,
-});
-const colorScale = scaleOrdinal<CityName, string>({
-  domain: keys,
-  range: [purple1, purple2, purple3],
-});
 
 let tooltipTimeout: number;
 
 export default function Example({
   width,
   height,
+  inputData,
   events = false,
   margin = defaultMargin,
 }: BarStackProps) {
   const { tooltipOpen, tooltipLeft, tooltipTop, tooltipData, hideTooltip, showTooltip } =
-    useTooltip<TooltipData>();
+    useTooltip<any>();
 
   const { containerRef, TooltipInPortal } = useTooltipInPortal({
-    // TooltipInPortal is rendered in a separate child of <body /> and positioned
-    // with page coordinates which should be updated on scroll. consider using
-    // Tooltip or TooltipWithBounds if you don't need to render inside a Portal
     scroll: true,
   });
 
@@ -79,11 +46,33 @@ export default function Example({
   // bounds
   const xMax = width;
   const yMax = height - margin.top - 100;
+  const myKeys = Object.keys(inputData[0]).filter(d => d !== 'date');
 
-  dateScale.rangeRound([0, xMax]);
-  temperatureScale.range([yMax, 0]);
-  console.log("input data for graph is: ")
-  console.log(data)
+  const getCategory = (d) => d.date;
+
+  const costTotals = inputData.reduce((allTotals, currentDate) => {
+    const totalCost = myKeys.reduce((dailyTotal, k) => {
+      dailyTotal += Number(currentDate[k]);
+      return dailyTotal;
+    }, 0);
+    allTotals.push(totalCost);
+    return allTotals;
+  }, [] as number[]);
+
+  const categoryScale = scaleBand<string>({
+    domain: inputData.map(getCategory),
+    padding: 0.2,
+  });
+  const valueScale = scaleLinear<number>({
+    domain: [0, Math.max(...costTotals)],
+    nice: true,
+  });
+
+  const colorScale = scaleOrdinal<string, string>().domain([]).range(schemeCategory10);
+
+  categoryScale.rangeRound([0, xMax]);
+  valueScale.range([yMax, 0]);
+
   return width < 10 ? null : (
     <div style={{ position: 'relative' }}>
       <svg ref={containerRef} width={width} height={height}>
@@ -91,21 +80,21 @@ export default function Example({
         <Grid
           top={margin.top}
           left={margin.left}
-          xScale={dateScale}
-          yScale={temperatureScale}
+          xScale={categoryScale}
+          yScale={valueScale}
           width={xMax}
           height={yMax}
           stroke="black"
           strokeOpacity={0.1}
-          xOffset={dateScale.bandwidth() / 2}
+          xOffset={categoryScale.bandwidth() / 2}
         />
         <Group top={margin.top}>
-          <BarStack<CityTemperature, CityName>
-            data={data}
-            keys={keys}
-            x={getDate}
-            xScale={dateScale}
-            yScale={temperatureScale}
+          <BarStack
+            data={inputData}
+            keys={myKeys}
+            x={getCategory}
+            xScale={categoryScale}
+            yScale={valueScale}
             color={colorScale}
           >
             {(barStacks) =>
@@ -128,9 +117,6 @@ export default function Example({
                     }}
                     onMouseMove={(event) => {
                       if (tooltipTimeout) clearTimeout(tooltipTimeout);
-                      // TooltipInPortal expects coordinates to be relative to containerRef
-                      // localPoint returns coordinates relative to the nearest SVG, which
-                      // is what containerRef is set to in this example.
                       const eventSvgCoords = localPoint(event);
                       const left = bar.x + bar.width / 2;
                       showTooltip({
@@ -147,7 +133,7 @@ export default function Example({
         </Group>
         <AxisBottom
           top={yMax + margin.top}
-          scale={dateScale}
+          scale={categoryScale}
           tickFormat={formatDate}
           stroke={purple3}
           tickStroke={purple3}
@@ -173,12 +159,12 @@ export default function Example({
 
       {tooltipOpen && tooltipData && (
         <TooltipInPortal top={tooltipTop} left={tooltipLeft} style={tooltipStyles}>
-          <div style={{ color: colorScale(tooltipData.key) }}>
+          <div>
             <strong>{tooltipData.key}</strong>
           </div>
-          <div>{tooltipData.bar.data[tooltipData.key]}℉</div>
+          <div>£{tooltipData.bar.data[tooltipData.key]}</div>
           <div>
-            <small>{formatDate(getDate(tooltipData.bar.data))}</small>
+            <small>{formatDate(getCategory(tooltipData.bar.data))}</small>
           </div>
         </TooltipInPortal>
       )}

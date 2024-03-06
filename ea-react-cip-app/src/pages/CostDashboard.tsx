@@ -2,11 +2,20 @@ import React from 'react';
 import styled from 'styled-components';
 import DashboardCardComponent from '../components/custom_components/DashboardCard';
 import { useData } from '../contexts/useDataContext';
-import { Button, Form, Modal } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import Example from '../charts/BarChart';
 import PackageChart from '../charts/PackageChart';
-import { TableData, TableRow, WeirRow } from '../types/public-types'
+import { TableData, TableRow as AssetTableRow, WeirRow } from '../types/public-types'
 
+import PackageForm from '../components/weir_package_components/PackageForm'
+
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
 const HeroSection = styled.section`
   background-position: center, bottom left;
@@ -52,14 +61,14 @@ const CostCard = styled.div`
 
 const CostDashboard: React.FC = () => {
 
-  const { table2Data } = useData();
+  const { table1Data, table2Data } = useData();
   const { showCostPackageModal, setShowCostPackageModal } = useData();
   const { selectedWeirs, setSelectedWeirs } = useData();
   const { chartData, setChartData } = useData();
 
   const parseData = (data: TableData) => {
     const headers = data[0];
-    return data.slice(1).map((row:TableRow) => {
+    return data.slice(1).map((row: AssetTableRow) => {
       const obj: WeirRow = {
         'Weir Name': '',
         'Package Cost': 0,
@@ -72,31 +81,43 @@ const CostDashboard: React.FC = () => {
     });
   };
   
+  const table1parsedData = parseData(table1Data);
   const parsedData = parseData(table2Data);
 
   const handleCheckboxChange = (weirName: string) => {
-    toggleWeirSelection(weirName);
-  };
-
-  const toggleWeirSelection = (weirName: string) => {
     if (selectedWeirs.includes(weirName)) {
       setSelectedWeirs(prev => prev.filter(name => name !== weirName));
     } else {
       setSelectedWeirs(prev => [...prev, weirName]);
-    }
-  };
+    }  };
+
 
   const displayTotalCosts = () => {
-    console.log(selectedWeirs);
-    console.log(parsedData);
+
+    // console.log(selectedWeirs);
+    // console.log(parsedData);
     
     const totalCosts = getTotalCostForWeirs(selectedWeirs, parsedData);
-    console.log(parsedData);
-    console.log(`Total Costs for selected Weirs: ${totalCosts}`);
-    
+
+    const filteredData = table2Data.slice(1).filter(row => row[1] === "Package Summary");
+
+    const headers = table2Data[0].slice(6); // Assuming cost data starts from the 7th column
+    console.log(headers)
+    const transformedData = headers.map((header, index) => {
+        const obj = { date: header };
+        filteredData.forEach(row => {
+            const weirName = row[0];
+            const costValue = row[6 + index]; // Adjust index to match cost data columns
+            obj[weirName] = costValue.toString(); // Convert to string if necessary
+        });
+        return obj;
+    });
+
+
+    console.log(transformedData)
     // Update chart data here
     // const updatedChartData = calculateChartData(totalCosts); // You'll define how you calculate this
-    setChartData(totalCosts);
+    setChartData(transformedData);
 
   };
 
@@ -124,38 +145,34 @@ const CostDashboard: React.FC = () => {
           <Modal.Title>Package 1</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form>
-            {[...new Set(parsedData.map(data => data['Weir Name']))].map(weir => (
-              <Form.Check
-                key={weir}
-                type="checkbox"
-                label={weir}
-                onChange={() => handleCheckboxChange(weir)}
-                checked={selectedWeirs.includes(weir)}
-              />
-            ))}
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowCostPackageModal(false)}>
             Close
           </Button>
           <Button variant="primary" onClick={displayTotalCosts}>
             Show Total Costs for Selected Weirs
           </Button>
-        </Modal.Footer>
+          <PackageForm
+            tableParsedData={table1parsedData}
+            selectedWeirs={selectedWeirs}
+            handleCheckboxChange={handleCheckboxChange}
+          />
+        </Modal.Body>
       </Modal>
       <CostCard>
         {selectedWeirs}
-              
-        {chartData}
-        <DashboardCardComponent
-          title="Total Package Costs by Year"
-          width = {79} height = {35}
-          left = {1} top = {3}
-        >
-          <Example width={1250} height={450}></Example>
-        </DashboardCardComponent>
+
+        {
+          selectedWeirs.length > 0 && showCostPackageModal===false && (
+            <DashboardCardComponent
+              title="Total Package Costs by Year"
+              width={79} height={35}
+              left={1} top={3}
+            >
+              <Example width={1250} height={450} inputData={chartData}></Example>
+            </DashboardCardComponent>
+          )
+        }
+
 
         <DashboardCardComponent
           title="Total Package Costs by Type"

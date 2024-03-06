@@ -4,7 +4,7 @@ import { TableRow, CostTableRow, CustomNodeProps } from '../types/public-types'
 import { Edge } from 'reactflow'
 import { ViewMode } from 'gantt-task-react'
 import { initTasks } from '../components/gantt_components/GanttHelper'
-import { Task } from '../types/public-types';
+import { Task, TransformedDataItem } from '../types/public-types';
 
 type DataContextType = {
     // Populate Table Props
@@ -42,8 +42,8 @@ type DataContextType = {
     setShowCostPackageModal: React.Dispatch<React.SetStateAction<boolean>>;
     selectedWeirs: string[];
     setSelectedWeirs: React.Dispatch<React.SetStateAction<string[]>>;
-    chartData: number | null;
-    setChartData: React.Dispatch<React.SetStateAction<number | null>>;
+    chartData: TransformedDataItem[];
+    setChartData: React.Dispatch<React.SetStateAction<TransformedDataItem[]>>;
 
     // Reacflow States
     nodes: CustomNodeProps[];
@@ -104,7 +104,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // CostDashboard States
   const [showCostPackageModal, setShowCostPackageModal] = useState(false);
   const [selectedWeirs, setSelectedWeirs] = useState<string[]>([]);
-  const [chartData, setChartData] = useState<number | null>(null);
+  const [chartData, setChartData] = useState<TransformedDataItem[]>([]);
 
   // Reactflow States
   const [nodes, setNodes] = useState<CustomNodeProps[]>([]);

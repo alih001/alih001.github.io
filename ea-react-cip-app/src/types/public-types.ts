@@ -132,6 +132,11 @@ export type PieProps = {
 
 
 // BarChart Props
+export interface TransformedDataItem {
+  date: string | number;
+  [key: string]: string | number;
+}
+
 export type BarGroupProps = {
     width: number;
     height: number;
@@ -141,20 +146,21 @@ export type BarGroupProps = {
   
 export type CityName = 'New York' | 'San Francisco' | 'Austin';
 
-export type TooltipData = {
-    bar: SeriesPoint<CityTemperature>;
-    key: CityName;
-    index: number;
-    height: number;
-    width: number;
-    x: number;
-    y: number;
-    color: string;
-};
+// export type TooltipData = {
+//     bar: SeriesPoint<CityTemperature>;
+//     key: CityName;
+//     index: number;
+//     height: number;
+//     width: number;
+//     x: number;
+//     y: number;
+//     color: string;
+// };
   
 export type BarStackProps = {
     width: number;
     height: number;
+    inputData: TransformedDataItem[]
     margin?: { top: number; right: number; bottom: number; left: number };
     events?: boolean;
 };
@@ -216,4 +222,10 @@ export interface GanttModalProps {
 export interface ExtendGanttProps {
   tasks: Task[];
   onSelectTask: (value: React.SetStateAction<Task | null>) => void;
+}
+
+export interface WeirPackageForm {
+  tableParsedData: WeirRow[];
+  selectedWeirs: string[];
+  handleCheckboxChange: (weirName: string) => void;
 }
