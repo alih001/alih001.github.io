@@ -11,6 +11,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/material/styles';
+import { Button } from 'react-bootstrap';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -230,6 +231,7 @@ const AssetTable: React.FC<AssetTableProps> = ({
         <Table aria-label="customized table">
           <TableHead>
             <StyledTableRow>
+            <StyledTableCell></StyledTableCell>
               {data[0].map((header, index) => {
                 // Hide the header for collapsible columns
                 if (!arrayCollapsibleColumnIndexes.includes(index)) {
@@ -245,18 +247,19 @@ const AssetTable: React.FC<AssetTableProps> = ({
             {rowIndex > 0 && (
                 <>
                 <StyledTableRow>
+                                      {/* Toggle button for collapsible rows */}
+                    <StyledTableCell>
+                      <Button onClick={() => toggleRowCollapse(rowIndex)}>
+                          {collapsedAssetRows.has(rowIndex) ? 'Expand' : 'Collapse'}
+                      </Button>
+                    </StyledTableCell>
                     {row.map((cell, colIndex) => {
                     if (!arrayCollapsibleColumnIndexes.includes(colIndex)) {
                         return <StyledTableCell key={`${tableId}-${rowIndex}-${colIndex}`}>{cell}</StyledTableCell>;
                     }
                     return null;
                     })}
-                    {/* Toggle button for collapsible rows */}
-                    <StyledTableCell>
-                      <button onClick={() => toggleRowCollapse(rowIndex)}>
-                          {collapsedAssetRows.has(rowIndex) ? 'Show' : 'Hide'}
-                      </button>
-                    </StyledTableCell>
+
                 </StyledTableRow>
                 {/* Render collapsible rows */}
                 {tableId === "table1" && !collapsedAssetRows.has(rowIndex) && renderCollapsibleRow(row, rowIndex, arrayCollapsibleColumnIndexes)}

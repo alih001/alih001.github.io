@@ -1,66 +1,65 @@
 import React from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { styled } from '@mui/material/styles';
 
-function createData(
-  name: string,
-  calories: number,
-  fat: number,
-  carbs: number,
-  protein: number,
-) {
-  return { name, calories, fat, carbs, protein };
-}
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('G', 356, 16.0, 49, 3.9),
-  createData('i', 356, 16.0, 49, 3.9),
-  createData('n', 356, 16.0, 49, 3.9),
-  createData('erbread', 356, 16.0, 49, 3.9),
-  createData('  rbread', 356, 16.0, 49, 3.9),
-];
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}));
 
-const DashboardTable = ({tableData}) => {
+const DashboardTable = ({ tableData }) => {
+  // Skip the first row, sort by row[17], and limit to the top 10 items
+  const sortedAndFilteredData = tableData.slice(1).sort((a, b) => b[17] - a[17]).slice(0, 10);
 
   return (
     <TableContainer component={Paper}>
       <Table aria-label="simple table">
         <TableHead>
-          <TableRow>
-            <TableCell>Weir Name</TableCell>
-            <TableCell align="right">Step 1 Score</TableCell>
-            <TableCell align="right">Step 2 Score</TableCell>
-            <TableCell align="right">Stage 1 Score</TableCell>
-          </TableRow>
+          <StyledTableRow>
+            <StyledTableCell>Weir Name</StyledTableCell>
+            <StyledTableCell align="right">Step 1 Score</StyledTableCell>
+            <StyledTableCell align="right">Step 2 Score</StyledTableCell>
+            <StyledTableCell align="right">Stage 1 Score</StyledTableCell>
+          </StyledTableRow>
         </TableHead>
         <TableBody>
-          {tableData.map((row) => (
-            <TableRow
-              key={row[2]}
+          {sortedAndFilteredData.map((row, index) => (
+            <StyledTableRow
+              key={index} // Changed to index due to potential non-unique row[2]
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell component="th" scope="row">
+              <StyledTableCell component="th" scope="row">
                 {row[2]}
-              </TableCell>
-              <TableCell align="right">{row[15]}</TableCell>
-              <TableCell align="right">{row[16]}</TableCell>
-              <TableCell align="right">{row[17]}</TableCell>
-            </TableRow>
+              </StyledTableCell>
+              <StyledTableCell align="right">{row[15]}</StyledTableCell>
+              <StyledTableCell align="right">{row[16]}</StyledTableCell>
+              <StyledTableCell align="right">{row[17]}</StyledTableCell>
+            </StyledTableRow>
           ))}
         </TableBody>
       </Table>
     </TableContainer>
   );
-}
+};
 
 export default DashboardTable;

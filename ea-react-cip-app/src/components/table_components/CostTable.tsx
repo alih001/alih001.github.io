@@ -403,6 +403,9 @@ const CostTable: React.FC<CostTableProps> = ({
         else if (cell === 0) {
             return '-';
         }
+        else if (colIndex === 0 && !isGroupHeader(row)) {
+          return cell;
+      }
         else {
             return cell;
         }
@@ -416,6 +419,7 @@ const CostTable: React.FC<CostTableProps> = ({
         <Table>
           <TableHead>
             <StyledTableRow>
+              <StyledTableCell></StyledTableCell>
               {data[0].map((header, index) => {
               return <StyledTableCell key={index}>{header}</StyledTableCell>;
               })}
@@ -438,6 +442,24 @@ const CostTable: React.FC<CostTableProps> = ({
                     handleSave={handleSave}
                 />
                 <StyledTableRow>
+                {
+                  isGroupHeader(row) ? (
+                    <>
+                      <StyledTableCell>
+                        <Button onClick={() => toggleGroup(row[0])}>
+                          {collapsedCostGroups.has(row[0]) ? 'Expand' : 'Collapse'}
+                        </Button>
+                      </StyledTableCell>
+                      {/* Uncomment and use if needed
+                      <StyledTableCell>
+                        <Button onClick={() => openModal(rowIndex)}>Edit Total Cost</Button>
+                      </StyledTableCell> */}
+                    </>
+                  ) : (
+                    <StyledTableCell></StyledTableCell> // This will be used if isGroupHeader(row) is false
+                  )
+                }
+
                   {/* Render cells */}
                   {row.map((cell, colIndex) => (
                       <StyledTableCell key={`${tableId}-${rowIndex}-${colIndex}`}>
@@ -446,18 +468,7 @@ const CostTable: React.FC<CostTableProps> = ({
                   ))}
 
                   {/* Toggle button for group headers */}
-                  {isGroupHeader(row) && (
-                  <>
-                  <StyledTableCell>
-                      <button onClick={() => toggleGroup(row[0])}>
-                      {collapsedCostGroups.has(row[0]) ? 'Expand' : 'Collapse'}
-                      </button>
-                  </StyledTableCell>
-                  <StyledTableCell>
-                      <Button onClick={() => openModal(rowIndex)}>Edit Total Cost</Button>
-                  </StyledTableCell>
-                  </>
-                  )}
+
                 </StyledTableRow>
               </>
               )}
