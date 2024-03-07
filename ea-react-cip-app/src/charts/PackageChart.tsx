@@ -1,70 +1,89 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Group } from '@visx/group';
 import { BarGroup } from '@visx/shape';
 import { AxisBottom } from '@visx/axis';
-import cityTemperature, { CityTemperature } from '@visx/mock-data/lib/mocks/cityTemperature';
 import { scaleBand, scaleLinear, scaleOrdinal } from '@visx/scale';
 import { timeParse, timeFormat } from '@visx/vendor/d3-time-format';
-import { BarGroupProps, CityName } from '../types/public-types';
+import { BarGroupProps } from '../types/public-types';
+import { schemeCategory10 } from 'd3-scale-chromatic';
+import Select from 'react-select'
 
-
-const blue = '#aeeef8';
 export const green = '#e5fd3d';
-const purple = '#9caff6';
 export const background = '#612efb';
 
-const data = cityTemperature.slice(0, 8);
-const keys = Object.keys(data[0]).filter((d) => d !== 'date') as CityName[];
 const defaultMargin = { top: 40, right: 0, bottom: 40, left: 0 };
 
-const parseDate = timeParse('%Y-%m-%d');
-const format = timeFormat('%b %d');
+const parseDate = timeParse('%Y');
+const format = timeFormat('%Y');
 const formatDate = (date: string) => format(parseDate(date) as Date);
-
-// accessors
-const getDate = (d: CityTemperature) => d.date;
-
-// scales
-const dateScale = scaleBand<string>({
-  domain: data.map(getDate),
-  padding: 0.2,
-});
-const cityScale = scaleBand<string>({
-  domain: keys,
-  padding: 0.1,
-});
-const tempScale = scaleLinear<number>({
-  domain: [0, Math.max(...data.map((d) => Math.max(...keys.map((key) => Number(d[key])))))],
-});
-const colorScale = scaleOrdinal<string, string>({
-  domain: keys,
-  range: [blue, green, purple],
-});
 
 export default function PackageChart({
   width,
   height,
+  inputData,
   events = false,
   margin = defaultMargin,
 }: BarGroupProps) {
+
+  const initialKey = Object.keys(inputData[0])[1];
+  const [selectedKey, setSelectedKey] = useState(initialKey);
+
+  const selectOptions = Object.keys(inputData[0]).filter(k => k !== 'date').map(key => ({
+    value: key,
+    label: key,
+  }));
+
+  const handleSelectChange = (selectedOption) => {
+    setSelectedKey(selectedOption.value);
+  };
+
+  // Filter keys based on the selectedKey state
+  const keys = [selectedKey];
+
   // bounds
+  const getCategory = (d) => d.date;
   const xMax = width - margin.left - margin.right;
   const yMax = height - margin.top - margin.bottom;
+  // const keys = Object.keys(inputData[0]).filter(d => d !== 'date');
 
+  const dateScale = scaleBand<string>({
+    domain: inputData.map(getCategory),
+    padding: 0.2,
+  });
+  const cityScale = scaleBand<string>({
+    domain: keys,
+    padding: 0.1,
+  });
+  const tempScale = scaleLinear<number>({
+    domain: [0, Math.max(...inputData.map((d) => Math.max(...keys.map((key) => Number(d[key])))))],
+  });
+  const colorScale = scaleOrdinal<string, string>().domain([]).range(schemeCategory10);
+  
   // update scale output dimensions
   dateScale.rangeRound([0, xMax]);
   cityScale.rangeRound([0, dateScale.bandwidth()]);
   tempScale.range([yMax, 0]);
 
   return width < 10 ? null : (
+    <div>
+      <Select 
+        value={selectOptions.find(option => option.value === selectedKey)} 
+        onChange={handleSelectChange}
+        options={selectOptions}
+      />
+      {/* {Object.keys(inputData[0]).filter(k => k !== 'date').map(key => (
+        <option key={key} value={key}>
+          {key}
+        </option>
+      ))} */}
     <svg width={width} height={height}>
       <rect x={0} y={0} width={width} height={height} fill={background} rx={14} />
       <Group top={margin.top} left={margin.left}>
         <BarGroup
-          data={data}
+          data={inputData}
           keys={keys}
           height={yMax}
-          x0={getDate}
+          x0={getCategory}
           x0Scale={dateScale}
           x1Scale={cityScale}
           yScale={tempScale}
@@ -108,5 +127,6 @@ export default function PackageChart({
         }}
       />
     </svg>
+    </div>
   );
 }

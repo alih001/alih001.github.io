@@ -160,30 +160,28 @@ const CostDashboard: React.FC = () => {
       </Modal>
       <CostCard>
         {selectedWeirs}
-
         {
           selectedWeirs.length > 0 && showCostPackageModal===false && (
-            <DashboardCardComponent
-              title="Total Package Costs by Year"
-              width={79} height={35}
-              left={1} top={3}
-            >
-              <Example width={1250} height={450} inputData={chartData}></Example>
-            </DashboardCardComponent>
+            <>
+              <DashboardCardComponent
+                title="Total Package Costs by Year"
+                width={79} height={35}
+                left={1} top={3}
+              >
+                <Example width={1250} height={450} inputData={chartData}></Example>
+              </DashboardCardComponent>
+
+              <DashboardCardComponent
+              title="Total Package Costs by Type"
+              width = {79} height = {35}
+              left = {1} top = {3}
+              >
+                <PackageChart width={1200} height={450} inputData={chartData}/>
+              </DashboardCardComponent>
+            </>
           )
         }
-
-
-        <DashboardCardComponent
-          title="Total Package Costs by Type"
-          width = {79} height = {35}
-          left = {1} top = {3}
-        >
-          <PackageChart width={1200} height={450} />
-        </DashboardCardComponent>
-
       </CostCard>
-
     </Background>
   );
 }

@@ -1,6 +1,4 @@
 import { ViewMode } from "gantt-task-react";
-import { SeriesPoint } from '@visx/shape/lib/types';
-import { CityTemperature } from '@visx/mock-data/lib/mocks/cityTemperature';
 import { Node } from 'reactflow'
 import React, { MouseEventHandler } from 'react';
 
@@ -140,11 +138,12 @@ export interface TransformedDataItem {
 export type BarGroupProps = {
     width: number;
     height: number;
+    inputData: TransformedDataItem[];
     margin?: { top: number; right: number; bottom: number; left: number };
     events?: boolean;
 };
   
-export type CityName = 'New York' | 'San Francisco' | 'Austin';
+// export type CityName = 'New York' | 'San Francisco' | 'Austin';
 
 // export type TooltipData = {
 //     bar: SeriesPoint<CityTemperature>;
