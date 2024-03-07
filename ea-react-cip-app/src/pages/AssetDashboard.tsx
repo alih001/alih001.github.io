@@ -113,37 +113,6 @@ const AssetDashboard: React.FC = () => {
             width={300} height={300} 
             data={table1Data} rowReference={7}/>
         </DashboardCardComponent>
-
-        <DashboardCardComponent
-          title="Average Scores by Weir Type"
-          width = {34} height = {20}
-          left = {5} top = {3}
-        >
-          <DashboardPieChart 
-            width={300} height={300} 
-            data={table1Data} rowReference={1}/>
-        </DashboardCardComponent>
-
-        <DashboardCardComponent
-          title="Total Scores Distribution"
-          width = {34} height = {20}
-          left = {5} top = {3}
-        >
-          <DashboardPieChart 
-            width={300} height={300} 
-            data={table1Data} rowReference={1}/>
-        </DashboardCardComponent>
-
-        <DashboardCardComponent
-          title="Filter and Search"
-          width = {34} height = {20}
-          left = {5} top = {3}
-        >
-          <DashboardPieChart 
-            width={300} height={300} 
-            data={table1Data} rowReference={1}/>
-        </DashboardCardComponent>
-
       
       </DashboardSection>
     </Background>

@@ -9,8 +9,17 @@ const NodeSidebar: React.FC = () => {
 
   return (
     <aside>
-      <div className="description">You can drag additional nodes to the pane on the left.</div>
-      <div className="customNodeBody" onDragStart={(event) => onDragStart(event, 'custom')} draggable>
+      <div className="description">
+        Use this panel to drag nodes into the left panel to create custom maps.
+      </div>
+      <div 
+        className="customNodeBody" 
+        onDragStart={(event) => onDragStart(event, 'custom')} 
+        draggable
+        style={{
+          backgroundColor: 'red',
+        }}
+      >
         Drag Node
       </div>
     </aside>

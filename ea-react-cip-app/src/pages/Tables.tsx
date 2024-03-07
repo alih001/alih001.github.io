@@ -32,15 +32,7 @@ const HeroSection = styled.section`
 `;
 
 const TableSection = styled.div`
-background-color: rgba(255, 255, 255, 0.5);
-border-radius: 15px;
-padding: 6px;
-box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
-backdrop-filter: blur(0.5rem);
-&:hover {
-  box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
-}
-width: 95%;
+
 margin-left:2.5rem;
 margin-top:1.5rem;
 `;
@@ -125,7 +117,7 @@ const Tables: React.FC = () => {
         <TableSection>
           {isTable1Visible ? (
               <>
-              <h3>Asset Table</h3>
+              {/* <h3>Asset Table</h3> */}
               <AssetTable 
                   data={table1Data} 
                   onDataChange={setTable1Data} 
@@ -134,7 +126,7 @@ const Tables: React.FC = () => {
               </>
           ) : (
               <>
-              <h3>Cost Table</h3>
+              {/* <h3>Cost Table</h3> */}
               <CostTable 
                   data={table2Data} 
                   onDataChange={setTable2Data} 

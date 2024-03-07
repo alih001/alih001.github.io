@@ -5,7 +5,7 @@ import CustomModal from '../custom_components/CustomModal';
 import { Button, Modal } from 'react-bootstrap';
 import { useData } from '../../contexts/useDataContext';
 import { TableCell as CostTableCell, CostTableProps, CostTableRow, CostTableData } from '../../types/public-types';
-
+import { tableCellClasses } from '@mui/material/TableCell';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -13,6 +13,28 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { styled } from '@mui/material/styles';
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}));
+
 
 const CostTable: React.FC<CostTableProps> = ({
     data, onDataChange, tableId,
@@ -388,16 +410,16 @@ const CostTable: React.FC<CostTableProps> = ({
 
     return (
     <>
-      <Button onClick={() => setShowChecklistModal(true)}>Filter Packages</Button>
-      {renderChecklistModal()}
+      {/* <Button onClick={() => setShowChecklistModal(true)}>Filter Packages</Button>
+      {renderChecklistModal()} */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
-            <TableRow>
+            <StyledTableRow>
               {data[0].map((header, index) => {
-              return <TableCell key={index}>{header}</TableCell>;
+              return <StyledTableCell key={index}>{header}</StyledTableCell>;
               })}
-            </TableRow>
+            </StyledTableRow>
           </TableHead>
           <TableBody>
             {filteredData.map((row, rowIndex) => {
@@ -415,28 +437,28 @@ const CostTable: React.FC<CostTableProps> = ({
                     handleSliderChange={handleSliderChange}
                     handleSave={handleSave}
                 />
-                <TableRow>
+                <StyledTableRow>
                   {/* Render cells */}
                   {row.map((cell, colIndex) => (
-                      <TableCell key={`${tableId}-${rowIndex}-${colIndex}`}>
+                      <StyledTableCell key={`${tableId}-${rowIndex}-${colIndex}`}>
                           {renderCellContent(row, rowIndex, colIndex, cell)}
-                      </TableCell>
+                      </StyledTableCell>
                   ))}
 
                   {/* Toggle button for group headers */}
                   {isGroupHeader(row) && (
                   <>
-                  <TableCell>
+                  <StyledTableCell>
                       <button onClick={() => toggleGroup(row[0])}>
                       {collapsedCostGroups.has(row[0]) ? 'Expand' : 'Collapse'}
                       </button>
-                  </TableCell>
-                  <TableCell>
+                  </StyledTableCell>
+                  <StyledTableCell>
                       <Button onClick={() => openModal(rowIndex)}>Edit Total Cost</Button>
-                  </TableCell>
+                  </StyledTableCell>
                   </>
                   )}
-                </TableRow>
+                </StyledTableRow>
               </>
               )}
               {/* ... [rest of the row rendering logic] */}

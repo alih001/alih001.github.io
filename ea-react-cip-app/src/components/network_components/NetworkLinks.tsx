@@ -98,7 +98,7 @@ const NetworkLinks = () => {
         id: Date.now().toString(),
         type,
         position,
-        data: { label: `${type} node`, nodeName: 'Custom Node', nodeColour: 'brown' },
+        data: { label: `${type} node`, nodeName: 'Custom Node', nodeColour: 'red' },
       };
   
       console.log(newNode)
@@ -149,8 +149,8 @@ const NetworkLinks = () => {
 
   const renderDescription = () => (
     <div>
-      This section will provide a brief overview 
-      on what's possible in this dashboard
+      Use your custom maps to visualise how different
+      factors in your system will affect each other :) 
     </div>
   );
 

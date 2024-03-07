@@ -24,7 +24,7 @@ const CustomNode: React.FC<CustomNodeProps> = ({ id, data, onEdit }) => {
         onContextMenu={handleContextMenu}
         style={{
           borderStyle: isTarget ? 'dashed' : 'solid',
-          backgroundColor: isTarget ? '#ffcce3' : data.nodeColour,
+          backgroundColor: isTarget ? 'red' : data.nodeColour,
         }}
       >
         <span>{nodeName}</span>

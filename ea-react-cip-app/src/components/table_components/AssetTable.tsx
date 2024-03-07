@@ -5,12 +5,32 @@ import { useData } from '../../contexts/useDataContext';
 import { TableRow as AssetTableRow, AssetTableProps, DropdownValueMapType, StagesFactorMapType } from '../../types/public-types'
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { styled } from '@mui/material/styles';
 
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}));
 
 const AssetTable: React.FC<AssetTableProps> = ({
     data, onDataChange, tableId
@@ -170,12 +190,12 @@ const AssetTable: React.FC<AssetTableProps> = ({
   
   const renderCollapsibleRowHeader = () => {
     return (
-      <TableRow>
-        <TableCell></TableCell> 
-        <TableCell>Attribute</TableCell>
-        <TableCell>Value</TableCell>
-        <TableCell>Output (If applicable)</TableCell>
-      </TableRow>
+      <StyledTableRow>
+        <StyledTableCell></StyledTableCell> 
+        <StyledTableCell>Attribute</StyledTableCell>
+        <StyledTableCell>Value</StyledTableCell>
+        <StyledTableCell>Output (If applicable)</StyledTableCell>
+      </StyledTableRow>
     );
   };
   
@@ -187,18 +207,18 @@ const AssetTable: React.FC<AssetTableProps> = ({
             {renderCollapsibleRowHeader()}
             {/* Render the collapsible rows */}
             {collapsibleColumnIndexes.map(columnIndex => (
-                <TableRow key={`${rowIndex}-collapsible-${columnIndex}`}>
-                    <TableCell className={`${tableId}-${rowIndex}-${columnIndex}-placeholder`}></TableCell>
-                    <TableCell className={`${tableId}-${rowIndex}-${columnIndex}-title`}>
+                <StyledTableRow key={`${rowIndex}-collapsible-${columnIndex}`}>
+                    <StyledTableCell className={`${tableId}-${rowIndex}-${columnIndex}-placeholder`}></StyledTableCell>
+                    <StyledTableCell className={`${tableId}-${rowIndex}-${columnIndex}-title`}>
                       {data[0][columnIndex]}
-                    </TableCell>
-                    <TableCell className={`${tableId}-${rowIndex}-${columnIndex}-value`}>
+                    </StyledTableCell>
+                    <StyledTableCell className={`${tableId}-${rowIndex}-${columnIndex}-value`}>
                         {dropdownColumnIndexes.includes(columnIndex) ? renderDropdown(rowIndex, columnIndex) : row[columnIndex]}
-                    </TableCell>
-                    <TableCell className={`${tableId}-${rowIndex}-${columnIndex}-output`}>
+                    </StyledTableCell>
+                    <StyledTableCell className={`${tableId}-${rowIndex}-${columnIndex}-output`}>
                         {outputValues[`${tableId}-${rowIndex}-${columnIndex}-output`] || dropdownValueMap[data[rowIndex][columnIndex]]}
-                    </TableCell>
-                </TableRow>
+                    </StyledTableCell>
+                </StyledTableRow>
               ))}
           </>
       );
@@ -207,37 +227,37 @@ const AssetTable: React.FC<AssetTableProps> = ({
 
     return (
       <TableContainer component={Paper}>
-        <Table>
+        <Table aria-label="customized table">
           <TableHead>
-            <TableRow>
+            <StyledTableRow>
               {data[0].map((header, index) => {
                 // Hide the header for collapsible columns
                 if (!arrayCollapsibleColumnIndexes.includes(index)) {
-                    return <th key={index}>{header}</th>;
+                    return <StyledTableCell key={index}>{header}</StyledTableCell>;
                 }
                 return null;
               })}
-            </TableRow>
+            </StyledTableRow>
           </TableHead>
           <TableBody>
           {data.map((row, rowIndex) => (
             <React.Fragment key={rowIndex}>
             {rowIndex > 0 && (
                 <>
-                <TableRow>
+                <StyledTableRow>
                     {row.map((cell, colIndex) => {
                     if (!arrayCollapsibleColumnIndexes.includes(colIndex)) {
-                        return <TableCell key={`${tableId}-${rowIndex}-${colIndex}`}>{cell}</TableCell>;
+                        return <StyledTableCell key={`${tableId}-${rowIndex}-${colIndex}`}>{cell}</StyledTableCell>;
                     }
                     return null;
                     })}
                     {/* Toggle button for collapsible rows */}
-                    <TableCell>
+                    <StyledTableCell>
                       <button onClick={() => toggleRowCollapse(rowIndex)}>
                           {collapsedAssetRows.has(rowIndex) ? 'Show' : 'Hide'}
                       </button>
-                    </TableCell>
-                </TableRow>
+                    </StyledTableCell>
+                </StyledTableRow>
                 {/* Render collapsible rows */}
                 {tableId === "table1" && !collapsedAssetRows.has(rowIndex) && renderCollapsibleRow(row, rowIndex, arrayCollapsibleColumnIndexes)}
                 </>
