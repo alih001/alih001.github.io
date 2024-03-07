@@ -3,8 +3,9 @@ import { Pie } from "@visx/shape";
 import { Group } from "@visx/group";
 import { scaleOrdinal } from "@visx/scale";
 import { schemeCategory10 } from 'd3-scale-chromatic';
-import { TableData, CountMap, PieProps } from '../types/public-types'
-
+import { useTooltip, TooltipWithBounds, defaultStyles } from "@visx/tooltip";
+import { localPoint } from '@visx/event'; // Make sure to import localPoint
+import { TableData, CountMap, PieProps } from '../types/public-types';
 
 const getWeirTypeColor = scaleOrdinal<string, string>().domain([]).range(schemeCategory10);
 
@@ -30,7 +31,14 @@ const DashboardPieChart = ({
   data,
   rowReference,
 }: PieProps) => {
-
+  const {
+    tooltipOpen,
+    tooltipLeft,
+    tooltipTop,
+    tooltipData,
+    hideTooltip,
+    showTooltip,
+  } = useTooltip<{ letter: string; frequency: number }>();
   const processedData = weirTypeData(data, rowReference);
 
   getWeirTypeColor.domain(processedData.map(d => d.letter));
@@ -45,6 +53,7 @@ const DashboardPieChart = ({
   const left = centerX + margin.left;
 
   return (
+    <div>
     <svg width={width} height={height}>
       <Group top={top} left={left}>
         <Pie
@@ -61,9 +70,22 @@ const DashboardPieChart = ({
               const arcPath = pie.path(arc);
               const arcFill = getWeirTypeColor(arc.data.letter);
               return (
-                <g key={`arc-${letter}-${index}`}>
-                  <path d={arcPath} fill={arcFill} />
-                  {hasSpaceForLabel && (
+                <g
+                key={`arc-${letter}-${index}`}
+                onMouseEnter={(event) => {
+                  const coords = localPoint(event) || { x: 0, y: 0 };
+                  showTooltip({
+                    tooltipData: arc.data,
+                    tooltipTop: coords.y,
+                    tooltipLeft: coords.x,
+                  });
+                }}
+                onMouseLeave={() => {
+                  hideTooltip();
+                }}
+              >
+                <path d={arcPath} fill={arcFill} />                  
+                {hasSpaceForLabel && (
                     <text
                       x={centroidX}
                       y={centroidY}
@@ -83,6 +105,20 @@ const DashboardPieChart = ({
         </Pie>
       </Group>
     </svg>
+      {tooltipOpen && tooltipData && (
+        <TooltipWithBounds
+          top={tooltipTop}
+          left={tooltipLeft}
+          style={{
+            ...defaultStyles,
+            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            color: 'white',
+          }}
+        >
+          {`${tooltipData.letter}: ${tooltipData.frequency}`}
+        </TooltipWithBounds>
+      )}
+    </div>
   );
 }
 export default DashboardPieChart;
