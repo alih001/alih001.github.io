@@ -33,8 +33,7 @@ const HeroSection = styled.section`
 
 const TableSection = styled.div`
 
-margin-left:2.5rem;
-margin-top:1.5rem;
+margin:2.5rem;
 `;
 
 const Background = styled.div`
@@ -72,8 +71,14 @@ const Tables: React.FC = () => {
         } else {
           // Pushing row values as an array to match the structure used by XLSX
           const rowData = [];
-          row.eachCell((cell) => {
-            rowData.push(cell.value);
+          row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
+            let value = cell.value;
+            // Check if the value is a number
+            if (typeof value === 'number') {
+              // Format the number to two decimal places and convert back to number
+              value = parseFloat(value.toFixed(2));
+            }
+            rowData.push(value);
           });
           data.push(rowData);
         }

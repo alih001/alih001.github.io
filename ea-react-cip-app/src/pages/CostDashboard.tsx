@@ -9,14 +9,6 @@ import { TableData, TableRow as AssetTableRow, WeirRow } from '../types/public-t
 
 import PackageForm from '../components/weir_package_components/PackageForm'
 
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-
 const HeroSection = styled.section`
   background-position: center, bottom left;
   background-size: cover, cover;
@@ -127,6 +119,17 @@ const CostDashboard: React.FC = () => {
       .reduce((total, row) => total + (row['Package Cost']), 0);
   };
 
+  const filteredChartData = chartData.map(dataItem => {
+    const filteredItem = {};
+    // Keep only the keys that are included in selectedWeirs plus any key you always want to keep, like 'date'
+    Object.keys(dataItem).forEach(key => {
+      if (selectedWeirs.includes(key) || key === 'date') {
+        filteredItem[key] = dataItem[key];
+      }
+    });
+    return filteredItem;
+  });
+
   return(
 
     <Background>
@@ -159,7 +162,6 @@ const CostDashboard: React.FC = () => {
         </Modal.Body>
       </Modal>
       <CostCard>
-        {selectedWeirs}
         {
           selectedWeirs.length > 0 && showCostPackageModal===false && (
             <>
@@ -168,7 +170,7 @@ const CostDashboard: React.FC = () => {
                 width={79} height={35}
                 left={1} top={3}
               >
-                <Example width={1250} height={450} inputData={chartData}></Example>
+                <Example width={1250} height={450} inputData={filteredChartData}></Example>
               </DashboardCardComponent>
 
               <DashboardCardComponent
@@ -176,7 +178,7 @@ const CostDashboard: React.FC = () => {
               width = {79} height = {35}
               left = {1} top = {3}
               >
-                <PackageChart width={1200} height={450} inputData={chartData}/>
+                <PackageChart width={1200} height={450} inputData={filteredChartData}/>
               </DashboardCardComponent>
             </>
           )

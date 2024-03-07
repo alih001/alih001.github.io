@@ -27,9 +27,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const DashboardTable = ({ tableData }) => {
+const DashboardTable = ({ tableData, sortRow }) => {
   // Skip the first row, sort by row[17], and limit to the top 10 items
-  const sortedAndFilteredData = tableData.slice(1).sort((a, b) => b[17] - a[17]).slice(0, 10);
+  const sortedAndFilteredData = tableData.slice(1).sort((a, b) => b[sortRow] - a[sortRow]).slice(0, 10);
 
   return (
     <TableContainer component={Paper}>

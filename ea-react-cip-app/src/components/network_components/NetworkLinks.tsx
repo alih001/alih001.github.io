@@ -136,7 +136,20 @@ const NetworkLinks = () => {
           autoFocus
         />
         <Circle
-          colors={[ '#F44E3B', '#FE9200', '#FCDC00', '#DBDF00' ]}
+          colors={[ '#F44E3B', 
+                    '#FE9200', 
+                    '#FCDC00',
+                    '#FF0000', 
+                    '#DBDF00',
+                    '#FF80ED',
+                    '#FFC0CB',
+                    '#00FFFF',
+                    '#0000FF',
+                    '#FF7373',
+                    '#D3FFCE',
+                    '#C0C0C0',
+
+                  ]}
           color={selectedColor}
           onChange={(color) => {
             handleColorChange(color.hex);

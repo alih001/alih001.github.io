@@ -59,24 +59,24 @@ const AssetDashboard: React.FC = () => {
       <DashboardSection>
 
         <DashboardCardComponent
-          title="Top 10 Weir Complexes"
+          title="Top 10 Weir Assets (Step 2 Score)"
           width = {34} height = {45}
           left = {5} top = {0}
         >
-          <DashboardTable tableData={table1Data}/>
+          <DashboardTable tableData={table1Data} sortRow={16}/>
         </DashboardCardComponent>
 
         <DashboardCardComponent
-          title="Top 10 Weir Assets"
+          title="Top 10 Weir Assets (Stage 1 Score)"
           width = {34} height = {45}
           left = {5} top = {0}
         >
-          <DashboardTable tableData={table1Data}/>
+          <DashboardTable tableData={table1Data} sortRow={17}/>
         </DashboardCardComponent>
 
         <DashboardCardComponent
           title="Weir Type Distribution"
-          width = {34} height = {20}
+          width = {34} height = {23}
           left = {5} top = {3}
         >
           <DashboardPieChart 
@@ -86,7 +86,7 @@ const AssetDashboard: React.FC = () => {
 
         <DashboardCardComponent
           title="Scour Rating Distribution"
-          width = {34} height = {20}
+          width = {34} height = {23}
           left = {5} top = {3}
         >
           <DashboardPieChart 
@@ -96,7 +96,7 @@ const AssetDashboard: React.FC = () => {
 
         <DashboardCardComponent
           title="Corrosion Rating Distribution"
-          width = {34} height = {20}
+          width = {34} height = {23}
           left = {5} top = {3}
         >
           <DashboardPieChart 
@@ -106,7 +106,7 @@ const AssetDashboard: React.FC = () => {
 
         <DashboardCardComponent
           title="Tackle Rating Distribution"
-          width = {34} height = {20}
+          width = {34} height = {23}
           left = {5} top = {3}
         >
           <DashboardPieChart 

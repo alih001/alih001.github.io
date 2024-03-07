@@ -17,9 +17,10 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
+    fontSize: 18,
   },
   [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
+    fontSize: 18,
   },
 }));
 
@@ -163,7 +164,7 @@ const AssetTable: React.FC<AssetTableProps> = ({
       }
       // Check if we need to update Total Score
       if (totalScoreColumnIndex !== -1) {
-        updatedData[rowIndex][totalScoreColumnIndex] = category1Score + category2Score
+        updatedData[rowIndex][totalScoreColumnIndex] = (category1Score + category2Score).toFixed(2)
       }
 
     }
