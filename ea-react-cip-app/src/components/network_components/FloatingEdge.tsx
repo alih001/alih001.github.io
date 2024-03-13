@@ -1,6 +1,6 @@
 // FloatingEdge.tsx
 import { useCallback } from 'react';
-import { useStore, getStraightPath } from 'reactflow';
+import { useStore, getStraightPath, getBezierPath } from 'reactflow';
 
 import { getEdgeParams } from './utils.tsx';
 import { ConnectionPath } from '../../types/public-types.ts';
@@ -13,13 +13,16 @@ const FloatingEdge: React.FC<ConnectionPath> = ({ id, source, target, markerEnd,
     return null;
   }
 
-  const { sx, sy, tx, ty } = getEdgeParams(sourceNode, targetNode);
+  const { sx, sy, tx, ty, sourcePos, targetPos } = getEdgeParams(sourceNode, targetNode);
 
-  const [edgePath] = getStraightPath({
+  const [edgePath] = getBezierPath({
     sourceX: sx,
     sourceY: sy,
+    sourcePosition: sourcePos,
+    targetPosition: targetPos,
     targetX: tx,
     targetY: ty,
+
   });
 
   return (

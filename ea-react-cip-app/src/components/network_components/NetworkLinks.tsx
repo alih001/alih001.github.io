@@ -23,7 +23,7 @@ const edgeTypes = {
 };
 
 const defaultEdgeOptions = {
-  style: { strokeWidth: 3, stroke: 'black' },
+  style: { strokeWidth: 5, stroke: 'black' },
   type: 'floating',
   markerEnd: {
     type: MarkerType.ArrowClosed,
