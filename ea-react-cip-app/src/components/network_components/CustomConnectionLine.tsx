@@ -1,15 +1,18 @@
 // CustomConnectionLine.tsx
 import React from 'react';
-import { getStraightPath } from 'reactflow';
+import { getBezierPath } from 'reactflow';
 import { CustomConnectionProps } from '../../types/public-types';
 
-const CustomConnectionLine: React.FC<CustomConnectionProps> = ({  fromX, fromY, toX, toY, connectionLineStyle }) => {
+const CustomConnectionLine: React.FC<CustomConnectionProps> = ({  fromX, fromY, toX, toY, sourcePos, targetPos, connectionLineStyle }) => {
   
-    const [edgePath] = getStraightPath({
+  const [edgePath] = getBezierPath({
     sourceX: fromX,
     sourceY: fromY,
+    sourcePosition: sourcePos,
+    targetPosition: targetPos,
     targetX: toX,
     targetY: toY,
+
   });
 
   return (

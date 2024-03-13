@@ -1,5 +1,5 @@
 import { ViewMode } from "gantt-task-react";
-import { Node } from 'reactflow'
+import { Node, Position } from 'reactflow'
 import React, { MouseEventHandler } from 'react';
 
 export type mapStateValue = {
@@ -194,6 +194,8 @@ export type EdgeTuple = {
   sy: number;
   tx: number;
   ty: number;
+  sourcePos: Position;
+  targetPos: Position;
 }
 
 export type IntersectionType = {
@@ -206,6 +208,8 @@ export interface CustomConnectionProps {
   fromY: number;
   toX: number;
   toY: number;
+  sourcePos: Position;
+  targetPos: Position;
   connectionLineStyle: React.CSSProperties;
 }
 
