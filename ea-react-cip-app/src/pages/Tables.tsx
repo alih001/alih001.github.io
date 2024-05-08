@@ -159,7 +159,7 @@ const Tables: React.FC = () => {
 
           <ButtonDivider>
             <Divider />
-            <TextSection>Alternate tables below</TextSection>
+            <TextSection>Switch between tables below</TextSection>
             <Divider />
           </ButtonDivider>
 

@@ -1,19 +1,23 @@
-import React from 'react';
-import styled from 'styled-components';
-import DashboardCardComponent from '../components/custom_components/DashboardCard';
-import { useData } from '../contexts/useDataContext';
-import { Button, Modal } from 'react-bootstrap';
-import Example from '../charts/BarChart';
-import PackageChart from '../charts/PackageChart';
-import { TableData, TableRow as AssetTableRow, WeirRow } from '../types/public-types'
+import React from "react";
+import styled from "styled-components";
+import DashboardCardComponent from "../components/custom_components/DashboardCard";
+import { useData } from "../contexts/useDataContext";
+import { Button, Modal } from "react-bootstrap";
+import Example from "../charts/BarChart";
+import PackageChart from "../charts/PackageChart";
+import {
+  TableData,
+  TableRow as AssetTableRow,
+  WeirRow,
+} from "../types/public-types";
 
-import PackageForm from '../components/weir_package_components/PackageForm'
+import PackageForm from "../components/weir_package_components/PackageForm";
 
 const HeroSection = styled.section`
   background-position: center, bottom left;
   background-size: cover, cover;
   height: fit-content;
-  color: #3C474B;
+  color: #3c474b;
   padding: 3rem 23rem 1rem;
   .heroInner {
     display: flex;
@@ -31,28 +35,71 @@ const HeroSection = styled.section`
   }
 `;
 
+const ButtonSection = styled.div`
+  margin-left: 22rem;
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(0.5rem);
+  width: 450px;
+  height: 18rem;
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='15' ry='15' stroke='%231a87e2' stroke-width='8' stroke-dasharray='13%2c 23%2c 15%2c 23' stroke-dashoffset='1' stroke-linecap='butt'/%3e%3c/svg%3e");
+  border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+`;
+
 const Background = styled.div`
-  background-image: url('./src/assets/images/home_page_background.png');
+  background-image: url("./src/assets/images/home_page_background.png");
   background-size: cover;
-  background-repeat: no-repeat; 
-  background-position: center; 
+  background-repeat: no-repeat;
+  background-position: center;
   min-height: 100vh;
+`;
+
+const ButtonDivider = styled.div`
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-content: center;
+  align-items: center;
+`;
+
+const Divider = styled.div`
+  width: 70%;
+  border-bottom: 2px solid #808080;
+  margin-left: 1rem;
+`;
+
+// Text section
+const TextSection = styled.div`
+  font-size: 18px;
+  max-width: 9.5rem;
+  text-align: center;
+  color: #808080;
+`;
+
+const DescriptionSection = styled.div`
+  font-size: 18px;
+  max-width: 20rem;
+  text-align: center;
+  color: #000;
 `;
 
 const CostCard = styled.div`
   border-radius: 15px;
-  width:95%;  
-  margin-left:2rem;
-  height:40rem;
+  width: 95%;
+  margin-left: 2rem;
+  height: 40rem;
 `;
-
 
 // const CustomButton = styled.button`
 //   margin-left: 1rem;
 // `;
 
 const CostDashboard: React.FC = () => {
-
   const { table1Data, table2Data } = useData();
   const { showCostPackageModal, setShowCostPackageModal } = useData();
   const { selectedWeirs, setSelectedWeirs } = useData();
@@ -62,8 +109,8 @@ const CostDashboard: React.FC = () => {
     const headers = data[0];
     return data.slice(1).map((row: AssetTableRow) => {
       const obj: WeirRow = {
-        'Weir Name': '',
-        'Package Cost': 0,
+        "Weir Name": "",
+        "Package Cost": 0,
       };
       row.forEach((value, index) => {
         const header = String(headers[index]);
@@ -72,83 +119,101 @@ const CostDashboard: React.FC = () => {
       return obj;
     });
   };
-  
+
   const table1parsedData = parseData(table1Data);
   const parsedData = parseData(table2Data);
 
   const handleCheckboxChange = (weirName: string) => {
     if (selectedWeirs.includes(weirName)) {
-      setSelectedWeirs(prev => prev.filter(name => name !== weirName));
+      setSelectedWeirs((prev) => prev.filter((name) => name !== weirName));
     } else {
-      setSelectedWeirs(prev => [...prev, weirName]);
-    }  };
-
+      setSelectedWeirs((prev) => [...prev, weirName]);
+    }
+  };
 
   const displayTotalCosts = () => {
-
     // console.log(selectedWeirs);
     // console.log(parsedData);
-    
+
     const totalCosts = getTotalCostForWeirs(selectedWeirs, parsedData);
 
-    const filteredData = table2Data.slice(1).filter(row => row[1] === "Package Summary");
+    const filteredData = table2Data
+      .slice(1)
+      .filter((row) => row[1] === "Package Summary");
 
     const headers = table2Data[0].slice(6); // Assuming cost data starts from the 7th column
-    console.log(headers)
+    console.log(headers);
     const transformedData = headers.map((header, index) => {
-        const obj = { date: header };
-        filteredData.forEach(row => {
-            const weirName = row[0];
-            const costValue = row[6 + index]; // Adjust index to match cost data columns
-            obj[weirName] = costValue.toString(); // Convert to string if necessary
-        });
-        return obj;
+      const obj = { date: header };
+      filteredData.forEach((row) => {
+        const weirName = row[0];
+        const costValue = row[6 + index]; // Adjust index to match cost data columns
+        obj[weirName] = costValue.toString(); // Convert to string if necessary
+      });
+      return obj;
     });
 
-
-    console.log(transformedData)
+    console.log(transformedData);
     // Update chart data here
     // const updatedChartData = calculateChartData(totalCosts); // You'll define how you calculate this
     setChartData(transformedData);
-
   };
 
   const getTotalCostForWeirs = (weirNames: string[], parsedData: WeirRow[]) => {
     return parsedData
-      .filter(row => weirNames.includes(row['Weir Name']))
-      .reduce((total, row) => total + (row['Package Cost']), 0);
+      .filter((row) => weirNames.includes(row["Weir Name"]))
+      .reduce((total, row) => total + row["Package Cost"], 0);
   };
 
-  const filteredChartData = chartData.map(dataItem => {
+  const filteredChartData = chartData.map((dataItem) => {
     const filteredItem = {};
     // Keep only the keys that are included in selectedWeirs plus any key you always want to keep, like 'date'
-    Object.keys(dataItem).forEach(key => {
-      if (selectedWeirs.includes(key) || key === 'date') {
+    Object.keys(dataItem).forEach((key) => {
+      if (selectedWeirs.includes(key) || key === "date") {
         filteredItem[key] = dataItem[key];
       }
     });
     return filteredItem;
   });
 
-  return(
-
+  return (
     <Background>
       <HeroSection className="light hero">
         <div className="heroInner">
           <span>
-          <h1>Cost Dashboard</h1>
+            <h1>Cost Dashboard</h1>
           </span>
         </div>
       </HeroSection>
 
-      <Button onClick={() => setShowCostPackageModal(true)}>Select Weirs</Button>
+      <ButtonSection>
+        <DescriptionSection>
+          Use this page to create a package of a combination of weirs to
+          visualise cost outputs over a period of time
+        </DescriptionSection>
 
-      <Modal show={showCostPackageModal} onHide={() => setShowCostPackageModal(false)}>
+        <ButtonDivider>
+          <Divider />
+          <TextSection>Add Weirs With Button Below</TextSection>
+          <Divider />
+        </ButtonDivider>
+        <Button onClick={() => setShowCostPackageModal(true)}>
+          Select Weirs
+        </Button>
+      </ButtonSection>
+
+      <Modal
+        show={showCostPackageModal}
+        onHide={() => setShowCostPackageModal(false)}
+      >
         <Modal.Header closeButton>
           <Modal.Title>Package 1</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Button variant="secondary" onClick={() => setShowCostPackageModal(false)}>
+          <Button
+            variant="secondary"
+            onClick={() => setShowCostPackageModal(false)}
+          >
             Close
           </Button>
           <Button variant="primary" onClick={displayTotalCosts}>
@@ -162,29 +227,39 @@ const CostDashboard: React.FC = () => {
         </Modal.Body>
       </Modal>
       <CostCard>
-        {
-          selectedWeirs.length > 0 && showCostPackageModal===false && (
-            <>
-              <DashboardCardComponent
-                title="Total Package Costs by Year"
-                width={79} height={35}
-                left={1} top={3}
-              >
-                <Example width={1250} height={450} inputData={filteredChartData}></Example>
-              </DashboardCardComponent>
+        {selectedWeirs.length > 0 && showCostPackageModal === false && (
+          <>
+            <DashboardCardComponent
+              title="Total Package Costs by Year"
+              width={79}
+              height={35}
+              left={1}
+              top={3}
+            >
+              <Example
+                width={1250}
+                height={450}
+                inputData={filteredChartData}
+              ></Example>
+            </DashboardCardComponent>
 
-              <DashboardCardComponent
+            <DashboardCardComponent
               title="Total Package Costs by Type"
-              width = {79} height = {35}
-              left = {1} top = {3}
-              >
-                <PackageChart width={1200} height={450} inputData={filteredChartData}/>
-              </DashboardCardComponent>
-            </>
-          )
-        }
+              width={79}
+              height={35}
+              left={1}
+              top={3}
+            >
+              <PackageChart
+                width={1200}
+                height={450}
+                inputData={filteredChartData}
+              />
+            </DashboardCardComponent>
+          </>
+        )}
       </CostCard>
     </Background>
   );
-}
+};
 export default CostDashboard;
