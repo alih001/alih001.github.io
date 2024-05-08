@@ -1,21 +1,80 @@
 // NetworkLinks.tsx
-import React, { useCallback, useRef, useState, useMemo } from 'react';
-import { useData } from '../../contexts/useDataContext';
-import ReactFlow, { applyNodeChanges, applyEdgeChanges, addEdge, MarkerType, ReactFlowProvider } from 'reactflow';
-import '../../styles/networkLinks.css';
-import CustomNode from './CustomNode';
-import FloatingEdge from './FloatingEdge';
-import CustomConnectionLine from './CustomConnectionLine';
-import { Circle } from '@uiw/react-color';
-import { CustomNodeProps } from '../../types/public-types';
-import 'reactflow/dist/style.css';
-import '../../styles/nodeStyles.css';
+import React, { useCallback, useRef, useState, useMemo } from "react";
+import { useData } from "../../contexts/useDataContext";
+import ReactFlow, {
+  applyNodeChanges,
+  applyEdgeChanges,
+  addEdge,
+  MarkerType,
+  ReactFlowProvider,
+} from "reactflow";
+import "../../styles/networkLinks.css";
+import CustomNode from "./CustomNode";
+import FloatingEdge from "./FloatingEdge";
+import CustomConnectionLine from "./CustomConnectionLine";
+import { Circle } from "@uiw/react-color";
+import { CustomNodeProps } from "../../types/public-types";
+import "reactflow/dist/style.css";
+import "../../styles/nodeStyles.css";
+import styled from "styled-components";
 
-import NodeSidebar from './AddNodeSidebar';
+import NodeSidebar from "./AddNodeSidebar";
+
+const TextWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 1rem;
+`;
+
+const ColourWrapper = styled.div`
+  margin-left: 1.3rem;
+`;
+
+const StyledInput = styled.input`
+  padding: 8px 12px;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  margin: 1rem 0;
+  transition: border-color 0.3s;
+
+  &:focus {
+    border-color: #007bff; // Change focus color as needed
+  }
+`;
+
+const Button = styled.label`
+  background: #1a87e2;
+  color: #fff;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  border-radius: 50px;
+  height: 60px;
+  width: 230px;
+  border-color: transparent;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.75);
+  outline: none;
+  transition: 0.15s;
+  text-align: center;
+  display: inline-block;
+  line-height: 60px;
+  font-size: 25px;
+
+  &:hover {
+    background-color: #052e84;
+  }
+
+  &:active {
+    background-color: #f1ac15;
+  }
+`;
 
 const connectionLineStyle = {
   strokeWidth: 3,
-  stroke: 'black',
+  stroke: "black",
 };
 
 const edgeTypes = {
@@ -23,40 +82,55 @@ const edgeTypes = {
 };
 
 const defaultEdgeOptions = {
-  style: { strokeWidth: 3, stroke: 'black' },
-  type: 'floating',
+  style: { strokeWidth: 3, stroke: "black" },
+  type: "floating",
   markerEnd: {
     type: MarkerType.ArrowClosed,
-    color: 'black',
+    color: "black",
   },
 };
 
 const NetworkLinks = () => {
   const { nodes, setNodes, edges, setEdges } = useData();
-  const [editingNode, setEditingNode] = useState({ isEditing: false, nodeId: '' });
-  const [nodeNameInput, setNodeNameInput] = useState('');
-  const editNodeRef = useRef(null)
+  const [editingNode, setEditingNode] = useState({
+    isEditing: false,
+    nodeId: "",
+  });
+  const [nodeNameInput, setNodeNameInput] = useState("");
+  const editNodeRef = useRef(null);
 
-  const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
+  const onConnect = useCallback(
+    (params) => setEdges((eds) => addEdge(params, eds)),
+    [setEdges]
+  );
 
-  const [selectedColor, setSelectedColor] = useState('#FE9200');
+  const [selectedColor, setSelectedColor] = useState("#FE9200");
 
   const reactFlowWrapper = useRef(null);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
+  const handleNodeEdit = useCallback(
+    (nodeId: string) => {
+      const nodeToEdit: CustomNodeProps = nodes.find(
+        (node) => node.id === nodeId
+      );
+      if (nodeToEdit) {
+        setNodeNameInput(nodeToEdit.data.nodeName);
+        setSelectedColor(nodeToEdit.data.nodeColour || "");
+      }
+      setEditingNode({ isEditing: true, nodeId });
+    },
+    [nodes, setNodeNameInput, setSelectedColor, setEditingNode]
+  );
 
-  const handleNodeEdit = useCallback((nodeId: string) => {
-    const nodeToEdit: CustomNodeProps = nodes.find((node) => node.id === nodeId);
-    if (nodeToEdit) {
-      setNodeNameInput(nodeToEdit.data.nodeName);
-      setSelectedColor(nodeToEdit.data.nodeColour || '');
-    }
-    setEditingNode({ isEditing: true, nodeId });
-  }, [nodes, setNodeNameInput, setSelectedColor, setEditingNode]);
-
-  const nodeTypes = useMemo(() => ({
-    custom: (nodeProps) => <CustomNode {...nodeProps} onEdit={handleNodeEdit} />,
-  }), [handleNodeEdit]); // Recalculate only if handleNodeEdit changes
+  const nodeTypes = useMemo(
+    () => ({
+      custom: (nodeProps) => (
+        <CustomNode {...nodeProps} onEdit={handleNodeEdit} />
+      ),
+    }),
+    [handleNodeEdit]
+  ); // Recalculate only if handleNodeEdit changes
 
   const onNodesChange = useCallback(
     (changes) => {
@@ -64,7 +138,7 @@ const NetworkLinks = () => {
     },
     [setNodes]
   );
-  
+
   const onEdgesChange = useCallback(
     (changes) => {
       setEdges((prevEdges) => applyEdgeChanges(changes, prevEdges));
@@ -74,21 +148,21 @@ const NetworkLinks = () => {
 
   const onDragOver = useCallback((event) => {
     event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
+    event.dataTransfer.dropEffect = "move";
   }, []);
 
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
 
-      const type = event.dataTransfer.getData('application/reactflow');
-  
-      console.log("add node node")
+      const type = event.dataTransfer.getData("application/reactflow");
 
-      if (typeof type === 'undefined' || !type) {
+      console.log("add node node");
+
+      if (typeof type === "undefined" || !type) {
         return;
       }
-  
+
       const position = reactFlowInstance.screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
@@ -98,73 +172,88 @@ const NetworkLinks = () => {
         id: Date.now().toString(),
         type,
         position,
-        data: { label: `${type} node`, nodeName: 'Custom Node', nodeColour: 'red' },
+        data: {
+          label: `${type} node`,
+          nodeName: "Custom Node",
+          nodeColour: "red",
+        },
       };
-  
-      console.log(newNode)
+
+      console.log(newNode);
 
       setNodes((nds) => nds.concat(newNode));
     },
     [reactFlowInstance, setNodes]
   );
-  
+
   const renderEditNodes = (nodeId: string) => {
     const handleInputChange = (event) => {
       setNodeNameInput(event.target.value);
     };
-  
+
     const handleColorChange = (colorHex: string) => {
       setSelectedColor(colorHex);
     };
 
     const handleSubmit = () => {
       const updatedNodes = nodes.map((node) =>
-        node.id === nodeId ? { ...node, data: { ...node.data, nodeName: nodeNameInput, nodeColour: selectedColor } } : node
+        node.id === nodeId
+          ? {
+              ...node,
+              data: {
+                ...node.data,
+                nodeName: nodeNameInput,
+                nodeColour: selectedColor,
+              },
+            }
+          : node
       );
 
       setNodes(updatedNodes);
-      setEditingNode({ isEditing: false, nodeId: '' }); // Reset editing state
-      setNodeNameInput(''); // Clear input field
+      setEditingNode({ isEditing: false, nodeId: "" }); // Reset editing state
+      setNodeNameInput(""); // Clear input field
     };
-  
+
     return (
-      <div>
-        <input
+      <TextWrapper>
+        <StyledInput
           type="text"
           value={nodeNameInput}
           onChange={handleInputChange}
           autoFocus
         />
-        <Circle
-          colors={[ '#F44E3B', 
-                    '#FE9200', 
-                    '#FCDC00',
-                    '#FF0000', 
-                    '#DBDF00',
-                    '#FF80ED',
-                    '#FFC0CB',
-                    '#00FFFF',
-                    '#0000FF',
-                    '#FF7373',
-                    '#D3FFCE',
-                    '#C0C0C0',
-
-                  ]}
-          color={selectedColor}
-          onChange={(color) => {
-            handleColorChange(color.hex);
-          }}
-        />
-        <button onClick={handleSubmit}>Update Name</button>
-      </div>
+        <ColourWrapper>
+          <Circle
+            colors={[
+              "#F44E3B",
+              "#FE9200",
+              "#FCDC00",
+              "#FF0000",
+              "#DBDF00",
+              "#FF80ED",
+              "#FFC0CB",
+              "#00FFFF",
+              "#0000FF",
+              "#FF7373",
+              "#D3FFCE",
+              "#C0C0C0",
+            ]}
+            color={selectedColor}
+            onChange={(color) => {
+              handleColorChange(color.hex);
+            }}
+          />
+        </ColourWrapper>
+        <Button onClick={handleSubmit}>Update Name</Button>
+      </TextWrapper>
     );
   };
 
   const renderDescription = () => (
-    <div>
-      Use your custom maps to visualise how different
-      factors in your system will affect each other :) 
-    </div>
+    <TextWrapper>
+      Use your custom maps to visualise how different factors in your system
+      will affect each other :)
+    </TextWrapper>
   );
 
   const renderDynamicSection = () => {
@@ -176,33 +265,32 @@ const NetworkLinks = () => {
 
   return (
     <>
-    <div className='network-dashboard'>
-      <ReactFlowProvider>
-        <div className='content' ref={reactFlowWrapper}>
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            fitView
-            nodeTypes={nodeTypes}
-            edgeTypes={edgeTypes}
-            defaultEdgeOptions={defaultEdgeOptions}
-            connectionLineComponent={CustomConnectionLine}
-            connectionLineStyle={connectionLineStyle}
-            onDrop={onDrop}
-            onDragOver={onDragOver}
-            onInit={setReactFlowInstance}
-          />
+      <div className="network-dashboard">
+        <ReactFlowProvider>
+          <div className="content" ref={reactFlowWrapper}>
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onConnect={onConnect}
+              fitView
+              nodeTypes={nodeTypes}
+              edgeTypes={edgeTypes}
+              defaultEdgeOptions={defaultEdgeOptions}
+              connectionLineComponent={CustomConnectionLine}
+              connectionLineStyle={connectionLineStyle}
+              onDrop={onDrop}
+              onDragOver={onDragOver}
+              onInit={setReactFlowInstance}
+            />
+          </div>
+        </ReactFlowProvider>
+        <div className="networkDescription" ref={editNodeRef}>
+          <NodeSidebar />
+          {renderDynamicSection()}
         </div>
-      </ReactFlowProvider>
-      <div className='networkDescription' ref={editNodeRef}>
-        <NodeSidebar/>
-        {renderDynamicSection()}
       </div>
-    </div>
-
     </>
   );
 };
