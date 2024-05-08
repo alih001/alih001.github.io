@@ -1,19 +1,19 @@
 // PopulateTables.tsx
-import React from 'react';
-import { useData } from '../contexts/useDataContext';
-import ExcelJS from 'exceljs'
-import FileUpload from '../components/table_components/FileUpload';
-import AssetTable from '../components/table_components/AssetTable';
-import CostTable from '../components/table_components/CostTable';
-import CustomizedSwitches from '../components/table_components/TableSwitch';
-import styled from 'styled-components';
+import React from "react";
+import { useData } from "../contexts/useDataContext";
+import ExcelJS from "exceljs";
+import FileUpload from "../components/table_components/FileUpload";
+import AssetTable from "../components/table_components/AssetTable";
+import CostTable from "../components/table_components/CostTable";
+import CustomizedSwitches from "../components/table_components/TableSwitch";
+import styled from "styled-components";
 // import { TableData, TableRow, CostTableData, CostTableRow} from '../types/public-types'
 
 const HeroSection = styled.section`
   background-position: center, bottom left;
   background-size: cover, cover;
   height: fit-content;
-  color: #3C474B;
+  color: #3c474b;
   padding: 3rem 23rem 1rem;
   .heroInner {
     display: flex;
@@ -31,16 +31,54 @@ const HeroSection = styled.section`
   }
 `;
 
-const TableSection = styled.div`
+const ButtonSection = styled.div`
+  margin-left: 17rem;
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(0.5rem);
+  width: 500px;
+  height: 18rem;
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='15' ry='15' stroke='%231a87e2' stroke-width='8' stroke-dasharray='13%2c 23%2c 15%2c 23' stroke-dashoffset='1' stroke-linecap='butt'/%3e%3c/svg%3e");
+  border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+`;
 
-margin:2.5rem;
+// Divider
+const ButtonDivider = styled.div`
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-content: center;
+  align-items: center;
+`;
+
+const Divider = styled.div`
+  width: 70%;
+  border-bottom: 2px solid #808080;
+  margin-left: 1rem;
+`;
+
+// Text section
+const TextSection = styled.div`
+  font-size: 18px;
+  max-width: 9.5rem;
+  text-align: center;
+  color: #808080;
+`;
+
+const TableSection = styled.div`
+  margin: 2.5rem;
 `;
 
 const Background = styled.div`
-  background-image: url('./src/assets/images/home_page_background.png');
+  background-image: url("./src/assets/images/home_page_background.png");
   background-size: cover;
-  background-repeat: no-repeat; 
-  background-position: center; 
+  background-repeat: no-repeat;
+  background-position: center;
   min-height: 100vh;
 `;
 
@@ -52,18 +90,18 @@ const Tables: React.FC = () => {
   const { setCollapsedCostGroups } = useData();
 
   const handleSwitchChange = () => {
-    setIsTable1Visible(prev => !prev); // Toggle the state
+    setIsTable1Visible((prev) => !prev); // Toggle the state
   };
 
   const readExcelFile = async (file: File) => {
     const workbook = new ExcelJS.Workbook();
     const arrayBuffer = await file.arrayBuffer();
     await workbook.xlsx.load(arrayBuffer);
-  
+
     const processSheet = (sheet: ExcelJS.Worksheet) => {
       const data = [];
       let headers = [];
-  
+
       sheet.eachRow((row, rowNumber) => {
         if (rowNumber === 0) {
           // Store headers from the first row
@@ -74,7 +112,7 @@ const Tables: React.FC = () => {
           row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
             let value = cell.value;
             // Check if the value is a number
-            if (typeof value === 'number') {
+            if (typeof value === "number") {
               // Format the number to two decimal places and convert back to number
               value = parseFloat(value.toFixed(2));
             }
@@ -83,22 +121,24 @@ const Tables: React.FC = () => {
           data.push(rowData);
         }
       });
-  
+
       return data;
     };
-  
-    const assetInformationSheet = workbook.getWorksheet('AssetInformation');
-    const costInformationSheet = workbook.getWorksheet('CostInformation');
-    
+
+    const assetInformationSheet = workbook.getWorksheet("AssetInformation");
+    const costInformationSheet = workbook.getWorksheet("CostInformation");
+
     const assetInformation = processSheet(assetInformationSheet);
     const costInformation = processSheet(costInformationSheet);
-  
+
     setTable1Data(assetInformation);
-    setCollapsedAssetRows(new Set(assetInformation.map((_, rowIndex) => rowIndex).slice(1)));
+    setCollapsedAssetRows(
+      new Set(assetInformation.map((_, rowIndex) => rowIndex).slice(1))
+    );
     setTable2Data(costInformation);
-    setCollapsedCostGroups(new Set(costInformation.map(row => row[0])));
+    setCollapsedCostGroups(new Set(costInformation.map((row) => row[0])));
   };
-  
+
   // file upload handler
   const handleFileUpload = (file: File) => {
     readExcelFile(file);
@@ -110,39 +150,48 @@ const Tables: React.FC = () => {
         <HeroSection className="light hero">
           <div className="heroInner">
             <span>
-              <h1>Asset Management</h1>  
+              <h1>Asset Management</h1>
             </span>
           </div>
         </HeroSection>
-        <FileUpload onFileSelect={handleFileUpload} />
-        <CustomizedSwitches 
-          onChange={handleSwitchChange} 
-          checked={isTable1Visible} 
-        />
+        <ButtonSection>
+          <FileUpload onFileSelect={handleFileUpload} />
+
+          <ButtonDivider>
+            <Divider />
+            <TextSection>Alternate tables below</TextSection>
+            <Divider />
+          </ButtonDivider>
+
+          <CustomizedSwitches
+            onChange={handleSwitchChange}
+            checked={isTable1Visible}
+          />
+        </ButtonSection>
+
         <TableSection>
           {isTable1Visible ? (
-              <>
+            <>
               {/* <h3>Asset Table</h3> */}
-              <AssetTable 
-                  data={table1Data} 
-                  onDataChange={setTable1Data} 
-                  tableId="table1"
+              <AssetTable
+                data={table1Data}
+                onDataChange={setTable1Data}
+                tableId="table1"
               />
-              </>
+            </>
           ) : (
-              <>
+            <>
               {/* <h3>Cost Table</h3> */}
-              <CostTable 
-                  data={table2Data} 
-                  onDataChange={setTable2Data} 
-                  tableId="table2" 
+              <CostTable
+                data={table2Data}
+                onDataChange={setTable2Data}
+                tableId="table2"
               />
-              </>
+            </>
           )}
         </TableSection>
       </Background>
     </div>
-
   );
 };
 

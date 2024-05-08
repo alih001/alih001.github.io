@@ -1,35 +1,34 @@
 // FileUpload.tsx
-import React from 'react';
-import styled from 'styled-components';
-import { FileUploadProps } from '../../types/public-types'
+import React from "react";
+import styled from "styled-components";
+import { FileUploadProps } from "../../types/public-types";
 
 const Input = styled.input.attrs({
-  type: 'file'
+  type: "file",
 })`
   display: none; // Hide the actual input
 `;
 
 const Button = styled.label`
-  background: #3D314A;
+  background: #1a87e2;
   color: #fff;
   cursor: pointer;
   margin-bottom: 1rem;
-  margin-left: 10rem;
   text-transform: uppercase;
-  border-radius: 5px;
+  border-radius: 50px;
   height: 60px;
   width: 300px; // Control width here
   border-color: transparent;
-  box-shadow: 0px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.75);
   outline: none;
   transition: 0.15s;
   text-align: center;
-  display: inline-block; // Allows width and height to be effective
-  line-height: 60px; // Vertically center text
-  font-size: 25px; // Control font size
+  display: inline-block;
+  line-height: 60px;
+  font-size: 25px;
 
   &:hover {
-    background-color: #0090b0; // Slightly darker shade for hover
+    background-color: #052e84;
   }
 
   &:active {
@@ -47,9 +46,14 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileSelect }) => {
 
   return (
     <>
-      <Input id="file-upload" onChange={handleFileChange} accept=".xlsx, .xls"  />
+      <Input
+        id="file-upload"
+        onChange={handleFileChange}
+        accept=".xlsx, .xls"
+      />
       <Button htmlFor="file-upload">Upload File</Button>
     </>
-  );};
+  );
+};
 
 export default FileUpload;
