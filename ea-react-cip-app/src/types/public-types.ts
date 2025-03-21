@@ -1,14 +1,37 @@
 import { ViewMode } from "gantt-task-react";
-import { Node } from 'reactflow'
-import React, { MouseEventHandler } from 'react';
+import { Node } from "reactflow";
+import React, { MouseEventHandler } from "react";
+
+// SDB dashboard types
+
+// types.ts
+
+export interface DemandRow {
+  zone: string;
+  planningScenario: string;
+  growthForecast: string;
+  // Dynamic keys for each year, e.g., "2025", "2026", etc.
+  [year: string]: string | number;
+}
+
+export interface SupplyRow {
+  year: number;
+  wrz: string;
+  scenario: string;
+  wafu: number;
+  // Optional drought columns for future toggles, if needed
+  "1/500"?: number;
+  "1/200"?: number;
+  "1/100"?: number;
+}
 
 export type mapStateValue = {
-    scale: number;
-    translation: {
-        x: number;
-        y: number;
-    };
-}
+  scale: number;
+  translation: {
+    x: number;
+    y: number;
+  };
+};
 
 // GanttChart Types
 export type TaskType = "task" | "milestone" | "project";
@@ -37,71 +60,71 @@ export interface Task {
 }
 
 export type ViewSwitcherProps = {
-    isChecked: boolean;
-    onViewListChange: (isChecked: boolean) => void;
-    onViewModeChange: (viewMode: ViewMode) => void;
-  };
+  isChecked: boolean;
+  onViewListChange: (isChecked: boolean) => void;
+  onViewModeChange: (viewMode: ViewMode) => void;
+};
 
 // FileUpload Types
 export type FileUploadProps = {
-    onFileSelect: (file: File) => void;
-  };
+  onFileSelect: (file: File) => void;
+};
 
 // DashboardCard Interface
 export interface DashboardCardProps {
-    title: string;
-    children?: React.ReactNode;
-    width: number;
-    height: number;
-    left: number;
-    top: number;
+  title: string;
+  children?: React.ReactNode;
+  width: number;
+  height: number;
+  left: number;
+  top: number;
 }
 
-export interface MainContainerProps{
-    width: number;
-    height: number
-    left: number;
-    top: number;
+export interface MainContainerProps {
+  width: number;
+  height: number;
+  left: number;
+  top: number;
 }
 
 // Table Types
-export type TableCell = (string | number);
+export type TableCell = string | number;
 export type TableRow = TableCell[];
 export type TableData = TableRow[];
 
 // CostTable Types
 export type CostTableRow = [
-    string, // Weir Name
-    string, // Cost Type
-    number, // Start Year
-    number, // Duration
-    string | number, // Package Split
-    number, // Package Cost
-    ...number[] // Yearly Costs
-    ];
+  string, // Weir Name
+  string, // Cost Type
+  number, // Start Year
+  number, // Duration
+  string | number, // Package Split
+  number, // Package Cost
+  ...number[] // Yearly Costs
+];
 
 export type CostTableData = CostTableRow[];
 
 export type CostTableProps = {
-    data: CostTableData;
-    onDataChange: (newData: CostTableData) => void;
-    tableId: string;
-  };
+  data: CostTableData;
+  onDataChange: (newData: CostTableData) => void;
+  tableId: string;
+};
 
 export interface CustomModalProps {
-    showModal: boolean;
-    closeModal: () => void;
-    sliderValue: number;
-    handleSliderChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    handleSave: () => void;
-  }
+  showModal: boolean;
+  closeModal: () => void;
+  sliderValue: number;
+  handleSliderChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleSave: () => void;
+}
 
 // AssetTable Types
 export type AssetTableProps = {
-    data: TableData;
-    onDataChange: (newData: TableData) => void;
-    tableId: string;
-  };
+  data: TableData;
+  onDataChange: (newData: TableData) => void;
+  tableId: string;
+};
 
 export type DropdownValueMapType = { [key: string]: number };
 export type StagesFactorMapType = { [key: number]: number };
@@ -109,25 +132,24 @@ export type StagesFactorMapType = { [key: number]: number };
 // Arrow Props
 
 export type defaultMargin = {
-    top: number;
-    right: number;
-    bottom: number;
-    left: number;
-}
+  top: number;
+  right: number;
+  bottom: number;
+  left: number;
+};
 
 // PieChart types
 export interface CountMap {
-    [key: string]: number;
-  }  
+  [key: string]: number;
+}
 
 export type PieProps = {
-    width: number;
-    height: number;
-    margin?: defaultMargin;
-    data: TableData;
-    rowReference: number;
-  };
-
+  width: number;
+  height: number;
+  margin?: defaultMargin;
+  data: TableData;
+  rowReference: number;
+};
 
 // BarChart Props
 export interface TransformedDataItem {
@@ -136,13 +158,13 @@ export interface TransformedDataItem {
 }
 
 export type BarGroupProps = {
-    width: number;
-    height: number;
-    inputData: TransformedDataItem[];
-    margin?: { top: number; right: number; bottom: number; left: number };
-    events?: boolean;
+  width: number;
+  height: number;
+  inputData: TransformedDataItem[];
+  margin?: { top: number; right: number; bottom: number; left: number };
+  events?: boolean;
 };
-  
+
 // export type CityName = 'New York' | 'San Francisco' | 'Austin';
 
 // export type TooltipData = {
@@ -155,21 +177,21 @@ export type BarGroupProps = {
 //     y: number;
 //     color: string;
 // };
-  
+
 export type BarStackProps = {
-    width: number;
-    height: number;
-    inputData: TransformedDataItem[]
-    margin?: { top: number; right: number; bottom: number; left: number };
-    events?: boolean;
+  width: number;
+  height: number;
+  inputData: TransformedDataItem[];
+  margin?: { top: number; right: number; bottom: number; left: number };
+  events?: boolean;
 };
 
 // CostDashboard Types
 export interface WeirRow {
-    'Weir Name': string;
-    'Package Cost': number;
-    [key: string]: string | number;
-  }
+  "Weir Name": string;
+  "Package Cost": number;
+  [key: string]: string | number;
+}
 
 export interface CustomNodeData {
   nodeName: string;
@@ -194,12 +216,12 @@ export type EdgeTuple = {
   sy: number;
   tx: number;
   ty: number;
-}
+};
 
 export type IntersectionType = {
   x: number;
   y: number;
-}
+};
 
 export interface CustomConnectionProps {
   fromX: number;
