@@ -9,7 +9,15 @@ import { curveMonotoneX } from "@visx/curve";
 
 interface DemandSupplyChartProps {
   demandData: { yearlyDemand: Record<string, number> } | null;
-  supplyData: { yearlySupply: Record<string, number> } | null;
+  supplyData: {
+    yearlySupply: Record<string, number>;
+    droughtAdjustments?: {
+      "1/500"?: Record<string, number>;
+      "1/200"?: Record<string, number>;
+      "1/100"?: Record<string, number>;
+    };
+  } | null;
+  drought: string; // "None", "1/500", "1/200", or "1/100"
 }
 
 const margin = { top: 20, right: 30, bottom: 50, left: 50 };
@@ -19,6 +27,7 @@ const height = 400;
 const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
   demandData,
   supplyData,
+  drought,
 }) => {
   if (!demandData || !supplyData) {
     return <div>No data available for the selected filters.</div>;
@@ -29,9 +38,20 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
     (a, b) => Number(a) - Number(b)
   );
 
-  // Compute the maximum Y value from both demand and supply for scaling.
+  // Compute the maximum Y value from both demand and adjusted supply for scaling.
   const demandValues = years.map((year) => demandData.yearlyDemand[year]);
-  const supplyValues = years.map((year) => supplyData.yearlySupply[year] || 0);
+  const supplyValues = years.map((year) => {
+    const baseSupply = supplyData.yearlySupply[year] || 0;
+    let adjustment = 0;
+    if (
+      drought !== "None" &&
+      supplyData.droughtAdjustments &&
+      supplyData.droughtAdjustments[drought]
+    ) {
+      adjustment = supplyData.droughtAdjustments[drought][year] || 0;
+    }
+    return baseSupply - adjustment;
+  });
   const maxDemand = Math.max(...demandValues);
   const maxSupply = Math.max(...supplyValues);
   const maxY = Math.max(maxDemand, maxSupply) * 1.1; // add 10% headroom
@@ -43,7 +63,7 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
     padding: 0.2,
   });
 
-  // yScale using scaleLinear for the numeric values.
+  // yScale using scaleLinear for numeric values.
   const yScale = scaleLinear<number>({
     domain: [0, maxY],
     range: [height - margin.bottom, margin.top],
@@ -66,13 +86,22 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
       <Group>
         {years.map((year) => {
           const x = xScale(year);
-          const supplyValue = supplyData.yearlySupply[year] || 0;
-          const barHeight = height - margin.bottom - yScale(supplyValue);
+          const baseSupply = supplyData.yearlySupply[year] || 0;
+          let adjustment = 0;
+          if (
+            drought !== "None" &&
+            supplyData.droughtAdjustments &&
+            supplyData.droughtAdjustments[drought]
+          ) {
+            adjustment = supplyData.droughtAdjustments[drought][year] || 0;
+          }
+          const effectiveSupply = baseSupply - adjustment;
+          const barHeight = height - margin.bottom - yScale(effectiveSupply);
           return (
             <Bar
               key={`bar-${year}`}
               x={x}
-              y={yScale(supplyValue)}
+              y={yScale(effectiveSupply)}
               width={xScale.bandwidth()}
               height={barHeight}
               fill="orange"

@@ -1,11 +1,6 @@
 // FilterControls.tsx
 import React from "react";
-
-export interface FilterCriteria {
-  wrz: string;
-  planningScenario: string;
-  growthForecast: string;
-}
+import { FilterCriteria } from "../../types/public-types"; // wherever FilterCriteria is defined
 
 interface FilterControlsProps {
   criteria: FilterCriteria;
@@ -30,7 +25,6 @@ const FilterControls: React.FC<FilterControlsProps> = ({
           value={criteria.wrz}
           onChange={(e) => setCriteria({ ...criteria, wrz: e.target.value })}
         >
-          <option value="">All</option>
           {zones.map((zone) => (
             <option key={zone} value={zone}>
               {zone}
@@ -46,7 +40,6 @@ const FilterControls: React.FC<FilterControlsProps> = ({
             setCriteria({ ...criteria, planningScenario: e.target.value })
           }
         >
-          <option value="">All</option>
           {planningScenarios.map((ps) => (
             <option key={ps} value={ps}>
               {ps}
@@ -62,12 +55,25 @@ const FilterControls: React.FC<FilterControlsProps> = ({
             setCriteria({ ...criteria, growthForecast: e.target.value })
           }
         >
-          <option value="">All</option>
           {growthForecasts.map((gf) => (
             <option key={gf} value={gf}>
               {gf}
             </option>
           ))}
+        </select>
+      </label>
+      <label>
+        Drought Scenario:
+        <select
+          value={criteria.drought}
+          onChange={(e) =>
+            setCriteria({ ...criteria, drought: e.target.value })
+          }
+        >
+          <option value="None">None</option>
+          <option value="1/500">1/500</option>
+          <option value="1/200">1/200</option>
+          <option value="1/100">1/100</option>
         </select>
       </label>
     </div>

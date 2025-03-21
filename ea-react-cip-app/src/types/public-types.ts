@@ -25,6 +25,13 @@ export interface SupplyRow {
   "1/100"?: number;
 }
 
+export interface FilterCriteria {
+  wrz: string;
+  planningScenario: string;
+  growthForecast: string;
+  drought: string;
+}
+
 export type mapStateValue = {
   scale: number;
   translation: {

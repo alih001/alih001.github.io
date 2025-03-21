@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ExcelJS from "exceljs";
 import { DemandRow } from "../../types/public-types";
 import FilterControls, { FilterCriteria } from "./FilterControls";
@@ -11,6 +11,7 @@ const ExcelFileUpload: React.FC = () => {
     wrz: "",
     planningScenario: "",
     growthForecast: "",
+    drought: "None",
   });
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,8 +30,6 @@ const ExcelFileUpload: React.FC = () => {
       const demandSheet = workbook.getWorksheet("Demand");
       if (demandSheet) {
         const tempDemand: DemandRow[] = [];
-
-        // Get header row (assumed to be row 1) and determine year columns (from column G onward)
         const headerRow = demandSheet.getRow(1);
         const yearHeaders: { col: number; year: string }[] = [];
         headerRow.eachCell((cell, colNumber) => {
@@ -44,19 +43,15 @@ const ExcelFileUpload: React.FC = () => {
             yearHeaders.push({ col: colNumber, year: headerValue });
           }
         });
-
-        // Process each demand row (starting from row 2)
         demandSheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
-          if (rowNumber === 1) return; // Skip header
-
+          if (rowNumber === 1) return;
           const zone = row.getCell("B").value as string;
           const planningScenario = row.getCell("C").value as string;
           const growthForecast = row.getCell("D").value as string;
-
           const yearlyDemand: Record<string, number> = {};
           yearHeaders.forEach(({ col, year }) => {
             const cell = row.getCell(col);
-            let value: number = 0;
+            let value = 0;
             if (typeof cell.value === "number") {
               value = cell.value;
             } else if (typeof cell.value === "string") {
@@ -64,7 +59,6 @@ const ExcelFileUpload: React.FC = () => {
             }
             yearlyDemand[year] = value;
           });
-
           tempDemand.push({
             zone,
             planningScenario,
@@ -78,24 +72,28 @@ const ExcelFileUpload: React.FC = () => {
       // --- Process Supply Sheet ---
       const sheet = workbook.getWorksheet("Supply");
       if (sheet) {
-        // Group rows by a combination of WRZ and scenario
         const groups: {
           [key: string]: {
             wrz: string;
             scenario: string;
             yearlySupply: Record<string, number>;
+            droughtAdjustments: {
+              "1/500": Record<string, number>;
+              "1/200": Record<string, number>;
+              "1/100": Record<string, number>;
+            };
           };
         } = {};
 
-        // Assuming first row is header
         sheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
-          if (rowNumber === 1) return; // Skip header
-
-          // Column A: Year, B: WRZ, C: Scenario, D: WAFU
+          if (rowNumber === 1) return;
           const yearCell = row.getCell("A").value;
           const wrzCell = row.getCell("B").value;
           const scenarioCell = row.getCell("C").value;
           const wafuCell = row.getCell("D").value;
+          const drought1500Cell = row.getCell("E").value;
+          const drought1200Cell = row.getCell("F").value;
+          const drought100Cell = row.getCell("G").value;
 
           const yearStr =
             typeof yearCell === "number"
@@ -105,6 +103,18 @@ const ExcelFileUpload: React.FC = () => {
           const scenario = typeof scenarioCell === "string" ? scenarioCell : "";
           const wafu =
             typeof wafuCell === "number" ? wafuCell : Number(wafuCell);
+          const drought1500 =
+            typeof drought1500Cell === "number"
+              ? drought1500Cell
+              : Number(drought1500Cell);
+          const drought1200 =
+            typeof drought1200Cell === "number"
+              ? drought1200Cell
+              : Number(drought1200Cell);
+          const drought100 =
+            typeof drought100Cell === "number"
+              ? drought100Cell
+              : Number(drought100Cell);
 
           const key = `${wrz}_${scenario}`;
           if (!groups[key]) {
@@ -112,11 +122,18 @@ const ExcelFileUpload: React.FC = () => {
               wrz,
               scenario,
               yearlySupply: {},
+              droughtAdjustments: {
+                "1/500": {},
+                "1/200": {},
+                "1/100": {},
+              },
             };
           }
           groups[key].yearlySupply[yearStr] = wafu;
+          groups[key].droughtAdjustments["1/500"][yearStr] = drought1500;
+          groups[key].droughtAdjustments["1/200"][yearStr] = drought1200;
+          groups[key].droughtAdjustments["1/100"][yearStr] = drought100;
         });
-
         const groupedSupplyData = Object.values(groups);
         setSupplyData(groupedSupplyData);
       }
@@ -124,7 +141,7 @@ const ExcelFileUpload: React.FC = () => {
     reader.readAsArrayBuffer(file);
   };
 
-  // Create filter options based on loaded demand data
+  // Compute available options from demand data.
   const zones = Array.from(new Set(demandData.map((d) => d.zone)));
   const planningScenarios = Array.from(
     new Set(demandData.map((d) => d.planningScenario))
@@ -133,27 +150,43 @@ const ExcelFileUpload: React.FC = () => {
     new Set(demandData.map((d) => d.growthForecast))
   );
 
-  // Filter demand data based on selected options
+  // Automatically set default filter criteria once data is loaded.
+  React.useEffect(() => {
+    if (demandData.length > 0 && filterCriteria.wrz === "") {
+      const newZones = Array.from(new Set(demandData.map((d) => d.zone)));
+      const newPlanningScenarios = Array.from(
+        new Set(demandData.map((d) => d.planningScenario))
+      );
+      const newGrowthForecasts = Array.from(
+        new Set(demandData.map((d) => d.growthForecast))
+      );
+      setFilterCriteria((prev) => ({
+        ...prev,
+        wrz: newZones[0] || "",
+        planningScenario: newPlanningScenarios[0] || "",
+        growthForecast: newGrowthForecasts[0] || "",
+      }));
+    }
+  }, [demandData, filterCriteria.wrz]);
+
+  // Filter demand data based on selected options.
   const filteredDemandData = demandData.filter((d) => {
     return (
-      (!filterCriteria.wrz || d.zone === filterCriteria.wrz) &&
-      (!filterCriteria.planningScenario ||
-        d.planningScenario === filterCriteria.planningScenario) &&
-      (!filterCriteria.growthForecast ||
-        d.growthForecast === filterCriteria.growthForecast)
+      d.zone === filterCriteria.wrz &&
+      d.planningScenario === filterCriteria.planningScenario &&
+      d.growthForecast === filterCriteria.growthForecast
     );
   });
 
-  // For supply, filter by WRZ and Planning Scenario (supply is grouped)
+  // Filter supply data by WRZ and Planning Scenario (supply is grouped).
   const filteredSupplyData = supplyData.filter((s: any) => {
     return (
-      (!filterCriteria.wrz || s.wrz === filterCriteria.wrz) &&
-      (!filterCriteria.planningScenario ||
-        s.scenario === filterCriteria.planningScenario)
+      s.wrz === filterCriteria.wrz &&
+      s.scenario === filterCriteria.planningScenario
     );
   });
 
-  // Pick the first matching entry for charting
+  // Pick the first matching entry for charting.
   const demandForChart = filteredDemandData[0] || null;
   const supplyForChart = filteredSupplyData[0] || null;
 
@@ -173,15 +206,8 @@ const ExcelFileUpload: React.FC = () => {
         <DemandSupplyChart
           demandData={demandForChart}
           supplyData={supplyForChart}
+          drought={filterCriteria.drought}
         />
-      </div>
-      <div>
-        <h3>Filtered Demand Data Preview</h3>
-        <pre>{JSON.stringify(filteredDemandData, null, 2)}</pre>
-      </div>
-      <div>
-        <h3>Filtered Supply Data Preview</h3>
-        <pre>{JSON.stringify(filteredSupplyData, null, 2)}</pre>
       </div>
     </div>
   );
