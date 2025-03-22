@@ -4,13 +4,8 @@ import { scaleBand, scaleLinear } from "@visx/scale";
 import { Bar } from "@visx/shape";
 import { Group } from "@visx/group";
 import { AxisBottom, AxisLeft } from "@visx/axis";
-import { CustomAssetRow } from "../../types/public-types";
+import { CostChartProps } from "../../types/public-types";
 import { getColourForAsset } from "../../utils/getColourForAsset";
-
-interface CostChartProps {
-  customAssets: CustomAssetRow[]; // Parsed custom asset data per year
-  selectedAssets: Set<string>; // Currently implemented assets
-}
 
 const margin = { top: 20, right: 30, bottom: 50, left: 50 };
 const chartWidth = 600;

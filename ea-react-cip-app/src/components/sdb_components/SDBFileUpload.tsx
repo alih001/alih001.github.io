@@ -4,6 +4,7 @@ import {
   DemandRow,
   FilterCriteria,
   CustomAssetRow,
+  AssetColumns,
 } from "../../types/public-types";
 import FilterControls from "./FilterControls";
 import DemandSupplyChart from "../../charts/SDBCharts/SupplyDemandChart";
@@ -17,13 +18,7 @@ const ExcelFileUpload: React.FC = () => {
   const { supplyData, setSupplyData } = useData();
   const { customAssets, setCustomAssets } = useData();
   const { selectedAssets, setSelectedAssets } = useData();
-
-  const [filterCriteria, setFilterCriteria] = useState<FilterCriteria>({
-    wrz: "",
-    planningScenario: "",
-    growthForecast: "",
-    drought: "None",
-  });
+  const { filterCriteria, setFilterCriteria } = useData();
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -153,10 +148,7 @@ const ExcelFileUpload: React.FC = () => {
       const customAssetsSheet = workbook.getWorksheet("CustomAssets");
       if (customAssetsSheet) {
         // For each asset, store the columns for DO and Cost.
-        interface AssetColumns {
-          doCol?: number;
-          costCol?: number;
-        }
+
         const assetMap: { [assetName: string]: AssetColumns } = {};
 
         // Assume the first row is the header row

@@ -1,14 +1,6 @@
 // FilterControls.tsx
 import React from "react";
-import { FilterCriteria } from "../../types/public-types"; // wherever FilterCriteria is defined
-
-interface FilterControlsProps {
-  criteria: FilterCriteria;
-  setCriteria: (criteria: FilterCriteria) => void;
-  zones: string[];
-  planningScenarios: string[];
-  growthForecasts: string[];
-}
+import { FilterControlsProps } from "../../types/public-types"; // wherever FilterCriteria is defined
 
 const FilterControls: React.FC<FilterControlsProps> = ({
   criteria,

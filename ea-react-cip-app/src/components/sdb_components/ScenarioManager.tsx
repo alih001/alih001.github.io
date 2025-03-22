@@ -3,22 +3,19 @@ import React, { useContext, useState } from "react";
 import DataContext from "../../contexts/DataContext";
 import { Scenario, FilterCriteria } from "../../types/public-types"; // Ensure these types are defined
 import { v4 as uuidv4 } from "uuid";
-
-interface ScenarioManagerProps {
-  activeFilterCriteria: FilterCriteria;
-  onLoadScenario: (criteria: FilterCriteria) => void;
-}
+import { useData } from "../../contexts/useDataContext";
+import { ScenarioManagerProps } from "../../types/public-types";
 
 const ScenarioManager: React.FC<ScenarioManagerProps> = ({
   activeFilterCriteria,
   onLoadScenario,
 }) => {
-  const dataContext = useContext(DataContext);
-  if (!dataContext) return <div>Error: DataContext not available.</div>;
-
-  const { scenarios, setScenarios } = dataContext;
+  const inputData = useData();
+  const { scenarios, setScenarios } = useData();
   const [scenarioName, setScenarioName] = useState("");
   const [scenarioDescription, setScenarioDescription] = useState("");
+
+  if (!inputData) return <div>Error: Input data not available.</div>;
 
   const handleSaveScenario = () => {
     console.log("Saving scenario with filter criteria:", activeFilterCriteria);

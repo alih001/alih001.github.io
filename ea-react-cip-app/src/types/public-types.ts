@@ -15,12 +15,55 @@ export interface CustomAssetRow {
   };
 }
 
+export interface AssetSelectorProps {
+  allAssets: string[];
+  selectedAssets: Set<string>;
+  onToggleAsset: (asset: string) => void;
+}
+
+export interface AssetColumns {
+  doCol?: number;
+  costCol?: number;
+}
+
+// Chart Props
+export interface CostChartProps {
+  customAssets: CustomAssetRow[];
+  selectedAssets: Set<string>;
+}
+
+export interface DemandSupplyChartProps {
+  demandData: { yearlyDemand: Record<string, number> } | null;
+  supplyData: {
+    yearlySupply: Record<string, number>;
+    droughtAdjustments?: {
+      "1/500"?: Record<string, number>;
+      "1/200"?: Record<string, number>;
+      "1/100"?: Record<string, number>;
+    };
+  } | null;
+  drought: string; // "None", "1/500", "1/200", or "1/100"
+}
+
 // src/types/scenarioTypes.ts
 export interface FilterCriteria {
   wrz: string;
   planningScenario: string;
   growthForecast: string;
   drought: string;
+}
+
+export interface FilterControlsProps {
+  criteria: FilterCriteria;
+  setCriteria: (criteria: FilterCriteria) => void;
+  zones: string[];
+  planningScenarios: string[];
+  growthForecasts: string[];
+}
+
+export interface ScenarioManagerProps {
+  activeFilterCriteria: FilterCriteria;
+  onLoadScenario: (criteria: FilterCriteria) => void;
 }
 
 export interface Scenario {

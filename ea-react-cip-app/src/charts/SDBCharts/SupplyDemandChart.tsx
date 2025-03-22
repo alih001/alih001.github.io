@@ -7,19 +7,7 @@ import { LinePath } from "@visx/shape";
 import { curveMonotoneX } from "@visx/curve";
 import { useData } from "../../contexts/useDataContext";
 import { getColourForAsset } from "../../utils/getColourForAsset";
-
-interface DemandSupplyChartProps {
-  demandData: { yearlyDemand: Record<string, number> } | null;
-  supplyData: {
-    yearlySupply: Record<string, number>;
-    droughtAdjustments?: {
-      "1/500"?: Record<string, number>;
-      "1/200"?: Record<string, number>;
-      "1/100"?: Record<string, number>;
-    };
-  } | null;
-  drought: string; // "None", "1/500", "1/200", or "1/100"
-}
+import { DemandSupplyChartProps } from "../../types/public-types";
 
 const margin = { top: 20, right: 30, bottom: 50, left: 50 };
 const width = 800;
@@ -30,12 +18,12 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
   supplyData,
   drought,
 }) => {
+  // Get customAssets and selectedAssets from context.
+  const { customAssets, selectedAssets } = useData();
+
   if (!demandData || !supplyData) {
     return <div>No data available for the selected filters.</div>;
   }
-
-  // Get customAssets and selectedAssets from context.
-  const { customAssets, selectedAssets } = useData();
 
   // Get sorted years from demand data (assumes both datasets share the same years)
   const years = Object.keys(demandData.yearlyDemand).sort(

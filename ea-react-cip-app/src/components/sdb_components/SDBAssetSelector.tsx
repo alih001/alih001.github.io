@@ -1,11 +1,6 @@
 // AssetSelector.tsx
 import React from "react";
-
-interface AssetSelectorProps {
-  allAssets: string[];
-  selectedAssets: Set<string>;
-  onToggleAsset: (asset: string) => void;
-}
+import { AssetSelectorProps } from "../../types/public-types";
 
 const AssetSelector: React.FC<AssetSelectorProps> = ({
   allAssets,
