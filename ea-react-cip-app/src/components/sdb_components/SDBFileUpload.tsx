@@ -8,12 +8,14 @@ import {
 import FilterControls from "./FilterControls";
 import DemandSupplyChart from "../../charts/SDBCharts/SupplyDemandChart";
 import ScenarioManager from "./ScenarioManager";
+import AssetSelector from "./SDBAssetSelector";
 import { useData } from "../../contexts/useDataContext";
 
 const ExcelFileUpload: React.FC = () => {
   const { demandData, setDemandData } = useData();
   const { supplyData, setSupplyData } = useData();
   const { customAssets, setCustomAssets } = useData();
+  const { selectedAssets, setSelectedAssets } = useData();
 
   const [filterCriteria, setFilterCriteria] = useState<FilterCriteria>({
     wrz: "",
@@ -277,6 +279,18 @@ const ExcelFileUpload: React.FC = () => {
     setFilterCriteria(criteria);
   };
 
+  const handleToggleAsset = (assetName: string) => {
+    setSelectedAssets((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(assetName)) {
+        newSet.delete(assetName);
+      } else {
+        newSet.add(assetName);
+      }
+      return newSet;
+    });
+  };
+
   return (
     <div>
       <h2>Upload Excel File</h2>
@@ -302,6 +316,12 @@ const ExcelFileUpload: React.FC = () => {
       <ScenarioManager
         activeFilterCriteria={filterCriteria}
         onLoadScenario={handleLoadScenario}
+      />
+
+      <AssetSelector
+        allAssets={["Asset1", "Asset2"]} // or dynamically generated
+        selectedAssets={selectedAssets}
+        onToggleAsset={handleToggleAsset}
       />
 
       {/* Temporary Debugging Previews */}

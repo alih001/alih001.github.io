@@ -16,14 +16,21 @@ import { Scenario } from "../types/public-types";
 
 type DataContextType = {
   // SDB Data types
+  // Scenarios for saving
   scenarios: Scenario[];
   setScenarios: React.Dispatch<React.SetStateAction<Scenario[]>>;
+
+  // Demand/supply data for SDB chart
   demandData: DemandRow[];
   setDemandData: (data: DemandRow[]) => void;
   supplyData: SupplyRow[];
   setSupplyData: (data: SupplyRow[]) => void;
+
+  // Asset details for custom assets
   customAssets: CustomAssetRow[];
   setCustomAssets: (data: CustomAssetRow[]) => void;
+  selectedAssets: Set<string>;
+  setSelectedAssets: React.Dispatch<React.SetStateAction<Set<string>>>;
 
   // Populate Table Props
   table1Data: TableRow[];
@@ -104,8 +111,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
   // Initialize SDB States
   const [demandData, setDemandData] = useState<DemandRow[]>([]);
   const [supplyData, setSupplyData] = useState<SupplyRow[]>([]);
-  const [customAssets, setCustomAssets] = useState<CustomAsset[]>([]);
+  const [customAssets, setCustomAssets] = useState<CustomAssetRow[]>([]);
   const [scenarios, setScenarios] = useState<Scenario[]>([]);
+  const [selectedAssets, setSelectedAssets] = useState<Set<string>>(new Set());
 
   // Populate Table States
   const [table1Data, setTable1Data] = useState<TableRow[]>([]);
@@ -166,6 +174,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     setSupplyData,
     customAssets,
     setCustomAssets,
+    selectedAssets,
+    setSelectedAssets,
 
     // Table States
     table1Data,

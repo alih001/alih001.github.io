@@ -6,6 +6,7 @@ import { Group } from "@visx/group";
 import { AxisBottom, AxisLeft } from "@visx/axis";
 import { LinePath } from "@visx/shape";
 import { curveMonotoneX } from "@visx/curve";
+import { useData } from "../../contexts/useDataContext";
 
 interface DemandSupplyChartProps {
   demandData: { yearlyDemand: Record<string, number> } | null;
@@ -33,15 +34,32 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
     return <div>No data available for the selected filters.</div>;
   }
 
-  // Get sorted years from the demand data (assumes both datasets share the same years)
+  // Get customAssets and selectedAssets from context.
+  const { customAssets, selectedAssets } = useData();
+
+  // Get sorted years from demand data (assumes both datasets share the same years)
   const years = Object.keys(demandData.yearlyDemand).sort(
     (a, b) => Number(a) - Number(b)
   );
 
-  // Compute the maximum Y value from both demand and adjusted supply for scaling.
+  // Compute demand values (for scaling the y-axis)
   const demandValues = years.map((year) => demandData.yearlyDemand[year]);
+
+  // For each year, compute the effective supply:
   const supplyValues = years.map((year) => {
     const baseSupply = supplyData.yearlySupply[year] || 0;
+
+    // Sum deployable outputs from custom assets for the selected assets:
+    const assetRow = customAssets.find((row) => row.year === Number(year));
+    let additionalDO = 0;
+    if (assetRow) {
+      // selectedAssets is assumed to be a Set<string>
+      for (const assetName of selectedAssets) {
+        additionalDO += assetRow.assets[assetName]?.do ?? 0;
+      }
+    }
+
+    // Calculate drought adjustment, if applicable:
     let adjustment = 0;
     if (
       drought !== "None" &&
@@ -50,26 +68,28 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
     ) {
       adjustment = supplyData.droughtAdjustments[drought][year] || 0;
     }
-    return baseSupply - adjustment;
+
+    // Effective supply = base supply + additionalDO (from assets) - drought adjustment
+    return baseSupply + additionalDO - adjustment;
   });
+
   const maxDemand = Math.max(...demandValues);
   const maxSupply = Math.max(...supplyValues);
   const maxY = Math.max(maxDemand, maxSupply) * 1.1; // add 10% headroom
 
-  // xScale using scaleBand for discrete years.
+  // Setup xScale (for years) and yScale (for values)
   const xScale = scaleBand<string>({
     domain: years,
     range: [margin.left, width - margin.right],
     padding: 0.2,
   });
 
-  // yScale using scaleLinear for numeric values.
   const yScale = scaleLinear<number>({
     domain: [0, maxY],
     range: [height - margin.bottom, margin.top],
   });
 
-  // Prepare data for the demand line.
+  // Prepare data for the demand line chart
   const lineData = years.map((year) => {
     const x = (xScale(year) || 0) + xScale.bandwidth() / 2;
     return {
@@ -87,6 +107,17 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
         {years.map((year) => {
           const x = xScale(year);
           const baseSupply = supplyData.yearlySupply[year] || 0;
+
+          const assetRow = customAssets.find(
+            (row) => row.year === Number(year)
+          );
+          let additionalDO = 0;
+          if (assetRow) {
+            for (const assetName of selectedAssets) {
+              additionalDO += assetRow.assets[assetName]?.do ?? 0;
+            }
+          }
+
           let adjustment = 0;
           if (
             drought !== "None" &&
@@ -95,8 +126,10 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
           ) {
             adjustment = supplyData.droughtAdjustments[drought][year] || 0;
           }
-          const effectiveSupply = baseSupply - adjustment;
+
+          const effectiveSupply = baseSupply + additionalDO - adjustment;
           const barHeight = height - margin.bottom - yScale(effectiveSupply);
+
           return (
             <Bar
               key={`bar-${year}`}
