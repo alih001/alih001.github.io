@@ -4,7 +4,28 @@ import React, { MouseEventHandler } from "react";
 
 // SDB dashboard types
 
-// types.ts
+// CustomAssets
+export interface CustomAsset {
+  assetName: string;
+  deployableOutput: number;
+  cost: number;
+}
+
+// src/types/scenarioTypes.ts
+export interface FilterCriteria {
+  wrz: string;
+  planningScenario: string;
+  growthForecast: string;
+  drought: string;
+}
+
+export interface Scenario {
+  id: string; // A unique identifier, e.g., a UUID
+  name: string;
+  description?: string;
+  filterCriteria: FilterCriteria;
+  createdAt: number;
+}
 
 export interface DemandRow {
   zone: string;
@@ -23,13 +44,6 @@ export interface SupplyRow {
   "1/500"?: number;
   "1/200"?: number;
   "1/100"?: number;
-}
-
-export interface FilterCriteria {
-  wrz: string;
-  planningScenario: string;
-  growthForecast: string;
-  drought: string;
 }
 
 export type mapStateValue = {

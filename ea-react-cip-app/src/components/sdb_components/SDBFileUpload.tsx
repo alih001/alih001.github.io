@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from "react";
 import ExcelJS from "exceljs";
-import { DemandRow } from "../../types/public-types";
-import FilterControls, { FilterCriteria } from "./FilterControls";
+import {
+  DemandRow,
+  FilterCriteria,
+  CustomAsset,
+} from "../../types/public-types";
+import FilterControls from "./FilterControls";
 import DemandSupplyChart from "../../charts/SDBCharts/SupplyDemandChart";
+import ScenarioManager from "./ScenarioManager";
+import { useData } from "../../contexts/useDataContext";
 
 const ExcelFileUpload: React.FC = () => {
-  const [demandData, setDemandData] = useState<DemandRow[]>([]);
-  const [supplyData, setSupplyData] = useState<any[]>([]);
+  const { demandData, setDemandData } = useData();
+  const { supplyData, setSupplyData } = useData();
+  const { customAssets, setCustomAssets } = useData();
+
   const [filterCriteria, setFilterCriteria] = useState<FilterCriteria>({
     wrz: "",
     planningScenario: "",
@@ -190,6 +198,11 @@ const ExcelFileUpload: React.FC = () => {
   const demandForChart = filteredDemandData[0] || null;
   const supplyForChart = filteredSupplyData[0] || null;
 
+  // Function to handle loading a scenario:
+  const handleLoadScenario = (criteria: FilterCriteria) => {
+    setFilterCriteria(criteria);
+  };
+
   return (
     <div>
       <h2>Upload Excel File</h2>
@@ -209,6 +222,10 @@ const ExcelFileUpload: React.FC = () => {
           drought={filterCriteria.drought}
         />
       </div>
+      <ScenarioManager
+        activeFilterCriteria={filterCriteria}
+        onLoadScenario={handleLoadScenario}
+      />
     </div>
   );
 };
