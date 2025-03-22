@@ -1,4 +1,3 @@
-// DemandSupplyChart.tsx
 import React from "react";
 import { scaleBand, scaleLinear } from "@visx/scale";
 import { Bar } from "@visx/shape";
@@ -7,6 +6,7 @@ import { AxisBottom, AxisLeft } from "@visx/axis";
 import { LinePath } from "@visx/shape";
 import { curveMonotoneX } from "@visx/curve";
 import { useData } from "../../contexts/useDataContext";
+import { getColourForAsset } from "../../utils/getColourForAsset";
 
 interface DemandSupplyChartProps {
   demandData: { yearlyDemand: Record<string, number> } | null;
@@ -45,101 +45,102 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
   // Compute demand values (for scaling the y-axis)
   const demandValues = years.map((year) => demandData.yearlyDemand[year]);
 
-  // For each year, compute the effective supply:
-  const supplyValues = years.map((year) => {
-    const baseSupply = supplyData.yearlySupply[year] || 0;
+  // Convert selectedAssets (a Set) to a sorted array for consistent color assignment.
+  const selectedAssetsArray = Array.from(selectedAssets).sort();
 
-    // Sum deployable outputs from custom assets for the selected assets:
-    const assetRow = customAssets.find((row) => row.year === Number(year));
-    let additionalDO = 0;
-    if (assetRow) {
-      // selectedAssets is assumed to be a Set<string>
-      for (const assetName of selectedAssets) {
-        additionalDO += assetRow.assets[assetName]?.do ?? 0;
-      }
-    }
-
-    // Calculate drought adjustment, if applicable:
-    let adjustment = 0;
+  // Build stacked supply data:
+  // For each year, create an array of segments:
+  // - Base supply (after drought adjustment)
+  // - One segment per selected asset with its deployable output.
+  const stackedSupplyData = years.map((yearStr) => {
+    const year = Number(yearStr);
+    const baseSupply = supplyData.yearlySupply[yearStr] || 0;
+    let droughtAdjustment = 0;
     if (
       drought !== "None" &&
       supplyData.droughtAdjustments &&
       supplyData.droughtAdjustments[drought]
     ) {
-      adjustment = supplyData.droughtAdjustments[drought][year] || 0;
+      droughtAdjustment = supplyData.droughtAdjustments[drought][yearStr] || 0;
     }
+    // Effective base supply after drought adjustment:
+    const baseEffective = Math.max(0, baseSupply - droughtAdjustment);
 
-    // Effective supply = base supply + additionalDO (from assets) - drought adjustment
-    return baseSupply + additionalDO - adjustment;
+    // Begin with the base supply segment.
+    const segments: { label: string; value: number; color: string }[] = [
+      { label: "Base Supply", value: baseEffective, color: "orange" },
+    ];
+
+    // Add a segment for each selected asset.
+    selectedAssetsArray.forEach((assetName, index) => {
+      // Find the matching row in customAssets for this year.
+      const assetRow = customAssets.find((row) => row.year === year);
+      const assetDO = assetRow ? assetRow.assets[assetName]?.do ?? 0 : 0;
+      segments.push({
+        label: assetName,
+        value: assetDO,
+        color: getColourForAsset(index, selectedAssetsArray.length),
+      });
+    });
+    return { year, segments };
   });
 
+  // Calculate the total supply per year for scaling.
+  const supplyTotals = stackedSupplyData.map((row) =>
+    row.segments.reduce((sum, seg) => sum + seg.value, 0)
+  );
+  const maxSupply = Math.max(...supplyTotals);
   const maxDemand = Math.max(...demandValues);
-  const maxSupply = Math.max(...supplyValues);
-  const maxY = Math.max(maxDemand, maxSupply) * 1.1; // add 10% headroom
+  const maxY = Math.max(maxSupply, maxDemand) * 1.1; // add 10% headroom
 
-  // Setup xScale (for years) and yScale (for values)
-  const xScale = scaleBand<string>({
-    domain: years,
+  // xScale for years (using number type)
+  const xScale = scaleBand<number>({
+    domain: years.map(Number),
     range: [margin.left, width - margin.right],
     padding: 0.2,
   });
 
+  // yScale for supply/demand values.
   const yScale = scaleLinear<number>({
     domain: [0, maxY],
     range: [height - margin.bottom, margin.top],
   });
 
-  // Prepare data for the demand line chart
-  const lineData = years.map((year) => {
+  // Prepare demand line data.
+  const lineData = years.map((yearStr) => {
+    const year = Number(yearStr);
     const x = (xScale(year) || 0) + xScale.bandwidth() / 2;
     return {
       year,
-      value: demandData.yearlyDemand[year],
+      value: demandData.yearlyDemand[yearStr],
       x,
-      y: yScale(demandData.yearlyDemand[year]),
+      y: yScale(demandData.yearlyDemand[yearStr]),
     };
   });
 
   return (
     <svg width={width} height={height}>
-      {/* Supply Bars */}
+      {/* Stacked Supply Bars */}
       <Group>
-        {years.map((year) => {
-          const x = xScale(year);
-          const baseSupply = supplyData.yearlySupply[year] || 0;
-
-          const assetRow = customAssets.find(
-            (row) => row.year === Number(year)
-          );
-          let additionalDO = 0;
-          if (assetRow) {
-            for (const assetName of selectedAssets) {
-              additionalDO += assetRow.assets[assetName]?.do ?? 0;
-            }
-          }
-
-          let adjustment = 0;
-          if (
-            drought !== "None" &&
-            supplyData.droughtAdjustments &&
-            supplyData.droughtAdjustments[drought]
-          ) {
-            adjustment = supplyData.droughtAdjustments[drought][year] || 0;
-          }
-
-          const effectiveSupply = baseSupply + additionalDO - adjustment;
-          const barHeight = height - margin.bottom - yScale(effectiveSupply);
-
-          return (
-            <Bar
-              key={`bar-${year}`}
-              x={x}
-              y={yScale(effectiveSupply)}
-              width={xScale.bandwidth()}
-              height={barHeight}
-              fill="orange"
-            />
-          );
+        {stackedSupplyData.map((data) => {
+          const x = xScale(data.year);
+          let cumulative = 0;
+          return data.segments.map((seg, i) => {
+            const y0 = yScale(cumulative);
+            cumulative += seg.value;
+            const y1 = yScale(cumulative);
+            const segHeight = y0 - y1;
+            return (
+              <Bar
+                key={`bar-${data.year}-${i}`}
+                x={x}
+                y={y1}
+                width={xScale.bandwidth()}
+                height={segHeight}
+                fill={seg.color}
+              />
+            );
+          });
         })}
       </Group>
 
@@ -157,6 +158,7 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
       <AxisBottom
         top={height - margin.bottom}
         scale={xScale}
+        tickFormat={(d) => d.toString()}
         stroke="black"
         tickStroke="black"
         tickLabelProps={() => ({

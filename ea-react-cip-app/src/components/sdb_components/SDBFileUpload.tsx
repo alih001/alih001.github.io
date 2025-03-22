@@ -9,6 +9,7 @@ import FilterControls from "./FilterControls";
 import DemandSupplyChart from "../../charts/SDBCharts/SupplyDemandChart";
 import ScenarioManager from "./ScenarioManager";
 import AssetSelector from "./SDBAssetSelector";
+import CostChart from "../../charts/SDBCharts/CostChart";
 import { useData } from "../../contexts/useDataContext";
 
 const ExcelFileUpload: React.FC = () => {
@@ -323,6 +324,8 @@ const ExcelFileUpload: React.FC = () => {
         selectedAssets={selectedAssets}
         onToggleAsset={handleToggleAsset}
       />
+
+      <CostChart customAssets={customAssets} selectedAssets={selectedAssets} />
 
       {/* Temporary Debugging Previews */}
       {/* <div>
