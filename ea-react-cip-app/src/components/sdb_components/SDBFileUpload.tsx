@@ -3,7 +3,7 @@ import ExcelJS from "exceljs";
 import {
   DemandRow,
   FilterCriteria,
-  CustomAsset,
+  CustomAssetRow,
 } from "../../types/public-types";
 import FilterControls from "./FilterControls";
 import DemandSupplyChart from "../../charts/SDBCharts/SupplyDemandChart";
@@ -145,6 +145,80 @@ const ExcelFileUpload: React.FC = () => {
         const groupedSupplyData = Object.values(groups);
         setSupplyData(groupedSupplyData);
       }
+
+      // --- Process CustomAssets Sheet ---
+      const customAssetsSheet = workbook.getWorksheet("CustomAssets");
+      if (customAssetsSheet) {
+        // For each asset, store the columns for DO and Cost.
+        interface AssetColumns {
+          doCol?: number;
+          costCol?: number;
+        }
+        const assetMap: { [assetName: string]: AssetColumns } = {};
+
+        // Assume the first row is the header row
+        const headerRow = customAssetsSheet.getRow(1);
+        headerRow.eachCell((cell, colNumber) => {
+          // Skip column 1 if it's "Year"
+          if (colNumber === 1) return;
+
+          const headerValue = cell.value;
+          if (typeof headerValue === "string") {
+            if (headerValue.includes("_DO")) {
+              // e.g. "Asset1_DO" => assetName = "Asset1"
+              const assetName = headerValue.replace("_DO", "");
+              if (!assetMap[assetName]) assetMap[assetName] = {};
+              assetMap[assetName].doCol = colNumber;
+            } else if (headerValue.includes("_Cost")) {
+              // e.g. "Asset1_Cost" => assetName = "Asset1"
+              const assetName = headerValue.replace("_Cost", "");
+              if (!assetMap[assetName]) assetMap[assetName] = {};
+              assetMap[assetName].costCol = colNumber;
+            }
+          }
+        });
+
+        const tempAssets: CustomAssetRow[] = [];
+
+        // Start from row 2 to skip the header
+        customAssetsSheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+          if (rowNumber === 1) return;
+
+          // Column 1 is the Year
+          const yearCell = row.getCell(1).value;
+          const year =
+            typeof yearCell === "number" ? yearCell : Number(yearCell) || 0;
+
+          // Build an object to store DO and Cost for each asset in this row
+          const assetData: {
+            [assetName: string]: { do: number; cost: number };
+          } = {};
+
+          // For each asset in the header map
+          for (const assetName of Object.keys(assetMap)) {
+            const { doCol, costCol } = assetMap[assetName];
+            const doVal = doCol ? row.getCell(doCol).value : 0;
+            const costVal = costCol ? row.getCell(costCol).value : 0;
+
+            const doNumber =
+              typeof doVal === "number" ? doVal : Number(doVal) || 0;
+            const costNumber =
+              typeof costVal === "number" ? costVal : Number(costVal) || 0;
+
+            assetData[assetName] = {
+              do: doNumber,
+              cost: costNumber,
+            };
+          }
+
+          tempAssets.push({
+            year,
+            assets: assetData,
+          });
+        });
+
+        setCustomAssets(tempAssets);
+      }
     };
     reader.readAsArrayBuffer(file);
   };
@@ -207,6 +281,7 @@ const ExcelFileUpload: React.FC = () => {
     <div>
       <h2>Upload Excel File</h2>
       <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
+
       <h2>Filtering Controls</h2>
       <FilterControls
         criteria={filterCriteria}
@@ -215,6 +290,7 @@ const ExcelFileUpload: React.FC = () => {
         planningScenarios={planningScenarios}
         growthForecasts={growthForecasts}
       />
+
       <div>
         <DemandSupplyChart
           demandData={demandForChart}
@@ -222,10 +298,25 @@ const ExcelFileUpload: React.FC = () => {
           drought={filterCriteria.drought}
         />
       </div>
+
       <ScenarioManager
         activeFilterCriteria={filterCriteria}
         onLoadScenario={handleLoadScenario}
       />
+
+      {/* Temporary Debugging Previews */}
+      {/* <div>
+        <h3>Demand Data Preview</h3>
+        <pre>{JSON.stringify(demandData, null, 2)}</pre>
+      </div>
+      <div>
+        <h3>Supply Data Preview</h3>
+        <pre>{JSON.stringify(supplyData, null, 2)}</pre>
+      </div> */}
+      <div>
+        <h3>Custom Assets Preview</h3>
+        <pre>{JSON.stringify(customAssets, null, 2)}</pre>
+      </div>
     </div>
   );
 };

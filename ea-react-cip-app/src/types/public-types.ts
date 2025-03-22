@@ -5,10 +5,14 @@ import React, { MouseEventHandler } from "react";
 // SDB dashboard types
 
 // CustomAssets
-export interface CustomAsset {
-  assetName: string;
-  deployableOutput: number;
-  cost: number;
+export interface CustomAssetRow {
+  year: number;
+  assets: {
+    [assetName: string]: {
+      do: number;
+      cost: number;
+    };
+  };
 }
 
 // src/types/scenarioTypes.ts

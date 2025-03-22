@@ -5,7 +5,7 @@ import {
   CostTableRow,
   CustomNodeProps,
   DemandRow,
-  CustomAsset,
+  CustomAssetRow,
   SupplyRow,
 } from "../types/public-types";
 import { Edge } from "reactflow";
@@ -22,8 +22,8 @@ type DataContextType = {
   setDemandData: (data: DemandRow[]) => void;
   supplyData: SupplyRow[];
   setSupplyData: (data: SupplyRow[]) => void;
-  customAssets: CustomAsset[];
-  setCustomAssets: (data: CustomAsset[]) => void;
+  customAssets: CustomAssetRow[];
+  setCustomAssets: (data: CustomAssetRow[]) => void;
 
   // Populate Table Props
   table1Data: TableRow[];
