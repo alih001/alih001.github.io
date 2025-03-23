@@ -1,6 +1,13 @@
 // FilterControls.tsx
 import React from "react";
 import { FilterControlsProps } from "../../types/public-types"; // wherever FilterCriteria is defined
+import styled from "styled-components";
+
+const FilterContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* adds spacing between the dropdowns */
+`;
 
 const FilterControls: React.FC<FilterControlsProps> = ({
   criteria,
@@ -10,7 +17,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
   growthForecasts,
 }) => {
   return (
-    <div>
+    <FilterContainer>
       <label>
         WRZ:
         <select
@@ -68,7 +75,7 @@ const FilterControls: React.FC<FilterControlsProps> = ({
           <option value="1/100">1/100</option>
         </select>
       </label>
-    </div>
+    </FilterContainer>
   );
 };
 

@@ -189,7 +189,6 @@ const ExcelFileUpload: React.FC = () => {
 
   return (
     <div>
-      <h2>Upload Excel File</h2>
       <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
     </div>
   );
