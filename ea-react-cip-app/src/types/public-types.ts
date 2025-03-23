@@ -17,8 +17,8 @@ export interface CustomAssetRow {
 
 export interface AssetSelectorProps {
   allAssets: string[];
-  selectedAssets: Set<string>;
-  onToggleAsset: (asset: string) => void;
+  // selectedAssets: Set<string>;
+  // onToggleAsset: (asset: string) => void;
 }
 
 export interface AssetColumns {

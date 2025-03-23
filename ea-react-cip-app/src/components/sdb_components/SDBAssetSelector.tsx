@@ -1,12 +1,11 @@
 // AssetSelector.tsx
 import React from "react";
+import { useAssetSelector } from "../../hooks/useAssetSelector";
 import { AssetSelectorProps } from "../../types/public-types";
 
-const AssetSelector: React.FC<AssetSelectorProps> = ({
-  allAssets,
-  selectedAssets,
-  onToggleAsset,
-}) => {
+const AssetSelector: React.FC<AssetSelectorProps> = ({ allAssets }) => {
+  const { selectedAssets, handleToggleAsset } = useAssetSelector();
+
   return (
     <div>
       <h3>Select Assets to Implement</h3>
@@ -17,7 +16,7 @@ const AssetSelector: React.FC<AssetSelectorProps> = ({
               <input
                 type="checkbox"
                 checked={selectedAssets.has(assetName)}
-                onChange={() => onToggleAsset(assetName)}
+                onChange={() => handleToggleAsset(assetName)}
               />
               {assetName}
             </label>
