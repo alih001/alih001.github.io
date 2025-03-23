@@ -53,12 +53,6 @@ const Background = styled.div`
   min-height: 100vh;
 `;
 
-const DashboardSection = styled.div`
-  background-color: rgba(255, 255, 255, 1);
-  border-radius: 15px;
-  margin-top: 1.5rem;
-`;
-
 const SDBDashboard: React.FC = () => {
   const { filterCriteria, setFilterCriteria, customAssets, selectedAssets } =
     useData();
@@ -78,11 +72,11 @@ const SDBDashboard: React.FC = () => {
 
           <MainContent>
             {/* Main Card 1 – Controls */}
-            <MainCard>
+            <MainCard customWidth="300px">
               <h2>Controls</h2>
               {/* You can have sub-cards within this MainCard */}
               <ControlsSubCardGrid>
-                <SubCard>
+                <SubCard customWidth="270px">
                   <p>Import your input data here</p>
                   <ExcelFileUpload></ExcelFileUpload>
                 </SubCard>
@@ -115,7 +109,7 @@ const SDBDashboard: React.FC = () => {
             </MainCard>
 
             {/* Main Card 2 – Charts */}
-            <MainCard>
+            <MainCard customWidth="1200px">
               <h2>Charts</h2>
               <DemandSupplyChart
                 demandData={demandForChart}

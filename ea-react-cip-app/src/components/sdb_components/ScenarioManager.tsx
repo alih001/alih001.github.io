@@ -17,7 +17,6 @@ const ScenarioManagerComponent: React.FC = () => {
 
   return (
     <div>
-      <h3>Saved Scenarios</h3>
       <ul>
         {scenarios.map((scenario) => (
           <li key={scenario.id}>

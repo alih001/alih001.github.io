@@ -10,12 +10,12 @@ const OverviewGrid = styled.div`
   gap: 1rem;
 `;
 
-// const AssetCard = styled.div`
-//   padding: 1rem;
-//   background: #f9f9f9;
-//   border: 1px solid #ddd;
-//   border-radius: 4px;
-// `;
+const SDBAssetCard = styled.div`
+  padding: 1rem;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+`;
 
 const AssetOverview: React.FC = () => {
   const { selectedAssets } = useData();
@@ -28,7 +28,9 @@ const AssetOverview: React.FC = () => {
   return (
     <OverviewGrid>
       {assets.map((asset) => (
-        <AssetCard key={asset} assetName={asset} />
+        <SDBAssetCard>
+          <AssetCard key={asset} assetName={asset} />
+        </SDBAssetCard>
       ))}
     </OverviewGrid>
   );
