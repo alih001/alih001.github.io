@@ -6,6 +6,7 @@ import { Group } from "@visx/group";
 import { AxisBottom, AxisLeft } from "@visx/axis";
 import { CostChartProps } from "../../types/public-types";
 import { getColourForAsset } from "../../utils/getColourForAsset";
+import { useData } from "../../contexts/useDataContext";
 
 const margin = { top: 20, right: 30, bottom: 50, left: 50 };
 const chartWidth = 600;
@@ -15,6 +16,8 @@ const CostChart: React.FC<CostChartProps> = ({
   customAssets,
   selectedAssets,
 }) => {
+  const { assetSettings } = useData();
+
   // Extract and sort the years from customAssets.
   const years = customAssets.map((row) => row.year).sort((a, b) => a - b);
 
@@ -24,19 +27,45 @@ const CostChart: React.FC<CostChartProps> = ({
   // Build stacked cost data.
   // For each year, create an array of segments – one for each selected asset.
   const stackedCostData = years.map((year) => {
-    // Find the row corresponding to this year.
-    const assetRow = customAssets.find((row) => row.year === year);
+    // For each chart year, "year" is a number.
+    // For each asset, we calculate an offset.
     const segments: { label: string; value: number; color: string }[] = [];
 
     // For each selected asset, add its cost for that year.
     selectedAssetsArray.forEach((assetName, index) => {
-      const assetCost = assetRow ? assetRow.assets[assetName]?.cost ?? 0 : 0;
+      // Get the asset settings for this asset, with defaults.
+      const settings = assetSettings[assetName] || {
+        doPercentage: 100,
+        startYear: 2020,
+      };
+
+      // Find all rows that have a cost for this asset.
+      const assetRows = customAssets.filter(
+        (row) => row.assets[assetName] !== undefined
+      );
+      // Determine the base start year for this asset.
+      const baseStartYear =
+        assetRows.length > 0
+          ? Math.min(...assetRows.map((row) => row.year))
+          : 2020;
+      // Calculate how many years to shift the timeline.
+      const shift = settings.startYear - baseStartYear;
+
+      // For the current chart year, compute the effective year in the asset's base timeline.
+      const effectiveYear = year - shift;
+      // Look up the cost for that effective year.
+      const assetCost =
+        customAssets.find((row) => row.year === effectiveYear)?.assets[
+          assetName
+        ]?.cost ?? 0;
+
       segments.push({
         label: assetName,
         value: assetCost,
         color: getColourForAsset(index, selectedAssetsArray.length),
       });
     });
+
     return { year, segments };
   });
 

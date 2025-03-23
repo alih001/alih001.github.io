@@ -59,24 +59,39 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
       { label: "Base Supply", value: baseEffective, color: "orange" },
     ];
 
-    // Get asset settings from context (assumes useData provides assetSettings).
+    // Get asset settings from context.
     const { assetSettings } = useData();
 
     // Add a segment for each selected asset.
     selectedAssetsArray.forEach((assetName, index) => {
-      // Find the matching row in customAssets for this year.
-      const assetRow = customAssets.find((row) => row.year === year);
-      const rawAssetDO = assetRow ? assetRow.assets[assetName]?.do ?? 0 : 0;
-      // Look up the asset settings (default to full contribution if not set).
+      // Filter the customAssets rows to find rows for this asset.
+      const assetRows = customAssets.filter(
+        (row) => row.assets[assetName] !== undefined
+      );
+      // Determine the base start year for the asset.
+      const baseStartYear =
+        assetRows.length > 0
+          ? Math.min(...assetRows.map((row) => row.year))
+          : 2020;
+      // Get settings for this asset.
       const settings = assetSettings[assetName] || {
         doPercentage: 100,
-        startYear: 0,
+        startYear: baseStartYear,
       };
-      // If the current year is before the asset's start year, its contribution is 0.
-      const effectiveAssetDO =
-        year >= settings.startYear
-          ? rawAssetDO * (settings.doPercentage / 100)
-          : 0;
+      // Calculate how many years to shift.
+      const shift = settings.startYear - baseStartYear;
+      // Compute the effective year: the base year corresponding to this chart year.
+      const effectiveYear = year - shift;
+      // Only apply the asset's DO if the effective year is at least the base start year.
+      let effectiveAssetDO = 0;
+      if (effectiveYear >= baseStartYear) {
+        effectiveAssetDO =
+          customAssets.find((row) => row.year === effectiveYear)?.assets[
+            assetName
+          ]?.do ?? 0;
+      }
+      // Apply the DO percentage slider.
+      effectiveAssetDO = effectiveAssetDO * (settings.doPercentage / 100);
 
       segments.push({
         label: assetName,
