@@ -26,6 +26,11 @@ export interface AssetColumns {
   costCol?: number;
 }
 
+export interface AssetSettings {
+  doPercentage: number;
+  startYear: number;
+}
+
 // Chart Props
 export interface CostChartProps {
   customAssets: CustomAssetRow[];

@@ -59,14 +59,28 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
       { label: "Base Supply", value: baseEffective, color: "orange" },
     ];
 
+    // Get asset settings from context (assumes useData provides assetSettings).
+    const { assetSettings } = useData();
+
     // Add a segment for each selected asset.
     selectedAssetsArray.forEach((assetName, index) => {
       // Find the matching row in customAssets for this year.
       const assetRow = customAssets.find((row) => row.year === year);
-      const assetDO = assetRow ? assetRow.assets[assetName]?.do ?? 0 : 0;
+      const rawAssetDO = assetRow ? assetRow.assets[assetName]?.do ?? 0 : 0;
+      // Look up the asset settings (default to full contribution if not set).
+      const settings = assetSettings[assetName] || {
+        doPercentage: 100,
+        startYear: 0,
+      };
+      // If the current year is before the asset's start year, its contribution is 0.
+      const effectiveAssetDO =
+        year >= settings.startYear
+          ? rawAssetDO * (settings.doPercentage / 100)
+          : 0;
+
       segments.push({
         label: assetName,
-        value: assetDO,
+        value: effectiveAssetDO,
         color: getColourForAsset(index, selectedAssetsArray.length),
       });
     });

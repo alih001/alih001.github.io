@@ -10,6 +10,7 @@ import CostChart from "../charts/SDBCharts/CostChart";
 import { useFilterOptions } from "../hooks/useFilterOptions";
 import { useData } from "../contexts/useDataContext";
 import { useChartData } from "../hooks/useChartData";
+import AssetOverview from "../components/sdb_components/SDBAssetOverview";
 
 import {
   DashboardContainer,
@@ -130,20 +131,7 @@ const SDBDashboard: React.FC = () => {
             {/* Main Card 3 – Asset Overview */}
             <MainCard>
               <h2>Asset Overview</h2>
-              {/* Only display if there are selected assets */}
-              {selectedAssets.length > 0 ? (
-                <AssetsSubCardGrid>
-                  {selectedAssets.map((asset) => (
-                    <SubCard key={asset}>
-                      <h4>{asset}</h4>
-                      {/* Additional details for the asset */}
-                      <p>Details about {asset}</p>
-                    </SubCard>
-                  ))}
-                </AssetsSubCardGrid>
-              ) : (
-                <p>No assets selected.</p>
-              )}
+              <AssetOverview />
             </MainCard>
           </MainContent>
 

@@ -8,6 +8,7 @@ import {
   CustomAssetRow,
   SupplyRow,
   FilterCriteria,
+  AssetSettings,
 } from "../types/public-types";
 import { Edge } from "reactflow";
 import { ViewMode } from "gantt-task-react";
@@ -34,6 +35,10 @@ type DataContextType = {
   setCustomAssets: (data: CustomAssetRow[]) => void;
   selectedAssets: Set<string>;
   setSelectedAssets: React.Dispatch<React.SetStateAction<Set<string>>>;
+  assetSettings: Record<string, AssetSettings>;
+  setAssetSettings: React.Dispatch<
+    React.SetStateAction<Record<string, AssetSettings>>
+  >;
 
   // Populate Table Props
   table1Data: TableRow[];
@@ -123,6 +128,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     growthForecast: "",
     drought: "None",
   });
+  // New state for asset settings
+  const [assetSettings, setAssetSettings] = useState<
+    Record<string, AssetSettings>
+  >({});
 
   // Populate Table States
   const [table1Data, setTable1Data] = useState<TableRow[]>([]);
@@ -187,6 +196,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     setSelectedAssets,
     filterCriteria,
     setFilterCriteria,
+    assetSettings,
+    setAssetSettings,
 
     // Table States
     table1Data,
