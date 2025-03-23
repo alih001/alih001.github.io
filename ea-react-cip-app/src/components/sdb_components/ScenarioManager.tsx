@@ -1,17 +1,56 @@
-import React from "react";
+import React, { useState } from "react";
+import styled from "styled-components";
 import { useScenarioManager } from "../../hooks/useScenarioManager";
+
+// Styled modal components
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+`;
+
+const ModalContent = styled.div`
+  background: #fff;
+  padding: 24px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+`;
 
 const ScenarioManagerComponent: React.FC = () => {
   const { scenarios, saveScenario, loadScenario, deleteScenario } =
     useScenarioManager();
+  const [showModal, setShowModal] = useState(false);
+  const [scenarioName, setScenarioName] = useState("");
+  const [scenarioDescription, setScenarioDescription] = useState("");
 
-  // Your component can now call saveScenario, loadScenario, and deleteScenario as needed.
-  // For example:
+  // When the user clicks the save button, open the modal.
   const handleSave = () => {
-    saveScenario("My Scenario", "Description here");
+    setShowModal(true);
   };
 
-  const handleLoad = (scenario) => {
+  // Handle modal form submission.
+  const handleModalSave = () => {
+    if (!scenarioName) {
+      alert("Please enter a scenario name.");
+      return;
+    }
+    saveScenario(scenarioName, scenarioDescription);
+    setShowModal(false);
+    setScenarioName("");
+    setScenarioDescription("");
+  };
+
+  // Function to load a scenario.
+  const handleLoad = (scenario: any) => {
     loadScenario(scenario.filterCriteria);
   };
 
@@ -28,6 +67,37 @@ const ScenarioManagerComponent: React.FC = () => {
         ))}
       </ul>
       <button onClick={handleSave}>Save Current Scenario</button>
+
+      {showModal && (
+        <ModalOverlay onClick={() => setShowModal(false)}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <h3>Save Current Scenario</h3>
+            <div>
+              <label>
+                Scenario Name:
+                <input
+                  type="text"
+                  value={scenarioName}
+                  onChange={(e) => setScenarioName(e.target.value)}
+                />
+              </label>
+            </div>
+            <div>
+              <label>
+                Description:
+                <textarea
+                  value={scenarioDescription}
+                  onChange={(e) => setScenarioDescription(e.target.value)}
+                />
+              </label>
+            </div>
+            <div style={{ marginTop: "1rem" }}>
+              <button onClick={handleModalSave}>Save Scenario</button>
+              <button onClick={() => setShowModal(false)}>Cancel</button>
+            </div>
+          </ModalContent>
+        </ModalOverlay>
+      )}
     </div>
   );
 };
