@@ -1,4 +1,3 @@
-// AssetOverview.tsx
 import React from "react";
 import styled from "styled-components";
 import { useData } from "../../contexts/useDataContext";
@@ -18,8 +17,10 @@ const SDBAssetCard = styled.div`
 `;
 
 const AssetOverview: React.FC = () => {
-  const { selectedAssets } = useData();
-  const assets = Array.from(selectedAssets);
+  const { getCurrentWRZState } = useData();
+  const { selectedAssets } = getCurrentWRZState();
+
+  const assets = Array.from(selectedAssets).sort();
 
   if (assets.length === 0) {
     return <div>No assets selected.</div>;
@@ -28,8 +29,8 @@ const AssetOverview: React.FC = () => {
   return (
     <OverviewGrid>
       {assets.map((asset) => (
-        <SDBAssetCard>
-          <AssetCard key={asset} assetName={asset} />
+        <SDBAssetCard key={asset}>
+          <AssetCard assetName={asset} />
         </SDBAssetCard>
       ))}
     </OverviewGrid>

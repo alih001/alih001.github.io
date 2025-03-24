@@ -12,11 +12,9 @@ const margin = { top: 20, right: 30, bottom: 50, left: 50 };
 const chartWidth = 600;
 const chartHeight = 300;
 
-const CostChart: React.FC<CostChartProps> = ({
-  customAssets,
-  selectedAssets,
-}) => {
-  const { assetSettings } = useData();
+const CostChart: React.FC<CostChartProps> = ({ customAssets }) => {
+  const { getCurrentWRZState } = useData();
+  const { selectedAssets, assetSettings } = getCurrentWRZState();
 
   // Extract and sort the years from customAssets.
   const years = customAssets.map((row) => row.year).sort((a, b) => a - b);

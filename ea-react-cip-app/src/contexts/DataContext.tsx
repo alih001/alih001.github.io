@@ -11,6 +11,7 @@ import {
   AssetSettings,
   WRZDataMap,
   WRZState,
+  AssetToWRZMap,
 } from "../types/public-types";
 import { Edge } from "reactflow";
 import { ViewMode } from "gantt-task-react";
@@ -29,6 +30,9 @@ type DataContextType = {
   setWRZData: React.Dispatch<React.SetStateAction<WRZDataMap>>;
   getCurrentWRZState: () => WRZState;
   updateCurrentWRZState: (update: Partial<WRZState>) => void;
+
+  assetToWRZMap: AssetToWRZMap;
+  setAssetToWRZMap: React.Dispatch<React.SetStateAction<AssetToWRZMap>>;
 
   // Scenarios for saving
   scenarios: Scenario[];
@@ -134,6 +138,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
   const [activeWRZ, setActiveWRZ] = useState<string>("");
   const [wrzData, setWRZData] = useState<WRZDataMap>({});
 
+  const [assetToWRZMap, setAssetToWRZMap] = useState<AssetToWRZMap>({});
+
   const getCurrentWRZState = (): WRZState => {
     return (
       wrzData[activeWRZ] || {
@@ -232,6 +238,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     setWRZData,
     getCurrentWRZState,
     updateCurrentWRZState,
+    assetToWRZMap,
+    setAssetToWRZMap,
+
     // Other SDB States
     scenarios,
     setScenarios,

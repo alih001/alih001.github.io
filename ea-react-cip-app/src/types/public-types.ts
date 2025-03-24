@@ -17,6 +17,8 @@ export interface WRZDataMap {
   [wrz: string]: WRZState;
 }
 
+export type AssetToWRZMap = Record<string, string[]>;
+
 // CustomAssets
 export interface CustomAssetRow {
   year: number;

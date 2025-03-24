@@ -7,6 +7,7 @@ import {
   CustomAssetRow,
   AssetColumns,
   WRZDataMap,
+  AssetToWRZMap,
 } from "../../types/public-types";
 import { useData } from "../../contexts/useDataContext";
 
@@ -18,6 +19,7 @@ const ExcelFileUpload: React.FC = () => {
     setWRZList,
     setActiveWRZ,
     setWRZData,
+    setAssetToWRZMap,
   } = useData();
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -157,6 +159,26 @@ const ExcelFileUpload: React.FC = () => {
         });
         const groupedSupplyData = Object.values(groups);
         setSupplyData(groupedSupplyData);
+      }
+
+      // --- Process Asset Mappping Sheet ---
+      const mappingSheet = workbook.getWorksheet("AssetMapping");
+      if (mappingSheet) {
+        const map: AssetToWRZMap = {};
+
+        mappingSheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+          if (rowNumber === 1) return; // skip header
+
+          const wrz = row.getCell(1).value?.toString().trim() || "";
+          const asset = row.getCell(2).value?.toString().trim() || "";
+
+          if (wrz && asset) {
+            if (!map[wrz]) map[wrz] = [];
+            map[wrz].push(asset);
+          }
+        });
+
+        setAssetToWRZMap(map);
       }
 
       // --- Process CustomAssets Sheet ---

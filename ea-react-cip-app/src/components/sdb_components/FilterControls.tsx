@@ -19,19 +19,6 @@ const FilterControls: React.FC<FilterControlsProps> = ({
   return (
     <FilterContainer>
       <label>
-        WRZ:
-        <select
-          value={criteria.wrz}
-          onChange={(e) => setCriteria({ ...criteria, wrz: e.target.value })}
-        >
-          {zones.map((zone) => (
-            <option key={zone} value={zone}>
-              {zone}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label>
         Planning Scenario:
         <select
           value={criteria.planningScenario}

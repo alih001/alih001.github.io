@@ -57,6 +57,10 @@ const Background = styled.div`
 const SDBDashboard: React.FC = () => {
   const { filterCriteria, setFilterCriteria, customAssets, selectedAssets } =
     useData();
+
+  const { activeWRZ, assetToWRZMap } = useData();
+  const allAssets = assetToWRZMap[activeWRZ] || [];
+
   const { zones, planningScenarios, growthForecasts } = useFilterOptions();
 
   // Use the custom hook to get processed chart data.
@@ -94,9 +98,7 @@ const SDBDashboard: React.FC = () => {
 
                 <SubCard>
                   <p>Asset Selector</p>
-                  <AssetSelector
-                    allAssets={["Asset1", "Asset2", "Asset3"]} // or dynamically generated
-                  />
+                  <AssetSelector allAssets={allAssets} />
                 </SubCard>
 
                 <SubCard>
@@ -118,10 +120,7 @@ const SDBDashboard: React.FC = () => {
                 supplyData={supplyForChart}
                 drought={filterCriteria.drought}
               />
-              <CostChart
-                customAssets={customAssets}
-                selectedAssets={selectedAssets}
-              />
+              <CostChart customAssets={customAssets} />
             </MainCard>
 
             {/* Main Card 3 – Asset Overview */}

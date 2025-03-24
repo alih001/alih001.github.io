@@ -19,7 +19,8 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
   drought,
 }) => {
   // Get customAssets and selectedAssets from context.
-  const { customAssets, selectedAssets, assetSettings } = useData();
+  const { customAssets, getCurrentWRZState } = useData();
+  const { selectedAssets, assetSettings } = getCurrentWRZState();
 
   if (!demandData || !supplyData) {
     return <div>No data available for the selected filters.</div>;
