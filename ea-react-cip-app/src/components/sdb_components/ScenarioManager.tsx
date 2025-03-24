@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useScenarioManager } from "../../hooks/useScenarioManager";
-
+import ExportButton from "./SDBExportToExcel";
 // Styled modal components
 const ModalOverlay = styled.div`
   position: fixed;
@@ -67,6 +67,10 @@ const ScenarioManagerComponent: React.FC = () => {
         ))}
       </ul>
       <button onClick={handleSave}>Save Current Scenario</button>
+
+      <div style={{ marginTop: "1rem" }}>
+        <ExportButton />
+      </div>
 
       {showModal && (
         <ModalOverlay onClick={() => setShowModal(false)}>
