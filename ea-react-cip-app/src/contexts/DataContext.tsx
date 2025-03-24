@@ -9,6 +9,8 @@ import {
   SupplyRow,
   FilterCriteria,
   AssetSettings,
+  WRZDataMap,
+  WRZState,
 } from "../types/public-types";
 import { Edge } from "reactflow";
 import { ViewMode } from "gantt-task-react";
@@ -18,6 +20,16 @@ import { Scenario } from "../types/public-types";
 
 type DataContextType = {
   // SDB Data types
+  // States for WRZ Tabs
+  wrzList: string[];
+  setWRZList: React.Dispatch<React.SetStateAction<string[]>>;
+  activeWRZ: string;
+  setActiveWRZ: React.Dispatch<React.SetStateAction<string>>;
+  wrzData: WRZDataMap;
+  setWRZData: React.Dispatch<React.SetStateAction<WRZDataMap>>;
+  getCurrentWRZState: () => WRZState;
+  updateCurrentWRZState: (update: Partial<WRZState>) => void;
+
   // Scenarios for saving
   scenarios: Scenario[];
   setScenarios: React.Dispatch<React.SetStateAction<Scenario[]>>;
@@ -117,6 +129,33 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   // Initialize SDB States
+  // Set up WRZ tab states
+  const [wrzList, setWRZList] = useState<string[]>([]);
+  const [activeWRZ, setActiveWRZ] = useState<string>("");
+  const [wrzData, setWRZData] = useState<WRZDataMap>({});
+
+  const getCurrentWRZState = (): WRZState => {
+    return (
+      wrzData[activeWRZ] || {
+        selectedAssets: new Set(),
+        assetSettings: {},
+        scenarios: [],
+      }
+    );
+  };
+
+  const updateCurrentWRZState = (update: Partial<WRZState>) => {
+    setWRZData((prev) => ({
+      ...prev,
+      [activeWRZ]: {
+        ...getCurrentWRZState(),
+        ...update,
+      },
+    }));
+  };
+
+  // Set up other SDB states
+
   const [demandData, setDemandData] = useState<DemandRow[]>([]);
   const [supplyData, setSupplyData] = useState<SupplyRow[]>([]);
   const [customAssets, setCustomAssets] = useState<CustomAssetRow[]>([]);
@@ -184,6 +223,16 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const contextValue: DataContextType = {
     // SDB Contexts
+    // SDB WRZ Tab States
+    wrzList,
+    setWRZList,
+    activeWRZ,
+    setActiveWRZ,
+    wrzData,
+    setWRZData,
+    getCurrentWRZState,
+    updateCurrentWRZState,
+    // Other SDB States
     scenarios,
     setScenarios,
     demandData,

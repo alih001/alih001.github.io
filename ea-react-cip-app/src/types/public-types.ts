@@ -4,6 +4,19 @@ import React, { MouseEventHandler } from "react";
 
 // SDB dashboard types
 
+// WRZ Tabs
+// public-types.ts
+
+export interface WRZState {
+  selectedAssets: Set<string>;
+  assetSettings: Record<string, AssetSettings>;
+  scenarios: Scenario[];
+}
+
+export interface WRZDataMap {
+  [wrz: string]: WRZState;
+}
+
 // CustomAssets
 export interface CustomAssetRow {
   year: number;

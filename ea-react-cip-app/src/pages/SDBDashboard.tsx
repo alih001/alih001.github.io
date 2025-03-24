@@ -11,6 +11,7 @@ import { useFilterOptions } from "../hooks/useFilterOptions";
 import { useData } from "../contexts/useDataContext";
 import { useChartData } from "../hooks/useChartData";
 import AssetOverview from "../components/sdb_components/SDBAssetOverview";
+import WRZTabs from "../components/sdb_components/SDBWRZTabs";
 
 import {
   DashboardContainer,
@@ -72,11 +73,11 @@ const SDBDashboard: React.FC = () => {
 
           <MainContent>
             {/* Main Card 1 – Controls */}
-            <MainCard customWidth="300px">
+            <MainCard $customwidth="300px">
               <h2>Controls</h2>
               {/* You can have sub-cards within this MainCard */}
               <ControlsSubCardGrid>
-                <SubCard customWidth="270px">
+                <SubCard $customwidth="270px">
                   <p>Import your input data here</p>
                   <ExcelFileUpload></ExcelFileUpload>
                 </SubCard>
@@ -109,8 +110,9 @@ const SDBDashboard: React.FC = () => {
             </MainCard>
 
             {/* Main Card 2 – Charts */}
-            <MainCard customWidth="1200px">
+            <MainCard $customwidth="1200px">
               <h2>Charts</h2>
+              <WRZTabs />
               <DemandSupplyChart
                 demandData={demandForChart}
                 supplyData={supplyForChart}

@@ -1,33 +1,57 @@
 // src/hooks/useChartData.ts
 import { useMemo, useEffect } from "react";
 import { useData } from "../contexts/useDataContext";
-import { FilterCriteria } from "../types/public-types";
 
 export const useChartData = () => {
-  const { demandData, supplyData, filterCriteria, setFilterCriteria } =
-    useData();
+  const {
+    demandData,
+    supplyData,
+    activeWRZ,
+    filterCriteria,
+    setFilterCriteria,
+  } = useData();
 
-  // Automatically set default filter criteria if not already set.
+  //
+  // Sync activeWRZ with filterCriteria.wrz
+  //
   useEffect(() => {
-    if (demandData.length > 0 && !filterCriteria.wrz) {
-      const newZones = Array.from(new Set(demandData.map((d) => d.zone)));
+    if (activeWRZ && filterCriteria.wrz !== activeWRZ) {
+      setFilterCriteria((prev) => ({
+        ...prev,
+        wrz: activeWRZ,
+      }));
+    }
+  }, [activeWRZ, filterCriteria.wrz, setFilterCriteria]);
+
+  //
+  // Set default filter criteria
+  //
+  useEffect(() => {
+    if (demandData.length > 0 && !filterCriteria.planningScenario) {
       const newPlanningScenarios = Array.from(
         new Set(demandData.map((d) => d.planningScenario))
       );
       const newGrowthForecasts = Array.from(
         new Set(demandData.map((d) => d.growthForecast))
       );
-      // Set defaults based on the first available values.
-      setFilterCriteria({
-        wrz: newZones[0] || "",
+
+      setFilterCriteria((prev) => ({
+        wrz: activeWRZ || prev.wrz || "",
         planningScenario: newPlanningScenarios[0] || "",
         growthForecast: newGrowthForecasts[0] || "",
         drought: "None",
-      });
+      }));
     }
-  }, [demandData, filterCriteria.wrz, setFilterCriteria]);
+  }, [
+    demandData,
+    activeWRZ,
+    filterCriteria.planningScenario,
+    setFilterCriteria,
+  ]);
 
-  // Compute filtered demand data.
+  //
+  // Filtered demand and supply data based on WRZ + scenario + growth
+  //
   const filteredDemandData = useMemo(() => {
     return demandData.filter(
       (d) =>
@@ -37,20 +61,22 @@ export const useChartData = () => {
     );
   }, [demandData, filterCriteria]);
 
-  // Compute filtered supply data.
   const filteredSupplyData = useMemo(() => {
     return supplyData.filter(
-      (s: any) =>
+      (s) =>
         s.wrz === filterCriteria.wrz &&
         s.scenario === filterCriteria.planningScenario
     );
   }, [supplyData, filterCriteria]);
 
-  // Pick the first matching record for the charts.
+  //
+  // Pick the first matching row for chart display
+  //
   const demandForChart = useMemo(
     () => filteredDemandData[0] || null,
     [filteredDemandData]
   );
+
   const supplyForChart = useMemo(
     () => filteredSupplyData[0] || null,
     [filteredSupplyData]

@@ -19,7 +19,7 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
   drought,
 }) => {
   // Get customAssets and selectedAssets from context.
-  const { customAssets, selectedAssets } = useData();
+  const { customAssets, selectedAssets, assetSettings } = useData();
 
   if (!demandData || !supplyData) {
     return <div>No data available for the selected filters.</div>;
@@ -58,9 +58,6 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
     const segments: { label: string; value: number; color: string }[] = [
       { label: "Base Supply", value: baseEffective, color: "orange" },
     ];
-
-    // Get asset settings from context.
-    const { assetSettings } = useData();
 
     // Add a segment for each selected asset.
     selectedAssetsArray.forEach((assetName, index) => {

@@ -6,11 +6,19 @@ import {
   SupplyRow,
   CustomAssetRow,
   AssetColumns,
+  WRZDataMap,
 } from "../../types/public-types";
 import { useData } from "../../contexts/useDataContext";
 
 const ExcelFileUpload: React.FC = () => {
-  const { setDemandData, setSupplyData, setCustomAssets } = useData();
+  const {
+    setDemandData,
+    setSupplyData,
+    setCustomAssets,
+    setWRZList,
+    setActiveWRZ,
+    setWRZData,
+  } = useData();
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -64,6 +72,21 @@ const ExcelFileUpload: React.FC = () => {
             yearlyDemand,
           });
         });
+
+        const zones = Array.from(new Set(tempDemand.map((row) => row.zone)));
+        setWRZList(zones);
+        setActiveWRZ(zones[0]);
+
+        const initialWRZData: WRZDataMap = {};
+        zones.forEach((zone) => {
+          initialWRZData[zone] = {
+            selectedAssets: new Set(),
+            assetSettings: {},
+            scenarios: [],
+          };
+        });
+        setWRZData(initialWRZData);
+
         setDemandData(tempDemand);
       }
 

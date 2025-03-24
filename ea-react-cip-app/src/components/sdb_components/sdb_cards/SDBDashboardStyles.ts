@@ -1,12 +1,12 @@
 import styled from "styled-components";
 
 interface MainCardProps {
-  customWidth?: string;
-  customLeft?: string;
+  $customwidth?: string;
+  $customleft?: string;
 }
 
 interface SubCardProps {
-  customWidth?: string;
+  $customwidth?: string;
 }
 
 // Container for the entire dashboard (Header, Main Content, Footer)
@@ -46,8 +46,8 @@ export const MainCard = styled.div<MainCardProps>`
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 16px;
-  width: ${(props) => props.customWidth || "auto"};
-  margin-left: ${(props) => props.customLeft || "0"};
+  width: ${(props) => props.$customwidth || "auto"};
+  margin-left: ${(props) => props.$customleft || "0"};
 `;
 
 // A grid container for SubCards, e.g., a 2-column layout for asset details
@@ -55,14 +55,14 @@ export const ControlsSubCardGrid = styled.div<SubCardProps>`
   display: grid;
   grid-template-columns: repeat(1, 1fr);
   gap: 12px;
-  width: ${(props) => props.customWidth || "auto"};
+  width: ${(props) => props.$customwidth || "auto"};
 `;
 
 export const AssetsSubCardGrid = styled.div<SubCardProps>`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
-  width: ${(props) => props.customWidth || "auto"};
+  width: ${(props) => props.$customwidth || "auto"};
 `;
 
 // A SubCard for displaying individual pieces of information (e.g., an asset card)
@@ -71,5 +71,5 @@ export const SubCard = styled.div<SubCardProps>`
   border: 1px solid #ddd;
   border-radius: 4px;
   padding: 8px;
-  width: ${(props) => props.customWidth || "auto"};
+  width: ${(props) => props.$customwidth || "auto"};
 `;
