@@ -8,6 +8,7 @@ import {
   AssetColumns,
   WRZDataMap,
   AssetToWRZMap,
+  AssetDetailsMap,
 } from "../../types/public-types";
 import { useData } from "../../contexts/useDataContext";
 
@@ -20,6 +21,7 @@ const ExcelFileUpload: React.FC = () => {
     setActiveWRZ,
     setWRZData,
     setAssetToWRZMap,
+    setAssetDetailsMap,
   } = useData();
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -182,6 +184,27 @@ const ExcelFileUpload: React.FC = () => {
       }
 
       // --- Process CustomAssets Sheet ---
+      const detailsSheet = workbook.getWorksheet("AssetDetails");
+      if (detailsSheet) {
+        const map: AssetDetailsMap = {};
+
+        detailsSheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+          if (rowNumber === 1) return; // skip header
+          const assetName = row.getCell(1).value?.toString().trim() || "";
+          if (!assetName) return;
+
+          map[assetName] = {
+            description: row.getCell(2).value?.toString() || "",
+            wrzCode: row.getCell(3).value?.toString() || "",
+            processLoss: Number(row.getCell(4).value) || undefined,
+            outageAllowance: Number(row.getCell(5).value) || undefined,
+            licenceMlPerDay: Number(row.getCell(6).value) || undefined,
+            leakageMlPerDay: Number(row.getCell(7).value) || undefined,
+          };
+        });
+        setAssetDetailsMap(map);
+      }
+
       const customAssetsSheet = workbook.getWorksheet("CustomAssets");
       if (customAssetsSheet) {
         interface AssetColumns {

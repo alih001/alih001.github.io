@@ -46,6 +46,17 @@ export interface AssetSettings {
   startYear: number;
 }
 
+export interface AssetDetails {
+  description?: string;
+  wrzCode?: string;
+  processLoss?: number;
+  outageAllowance?: number;
+  licenceMlPerDay?: number;
+  leakageMlPerDay?: number;
+}
+
+export type AssetDetailsMap = Record<string, AssetDetails>;
+
 // Chart Props
 export interface CostChartProps {
   customAssets: CustomAssetRow[];
