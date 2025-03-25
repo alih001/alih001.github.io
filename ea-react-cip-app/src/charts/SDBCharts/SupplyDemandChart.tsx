@@ -224,7 +224,61 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
             dx: "-0.25em",
           })}
         />
+
+        {/* Axis Titles */}
+        <text
+          x={-height / 2}
+          y={15}
+          transform="rotate(-90)"
+          textAnchor="middle"
+          fill="black"
+          fontSize={12}
+        >
+          Deployable Output (Ml/d)
+        </text>
+        <text
+          x={width / 2}
+          y={height - 5}
+          textAnchor="middle"
+          fill="black"
+          fontSize={12}
+        >
+          Year
+        </text>
       </svg>
+
+      {/* Legend */}
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "12px",
+          marginTop: "1rem",
+        }}
+      >
+        {[
+          { label: "Base Supply", color: "orange" },
+          ...selectedAssetsArray.map((assetName, index) => ({
+            label: assetName,
+            color: getColourForAsset(index, selectedAssetsArray.length),
+          })),
+        ].map((item) => (
+          <div
+            key={item.label}
+            style={{ display: "flex", alignItems: "center", gap: "6px" }}
+          >
+            <div
+              style={{
+                width: "16px",
+                height: "16px",
+                backgroundColor: item.color,
+                borderRadius: "3px",
+              }}
+            />
+            <span style={{ fontSize: "12px" }}>{item.label}</span>
+          </div>
+        ))}
+      </div>
 
       {tooltipOpen && tooltipData && (
         <TooltipInPortal
