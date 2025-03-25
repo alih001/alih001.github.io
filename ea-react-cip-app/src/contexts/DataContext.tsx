@@ -13,6 +13,7 @@ import {
   WRZState,
   AssetToWRZMap,
   AssetDetailsMap,
+  SimulationState,
 } from "../types/public-types";
 import { Edge } from "reactflow";
 import { ViewMode } from "gantt-task-react";
@@ -31,6 +32,9 @@ type DataContextType = {
   setWRZData: React.Dispatch<React.SetStateAction<WRZDataMap>>;
   getCurrentWRZState: () => WRZState;
   updateCurrentWRZState: (update: Partial<WRZState>) => void;
+  // What-if state testing
+  simulation: SimulationState;
+  setSimulation: React.Dispatch<React.SetStateAction<SimulationState>>;
 
   assetToWRZMap: AssetToWRZMap;
   setAssetToWRZMap: React.Dispatch<React.SetStateAction<AssetToWRZMap>>;
@@ -166,6 +170,12 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   // Set up other SDB states
+  // What-if scenario
+  const [simulation, setSimulation] = useState<SimulationState>({
+    active: false,
+    growthRate: 0,
+    startYear: 2030,
+  });
 
   const [demandData, setDemandData] = useState<DemandRow[]>([]);
   const [supplyData, setSupplyData] = useState<SupplyRow[]>([]);
@@ -247,6 +257,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     setAssetToWRZMap,
     assetDetailsMap,
     setAssetDetailsMap,
+    simulation,
+    setSimulation,
 
     // Other SDB States
     scenarios,

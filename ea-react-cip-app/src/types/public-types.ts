@@ -4,6 +4,13 @@ import React, { MouseEventHandler } from "react";
 
 // SDB dashboard types
 
+// What-if scenario
+export interface SimulationState {
+  active: boolean;
+  growthRate: number;
+  startYear: number;
+}
+
 // WRZ Tabs
 // public-types.ts
 

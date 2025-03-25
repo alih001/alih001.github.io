@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { Button } from "react-bootstrap";
 import ExcelFileUpload from "../components/sdb_components/SDBFileUpload";
@@ -12,6 +12,7 @@ import { useData } from "../contexts/useDataContext";
 import { useChartData } from "../hooks/useChartData";
 import AssetOverview from "../components/sdb_components/SDBAssetOverview";
 import WRZTabs from "../components/sdb_components/SDBWRZTabs";
+import WhatIfModal from "../components/sdb_components/SDBWhatIfModal";
 
 import {
   DashboardContainer,
@@ -57,6 +58,8 @@ const Background = styled.div`
 const SDBDashboard: React.FC = () => {
   const { filterCriteria, setFilterCriteria, customAssets, selectedAssets } =
     useData();
+
+  const [showWhatIfModal, setShowWhatIfModal] = useState(false);
 
   const { activeWRZ, assetToWRZMap } = useData();
   const allAssets = assetToWRZMap[activeWRZ] || [];
@@ -108,6 +111,17 @@ const SDBDashboard: React.FC = () => {
                     onLoadScenario={(criteria) => setFilterCriteria(criteria)}
                   />
                 </SubCard>
+
+                <SubCard>
+                  <p>What-If Simulator</p>
+                  <button onClick={() => setShowWhatIfModal(true)}>
+                    Open Simulator
+                  </button>
+                </SubCard>
+
+                {showWhatIfModal && (
+                  <WhatIfModal onClose={() => setShowWhatIfModal(false)} />
+                )}
               </ControlsSubCardGrid>
             </MainCard>
 
