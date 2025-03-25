@@ -14,6 +14,7 @@ import {
   AssetToWRZMap,
   AssetDetailsMap,
   SimulationState,
+  WhatIfScenario,
 } from "../types/public-types";
 import { Edge } from "reactflow";
 import { ViewMode } from "gantt-task-react";
@@ -35,6 +36,11 @@ type DataContextType = {
   // What-if state testing
   simulation: SimulationState;
   setSimulation: React.Dispatch<React.SetStateAction<SimulationState>>;
+
+  whatIfScenarios: WhatIfScenario[];
+  setWhatIfScenarios: React.Dispatch<React.SetStateAction<WhatIfScenario[]>>;
+  activeWhatIfId: string | null;
+  setActiveWhatIfId: React.Dispatch<React.SetStateAction<string | null>>;
 
   assetToWRZMap: AssetToWRZMap;
   setAssetToWRZMap: React.Dispatch<React.SetStateAction<AssetToWRZMap>>;
@@ -177,6 +183,9 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     startYear: 2030,
   });
 
+  const [whatIfScenarios, setWhatIfScenarios] = useState<WhatIfScenario[]>([]);
+  const [activeWhatIfId, setActiveWhatIfId] = useState<string | null>(null);
+
   const [demandData, setDemandData] = useState<DemandRow[]>([]);
   const [supplyData, setSupplyData] = useState<SupplyRow[]>([]);
   const [customAssets, setCustomAssets] = useState<CustomAssetRow[]>([]);
@@ -259,6 +268,10 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     setAssetDetailsMap,
     simulation,
     setSimulation,
+    whatIfScenarios,
+    setWhatIfScenarios,
+    activeWhatIfId,
+    setActiveWhatIfId,
 
     // Other SDB States
     scenarios,

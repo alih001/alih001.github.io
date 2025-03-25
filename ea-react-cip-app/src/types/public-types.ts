@@ -11,6 +11,17 @@ export interface SimulationState {
   startYear: number;
 }
 
+export interface WhatIfScenario {
+  id: string;
+  name: string;
+  description?: string;
+  createdAt: number;
+  config: {
+    growthRate: number;
+    startYear: number;
+  };
+}
+
 // WRZ Tabs
 // public-types.ts
 

@@ -9,7 +9,8 @@ export const useChartData = () => {
     activeWRZ,
     filterCriteria,
     setFilterCriteria,
-    simulation,
+    whatIfScenarios,
+    activeWhatIfId,
   } = useData();
 
   // Sync WRZ tab with filterCriteria.wrz
@@ -46,7 +47,6 @@ export const useChartData = () => {
     setFilterCriteria,
   ]);
 
-  // Demand filtering
   const filteredDemandData = useMemo(() => {
     return demandData.filter(
       (d) =>
@@ -61,30 +61,34 @@ export const useChartData = () => {
     return filteredDemandData[0] || null;
   }, [filteredDemandData]);
 
-  const simulatedDemandForChart = useMemo(() => {
-    if (!simulation.active || !demandForChart) return null;
+  const activeSimulation = useMemo(() => {
+    return whatIfScenarios.find((s) => s.id === activeWhatIfId) || null;
+  }, [whatIfScenarios, activeWhatIfId]);
 
+  const simulatedDemandForChart = useMemo(() => {
+    if (!activeSimulation || !demandForChart) return null;
+
+    const { growthRate, startYear } = activeSimulation.config;
     const adjusted = {
       ...demandForChart,
       yearlyDemand: { ...demandForChart.yearlyDemand },
     };
 
-    const factor = 1 + simulation.growthRate / 100;
+    const factor = 1 + growthRate / 100;
 
     for (const yearStr of Object.keys(adjusted.yearlyDemand)) {
       const year = Number(yearStr);
-      if (year >= simulation.startYear) {
+      if (year >= startYear) {
         const base = Number(demandForChart.yearlyDemand[yearStr]) || 0;
-        const yearsSince = year - simulation.startYear;
+        const yearsSince = year - startYear;
         const newValue = base * Math.pow(factor, yearsSince);
         adjusted.yearlyDemand[yearStr] = newValue;
       }
     }
 
     return adjusted;
-  }, [simulation, demandForChart]);
+  }, [activeSimulation, demandForChart]);
 
-  // Supply filtering
   const filteredSupplyData = useMemo(() => {
     return supplyData.filter(
       (s) =>
@@ -103,5 +107,6 @@ export const useChartData = () => {
     simulatedDemandForChart,
     supplyForChart,
     filteredSupplyData,
+    activeSimulation,
   };
 };

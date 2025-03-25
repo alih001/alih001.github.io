@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useData } from "../../contexts/useDataContext";
+import WhatIfSelector from "./SDBWhatIfSelector";
 
 const Overlay = styled.div`
   position: fixed;
@@ -12,7 +13,7 @@ const Overlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 2000;
+  z-index: 10000;
 `;
 
 const Modal = styled.div`
@@ -63,6 +64,27 @@ interface WhatIfModalProps {
 
 const WhatIfModal: React.FC<WhatIfModalProps> = ({ onClose }) => {
   const { simulation, setSimulation } = useData();
+  const { whatIfScenarios, setWhatIfScenarios, setActiveWhatIfId } = useData();
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+
+  const handleSaveScenario = () => {
+    const id = crypto.randomUUID();
+    const newScenario = {
+      id,
+      name,
+      description,
+      createdAt: Date.now(),
+      config: {
+        startYear: simulation.startYear,
+        growthRate: simulation.growthRate,
+      },
+    };
+
+    setWhatIfScenarios((prev) => [...prev, newScenario]);
+    setActiveWhatIfId(id);
+    onClose();
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -102,8 +124,18 @@ const WhatIfModal: React.FC<WhatIfModalProps> = ({ onClose }) => {
           />{" "}
           Enable Simulation Mode
         </Label>
+        <Label>Scenario Name</Label>
+        <Input value={name} onChange={(e) => setName(e.target.value)} />
+
+        <Label>Description</Label>
+        <Input
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+        <WhatIfSelector />
 
         <Row>
+          <Button onClick={handleSaveScenario}>Save Scenario</Button>
           <Button onClick={onClose}>Close</Button>
         </Row>
       </Modal>
