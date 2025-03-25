@@ -72,6 +72,7 @@ export interface CostChartProps {
 
 export interface DemandSupplyChartProps {
   demandData: { yearlyDemand: Record<string, number> } | null;
+  simulatedDemandData?: { yearlyDemand: Record<string, number> } | null;
   supplyData: {
     yearlySupply: Record<string, number>;
     droughtAdjustments?: {

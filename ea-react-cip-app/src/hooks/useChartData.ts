@@ -9,11 +9,10 @@ export const useChartData = () => {
     activeWRZ,
     filterCriteria,
     setFilterCriteria,
+    simulation,
   } = useData();
 
-  //
-  // Sync activeWRZ with filterCriteria.wrz
-  //
+  // Sync WRZ tab with filterCriteria.wrz
   useEffect(() => {
     if (activeWRZ && filterCriteria.wrz !== activeWRZ) {
       setFilterCriteria((prev) => ({
@@ -23,9 +22,7 @@ export const useChartData = () => {
     }
   }, [activeWRZ, filterCriteria.wrz, setFilterCriteria]);
 
-  //
-  // Set default filter criteria
-  //
+  // Set default scenario filters when demand data is loaded
   useEffect(() => {
     if (demandData.length > 0 && !filterCriteria.planningScenario) {
       const newPlanningScenarios = Array.from(
@@ -49,43 +46,62 @@ export const useChartData = () => {
     setFilterCriteria,
   ]);
 
-  //
-  // Filtered demand and supply data based on WRZ + scenario + growth
-  //
+  // Demand filtering
   const filteredDemandData = useMemo(() => {
     return demandData.filter(
       (d) =>
-        d.zone === filterCriteria.wrz &&
-        d.planningScenario === filterCriteria.planningScenario &&
-        d.growthForecast === filterCriteria.growthForecast
+        d.zone?.trim() === filterCriteria.wrz?.trim() &&
+        d.planningScenario?.trim() ===
+          filterCriteria.planningScenario?.trim() &&
+        d.growthForecast?.trim() === filterCriteria.growthForecast?.trim()
     );
   }, [demandData, filterCriteria]);
 
+  const demandForChart = useMemo(() => {
+    return filteredDemandData[0] || null;
+  }, [filteredDemandData]);
+
+  const simulatedDemandForChart = useMemo(() => {
+    if (!simulation.active || !demandForChart) return null;
+
+    const adjusted = {
+      ...demandForChart,
+      yearlyDemand: { ...demandForChart.yearlyDemand },
+    };
+
+    const factor = 1 + simulation.growthRate / 100;
+
+    for (const yearStr of Object.keys(adjusted.yearlyDemand)) {
+      const year = Number(yearStr);
+      if (year >= simulation.startYear) {
+        const base = Number(demandForChart.yearlyDemand[yearStr]) || 0;
+        const yearsSince = year - simulation.startYear;
+        const newValue = base * Math.pow(factor, yearsSince);
+        adjusted.yearlyDemand[yearStr] = newValue;
+      }
+    }
+
+    return adjusted;
+  }, [simulation, demandForChart]);
+
+  // Supply filtering
   const filteredSupplyData = useMemo(() => {
     return supplyData.filter(
       (s) =>
-        s.wrz === filterCriteria.wrz &&
-        s.scenario === filterCriteria.planningScenario
+        s.wrz?.trim() === filterCriteria.wrz?.trim() &&
+        s.scenario?.trim() === filterCriteria.planningScenario?.trim()
     );
   }, [supplyData, filterCriteria]);
 
-  //
-  // Pick the first matching row for chart display
-  //
-  const demandForChart = useMemo(
-    () => filteredDemandData[0] || null,
-    [filteredDemandData]
-  );
-
-  const supplyForChart = useMemo(
-    () => filteredSupplyData[0] || null,
-    [filteredSupplyData]
-  );
+  const supplyForChart = useMemo(() => {
+    return filteredSupplyData[0] || null;
+  }, [filteredSupplyData]);
 
   return {
-    demandForChart,
-    supplyForChart,
     filteredDemandData,
+    demandForChart,
+    simulatedDemandForChart,
+    supplyForChart,
     filteredSupplyData,
   };
 };

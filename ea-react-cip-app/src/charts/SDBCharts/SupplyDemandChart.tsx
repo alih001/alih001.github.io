@@ -18,9 +18,10 @@ const height = 400;
 const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
   demandData,
   supplyData,
+  simulatedDemandData,
   drought,
 }) => {
-  const { customAssets, getCurrentWRZState } = useData();
+  const { customAssets, getCurrentWRZState, simulation } = useData();
   const { selectedAssets, assetSettings } = getCurrentWRZState();
 
   const {
@@ -37,26 +38,30 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
   });
 
   if (!demandData || !supplyData) {
+    console.log("Rendering Chart", {
+      demandData,
+      supplyData,
+      simulatedDemandData,
+    });
+
     return <div>No data available for the selected filters.</div>;
   }
 
   const years = Object.keys(demandData.yearlyDemand).sort(
     (a, b) => Number(a) - Number(b)
   );
-  const demandValues = years.map((year) => demandData.yearlyDemand[year]);
+  const demandValues = years.map(
+    (year) => Number(demandData.yearlyDemand[year]) || 0
+  );
   const selectedAssetsArray = Array.from(selectedAssets).sort();
 
   const stackedSupplyData = years.map((yearStr) => {
     const year = Number(yearStr);
     const baseSupply = supplyData.yearlySupply[yearStr] || 0;
-    let droughtAdjustment = 0;
-    if (
-      drought !== "None" &&
-      supplyData.droughtAdjustments &&
-      supplyData.droughtAdjustments[drought]
-    ) {
-      droughtAdjustment = supplyData.droughtAdjustments[drought][yearStr] || 0;
-    }
+    const droughtAdjustment =
+      (drought !== "None" &&
+        supplyData.droughtAdjustments?.[drought]?.[yearStr]) ||
+      0;
     const baseEffective = Math.max(0, baseSupply - droughtAdjustment);
 
     const segments = [
@@ -80,9 +85,9 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
       let effectiveAssetDO = 0;
       if (effectiveYear >= baseStartYear) {
         effectiveAssetDO =
-          customAssets.find((row) => row.year === effectiveYear)?.assets[
+          customAssets.find((row) => row.year === effectiveYear)?.assets?.[
             assetName
-          ]?.do ?? 0;
+          ]?.do || 0;
       }
       effectiveAssetDO = effectiveAssetDO * (settings.doPercentage / 100);
       segments.push({
@@ -116,21 +121,22 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
   const lineData = years.map((yearStr) => {
     const year = Number(yearStr);
     const x = (xScale(year) || 0) + xScale.bandwidth() / 2;
-    return {
-      year,
-      value: demandData.yearlyDemand[yearStr],
-      x,
-      y: yScale(demandData.yearlyDemand[yearStr]),
-    };
+    const value = Number(demandData.yearlyDemand[yearStr]) || 0;
+    return { year, value, x, y: yScale(value) };
   });
+
+  const simLineData = simulatedDemandData
+    ? years.map((yearStr) => {
+        const year = Number(yearStr);
+        const x = (xScale(year) || 0) + xScale.bandwidth() / 2;
+        const value = Number(simulatedDemandData.yearlyDemand[yearStr]) || 0;
+        return { year, value, x, y: yScale(value) };
+      })
+    : [];
 
   return (
     <div
-      style={{
-        position: "relative",
-        zIndex: 9999,
-        overflow: "visible",
-      }}
+      style={{ position: "relative", zIndex: 9999, overflow: "visible" }}
       ref={containerRef}
     >
       <svg width={width} height={height}>
@@ -167,7 +173,8 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
                   style={{ pointerEvents: "all" }}
                   onMouseMove={(e) => {
                     const coords = localPoint(e) || { x: 0, y: 0 };
-                    const demand = demandData.yearlyDemand[data.year] || 0;
+                    const demand =
+                      Number(demandData.yearlyDemand[data.year]) || 0;
                     const totalSupply = data.segments.reduce(
                       (sum, seg) => sum + seg.value,
                       0
@@ -199,6 +206,18 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
           curve={curveMonotoneX}
         />
 
+        {simLineData.length > 0 && (
+          <LinePath
+            data={simLineData}
+            x={(d) => d.x}
+            y={(d) => d.y}
+            stroke="purple"
+            strokeWidth={2}
+            strokeDasharray="6,4"
+            curve={curveMonotoneX}
+          />
+        )}
+
         <AxisBottom
           top={height - margin.bottom}
           scale={xScale}
@@ -225,7 +244,6 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
           })}
         />
 
-        {/* Axis Titles */}
         <text
           x={-height / 2}
           y={15}
@@ -247,7 +265,6 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
         </text>
       </svg>
 
-      {/* Legend */}
       <div
         style={{
           display: "flex",
@@ -262,22 +279,45 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
             label: assetName,
             color: getColourForAsset(index, selectedAssetsArray.length),
           })),
-        ].map((item) => (
-          <div
-            key={item.label}
-            style={{ display: "flex", alignItems: "center", gap: "6px" }}
-          >
+          simulation.active
+            ? {
+                label: "Simulated Demand",
+                color: "purple",
+                dashed: true,
+              }
+            : null,
+        ]
+          .filter(Boolean)
+          .map((item) => (
             <div
-              style={{
-                width: "16px",
-                height: "16px",
-                backgroundColor: item.color,
-                borderRadius: "3px",
-              }}
-            />
-            <span style={{ fontSize: "12px" }}>{item.label}</span>
-          </div>
-        ))}
+              key={item.label}
+              style={{ display: "flex", alignItems: "center", gap: "6px" }}
+            >
+              {item.dashed ? (
+                <svg width={16} height={8}>
+                  <line
+                    x1={0}
+                    y1={4}
+                    x2={16}
+                    y2={4}
+                    stroke={item.color}
+                    strokeWidth={2}
+                    strokeDasharray="4,2"
+                  />
+                </svg>
+              ) : (
+                <div
+                  style={{
+                    width: "16px",
+                    height: "16px",
+                    backgroundColor: item.color,
+                    borderRadius: "3px",
+                  }}
+                />
+              )}
+              <span style={{ fontSize: "12px" }}>{item.label}</span>
+            </div>
+          ))}
       </div>
 
       {tooltipOpen && tooltipData && (

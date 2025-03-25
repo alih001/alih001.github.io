@@ -67,7 +67,8 @@ const SDBDashboard: React.FC = () => {
   const { zones, planningScenarios, growthForecasts } = useFilterOptions();
 
   // Use the custom hook to get processed chart data.
-  const { demandForChart, supplyForChart } = useChartData();
+  const { demandForChart, supplyForChart, simulatedDemandForChart } =
+    useChartData();
 
   return (
     <div>
@@ -132,8 +133,10 @@ const SDBDashboard: React.FC = () => {
               <DemandSupplyChart
                 demandData={demandForChart}
                 supplyData={supplyForChart}
+                simulatedDemandData={simulatedDemandForChart}
                 drought={filterCriteria.drought}
               />
+
               <CostChart customAssets={customAssets} />
             </MainCard>
 
