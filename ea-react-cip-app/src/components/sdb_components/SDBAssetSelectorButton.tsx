@@ -24,8 +24,46 @@ const StyledButton = styled.button`
   }
 `;
 
+const ModalHeader = styled.h3`
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 1.4rem;
+  color: #333;
+`;
+
 const ContentWrapper = styled.div`
   margin-top: 1rem;
+`;
+
+const AssetList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const AssetListItem = styled.li`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+`;
+
+const AssetLabel = styled.label`
+  flex: 1;
+  font-size: 1rem;
+  color: #333;
+`;
+
+const Checkbox = styled.input.attrs({ type: "checkbox" })`
+  width: auto;
+  height: auto;
+  margin-right: 8px;
 `;
 
 const AssetSelectorContent: React.FC<{ allAssets: string[] }> = ({
@@ -34,20 +72,17 @@ const AssetSelectorContent: React.FC<{ allAssets: string[] }> = ({
   const { selectedAssets, handleToggleAsset } = useAssetSelector();
   return (
     <ContentWrapper>
-      <ul>
+      <AssetList>
         {allAssets.map((assetName) => (
-          <li key={assetName}>
-            <label>
-              <input
-                type="checkbox"
-                checked={selectedAssets.has(assetName)}
-                onChange={() => handleToggleAsset(assetName)}
-              />
-              {assetName}
-            </label>
-          </li>
+          <AssetListItem key={assetName}>
+            <Checkbox
+              checked={selectedAssets.has(assetName)}
+              onChange={() => handleToggleAsset(assetName)}
+            />
+            <AssetLabel>{assetName}</AssetLabel>
+          </AssetListItem>
         ))}
-      </ul>
+      </AssetList>
     </ContentWrapper>
   );
 };
@@ -64,7 +99,7 @@ const AssetSelectorButton: React.FC<{ allAssets: string[] }> = ({
       </StyledButton>
       {showModal && (
         <SDBModal isOpen={true} onClose={() => setShowModal(false)}>
-          <h3>Select Assets to Implement</h3>
+          <ModalHeader>Select Assets to Implement</ModalHeader>
           <AssetSelectorContent allAssets={allAssets} />
           <StyledButton onClick={() => setShowModal(false)}>Close</StyledButton>
         </SDBModal>
