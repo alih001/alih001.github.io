@@ -13,7 +13,6 @@ export const useChartData = () => {
     activeWhatIfId,
   } = useData();
 
-  // Sync WRZ tab with filterCriteria.wrz
   useEffect(() => {
     if (activeWRZ && filterCriteria.wrz !== activeWRZ) {
       setFilterCriteria((prev) => ({
@@ -23,7 +22,6 @@ export const useChartData = () => {
     }
   }, [activeWRZ, filterCriteria.wrz, setFilterCriteria]);
 
-  // Set default scenario filters when demand data is loaded
   useEffect(() => {
     if (demandData.length > 0 && !filterCriteria.planningScenario) {
       const newPlanningScenarios = Array.from(
@@ -68,7 +66,8 @@ export const useChartData = () => {
   const simulatedDemandForChart = useMemo(() => {
     if (!activeSimulation || !demandForChart) return null;
 
-    const { growthRate, startYear } = activeSimulation.config;
+    const { growthRate, startYear, demandReduction } = activeSimulation.config;
+
     const adjusted = {
       ...demandForChart,
       yearlyDemand: { ...demandForChart.yearlyDemand },
@@ -81,7 +80,16 @@ export const useChartData = () => {
       if (year >= startYear) {
         const base = Number(demandForChart.yearlyDemand[yearStr]) || 0;
         const yearsSince = year - startYear;
-        const newValue = base * Math.pow(factor, yearsSince);
+        let newValue = base * Math.pow(factor, yearsSince);
+
+        if (
+          demandReduction &&
+          year >= demandReduction.startYear &&
+          demandReduction.percent > 0
+        ) {
+          newValue = newValue * (1 - demandReduction.percent / 100);
+        }
+
         adjusted.yearlyDemand[yearStr] = newValue;
       }
     }

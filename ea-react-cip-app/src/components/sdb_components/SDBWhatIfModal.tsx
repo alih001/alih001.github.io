@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { useData } from "../../contexts/useDataContext";
 import WhatIfSelector from "./SDBWhatIfSelector";
+import { WhatIfScenario } from "../../types/public-types";
 
 const Overlay = styled.div`
   position: fixed;
@@ -63,21 +64,41 @@ interface WhatIfModalProps {
 }
 
 const WhatIfModal: React.FC<WhatIfModalProps> = ({ onClose }) => {
-  const { simulation, setSimulation } = useData();
-  const { whatIfScenarios, setWhatIfScenarios, setActiveWhatIfId } = useData();
+  const {
+    simulation,
+    setSimulation,
+    whatIfScenarios,
+    setWhatIfScenarios,
+    setActiveWhatIfId,
+  } = useData();
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [demandReductionPercent, setDemandReductionPercent] =
+    useState<number>(0);
+  const [demandReductionStartYear, setDemandReductionStartYear] =
+    useState<number>(2030);
+  const [droughtOverride, setDroughtOverride] = useState<
+    "None" | "1/100" | "1/200" | "1/500"
+  >("None");
+  const [assetDeterioration, setAssetDeterioration] = useState<number>(0);
 
   const handleSaveScenario = () => {
     const id = crypto.randomUUID();
-    const newScenario = {
+    const newScenario: WhatIfScenario = {
       id,
       name,
       description,
       createdAt: Date.now(),
       config: {
-        startYear: simulation.startYear,
         growthRate: simulation.growthRate,
+        startYear: simulation.startYear,
+        demandReduction: {
+          percent: demandReductionPercent,
+          startYear: demandReductionStartYear,
+        },
+        droughtOverride,
+        assetDeterioration,
       },
     };
 
@@ -115,6 +136,40 @@ const WhatIfModal: React.FC<WhatIfModalProps> = ({ onClose }) => {
           onChange={handleChange}
         />
 
+        <h4>Advanced Options</h4>
+
+        <Label>Demand Reduction (%)</Label>
+        <Input
+          type="number"
+          value={demandReductionPercent}
+          onChange={(e) => setDemandReductionPercent(Number(e.target.value))}
+        />
+
+        <Label>Demand Reduction Start Year</Label>
+        <Input
+          type="number"
+          value={demandReductionStartYear}
+          onChange={(e) => setDemandReductionStartYear(Number(e.target.value))}
+        />
+
+        <Label>Drought Override</Label>
+        <select
+          value={droughtOverride}
+          onChange={(e) => setDroughtOverride(e.target.value as any)}
+        >
+          <option value="None">None</option>
+          <option value="1/100">1/100</option>
+          <option value="1/200">1/200</option>
+          <option value="1/500">1/500</option>
+        </select>
+
+        <Label>Asset Deterioration (% per year)</Label>
+        <Input
+          type="number"
+          value={assetDeterioration}
+          onChange={(e) => setAssetDeterioration(Number(e.target.value))}
+        />
+
         <Label>
           <input
             type="checkbox"
@@ -124,6 +179,7 @@ const WhatIfModal: React.FC<WhatIfModalProps> = ({ onClose }) => {
           />{" "}
           Enable Simulation Mode
         </Label>
+
         <Label>Scenario Name</Label>
         <Input value={name} onChange={(e) => setName(e.target.value)} />
 
@@ -132,6 +188,7 @@ const WhatIfModal: React.FC<WhatIfModalProps> = ({ onClose }) => {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
+
         <WhatIfSelector />
 
         <Row>

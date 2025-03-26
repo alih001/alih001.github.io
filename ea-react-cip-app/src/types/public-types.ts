@@ -19,6 +19,26 @@ export interface WhatIfScenario {
   config: {
     growthRate: number;
     startYear: number;
+
+    assetDeterioration?: number; // global DO decay (% per year)
+
+    // Optional DO % decay per asset
+    assetOverrides?: Record<
+      string,
+      {
+        doPercentage?: number;
+        decayRate?: number;
+      }
+    >;
+
+    // Demand reduction program
+    demandReduction?: {
+      percent: number;
+      startYear: number;
+    };
+
+    // Override drought scenario
+    droughtOverride?: "None" | "1/500" | "1/200" | "1/100";
   };
 }
 

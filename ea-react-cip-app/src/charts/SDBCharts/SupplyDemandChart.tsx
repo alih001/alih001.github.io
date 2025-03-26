@@ -1,3 +1,4 @@
+// DemandSupplyChart.tsx
 import React from "react";
 import { scaleBand, scaleLinear } from "@visx/scale";
 import { Bar } from "@visx/shape";
@@ -10,7 +11,7 @@ import { getColourForAsset } from "../../utils/getColourForAsset";
 import { DemandSupplyChartProps } from "../../types/public-types";
 import { useTooltip, useTooltipInPortal } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
-
+import { useChartData } from "../../hooks/useChartData";
 const margin = { top: 20, right: 30, bottom: 50, left: 50 };
 const width = 800;
 const height = 400;
@@ -21,8 +22,9 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
   simulatedDemandData,
   drought,
 }) => {
-  const { customAssets, getCurrentWRZState, simulation } = useData();
+  const { customAssets, getCurrentWRZState } = useData();
   const { selectedAssets, assetSettings } = getCurrentWRZState();
+  const { activeSimulation } = useChartData();
 
   const {
     tooltipData,
@@ -38,12 +40,6 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
   });
 
   if (!demandData || !supplyData) {
-    console.log("Rendering Chart", {
-      demandData,
-      supplyData,
-      simulatedDemandData,
-    });
-
     return <div>No data available for the selected filters.</div>;
   }
 
@@ -58,10 +54,13 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
   const stackedSupplyData = years.map((yearStr) => {
     const year = Number(yearStr);
     const baseSupply = supplyData.yearlySupply[yearStr] || 0;
+    const effectiveDrought =
+      activeSimulation?.config?.droughtOverride ?? drought;
     const droughtAdjustment =
-      (drought !== "None" &&
-        supplyData.droughtAdjustments?.[drought]?.[yearStr]) ||
+      (effectiveDrought !== "None" &&
+        supplyData.droughtAdjustments?.[effectiveDrought]?.[yearStr]) ||
       0;
+
     const baseEffective = Math.max(0, baseSupply - droughtAdjustment);
 
     const segments = [
@@ -76,10 +75,13 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
         assetRows.length > 0
           ? Math.min(...assetRows.map((row) => row.year))
           : 2020;
+
       const settings = assetSettings[assetName] || {
         doPercentage: 100,
         startYear: baseStartYear,
       };
+
+      const doPercentage = settings.doPercentage;
       const shift = settings.startYear - baseStartYear;
       const effectiveYear = year - shift;
       let effectiveAssetDO = 0;
@@ -89,10 +91,22 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
             assetName
           ]?.do || 0;
       }
-      effectiveAssetDO = effectiveAssetDO * (settings.doPercentage / 100);
+
+      effectiveAssetDO = effectiveAssetDO * (doPercentage / 100);
+
+      const yearsSinceStart = Math.max(0, year - settings.startYear);
+      // const decayRate = activeSimulation?.config.assetDeterioration ?? 0;
+      const decayRate = Math.min(
+        activeSimulation?.config.assetDeterioration ?? 0,
+        20
+      ); // 20% max
+
+      const decayedDO =
+        effectiveAssetDO * Math.pow(1 - decayRate / 100, yearsSinceStart);
+
       segments.push({
         label: assetName,
-        value: effectiveAssetDO,
+        value: decayedDO,
         color: getColourForAsset(index, selectedAssetsArray.length),
       });
     });
@@ -264,96 +278,6 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
           Year
         </text>
       </svg>
-
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "12px",
-          marginTop: "1rem",
-        }}
-      >
-        {[
-          { label: "Base Supply", color: "orange" },
-          ...selectedAssetsArray.map((assetName, index) => ({
-            label: assetName,
-            color: getColourForAsset(index, selectedAssetsArray.length),
-          })),
-          simulation.active
-            ? {
-                label: "Simulated Demand",
-                color: "purple",
-                dashed: true,
-              }
-            : null,
-        ]
-          .filter(Boolean)
-          .map((item) => (
-            <div
-              key={item.label}
-              style={{ display: "flex", alignItems: "center", gap: "6px" }}
-            >
-              {item.dashed ? (
-                <svg width={16} height={8}>
-                  <line
-                    x1={0}
-                    y1={4}
-                    x2={16}
-                    y2={4}
-                    stroke={item.color}
-                    strokeWidth={2}
-                    strokeDasharray="4,2"
-                  />
-                </svg>
-              ) : (
-                <div
-                  style={{
-                    width: "16px",
-                    height: "16px",
-                    backgroundColor: item.color,
-                    borderRadius: "3px",
-                  }}
-                />
-              )}
-              <span style={{ fontSize: "12px" }}>{item.label}</span>
-            </div>
-          ))}
-      </div>
-
-      {tooltipOpen && tooltipData && (
-        <TooltipInPortal
-          top={tooltipTop}
-          left={tooltipLeft}
-          applyPositionStyle
-          style={{
-            position: "absolute",
-            backgroundColor: "white",
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "0.75rem",
-            fontSize: "12px",
-            boxShadow: "0px 2px 6px rgba(0,0,0,0.1)",
-            zIndex: 9999,
-            maxWidth: "240px",
-          }}
-        >
-          <div>
-            <strong>Year: {tooltipData.year}</strong>
-          </div>
-          <div>Demand: {tooltipData.demand.toFixed(2)} Ml/d</div>
-          <div>Total Supply: {tooltipData.totalSupply.toFixed(2)} Ml/d</div>
-          <div style={{ marginTop: "0.5rem" }}>
-            {tooltipData.segments.map((seg, i) => (
-              <div key={i}>
-                <span style={{ color: seg.color, fontWeight: 600 }}>
-                  {seg.label}:
-                </span>{" "}
-                {seg.value.toFixed(2)} Ml/d
-              </div>
-            ))}
-          </div>
-        </TooltipInPortal>
-      )}
     </div>
   );
 };
