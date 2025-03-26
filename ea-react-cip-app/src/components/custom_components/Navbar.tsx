@@ -28,26 +28,26 @@ const MenuList = styled.ul`
 `;
 
 const MenuItem = styled.li`
-  margin: 8px 12px; /* provides some spacing around the item */
+  margin: 8px 12px;
 
   a {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 12px; /* inner padding so the blue highlight doesn't run edge-to-edge */
+    padding: 8px 12px;
     color: #fff;
     text-decoration: none;
     border-radius: 6px;
     transition: background-color 0.2s ease;
 
     &:hover {
-      background-color: #3498db; /* blue on hover */
+      background-color: #3498db;
     }
 
-    ${({ active }) =>
-      active &&
+    ${({ $active }) =>
+      $active &&
       `
-        background-color: #3498db; /* blue when active */
+        background-color: #3498db;
       `}
   }
 `;
@@ -58,31 +58,31 @@ const CustomSidebar = () => {
   return (
     <SidebarContainer>
       <MenuList>
-        <MenuItem active={location.pathname === "/"}>
+        <MenuItem $active={location.pathname === "/"}>
           <Link to="/">
             <FaHome />
             Home Page
           </Link>
         </MenuItem>
-        <MenuItem active={location.pathname === "/SDBDashboard"}>
+        <MenuItem $active={location.pathname === "/SDBDashboard"}>
           <Link to="/SDBDashboard">
             <FaChartLine />
             Supply-Demand Dashboard
           </Link>
         </MenuItem>
-        <MenuItem active={location.pathname === "/Tables"}>
+        <MenuItem $active={location.pathname === "/Tables"}>
           <Link to="/Tables">
             <FaTable />
             Tables
           </Link>
         </MenuItem>
-        <MenuItem active={location.pathname === "/SystemsThinking"}>
+        <MenuItem $active={location.pathname === "/SystemsThinking"}>
           <Link to="/SystemsThinking">
             <FaProjectDiagram />
             Systems Thinking
           </Link>
         </MenuItem>
-        <MenuItem active={location.pathname === "/AssetDashboard"}>
+        <MenuItem $active={location.pathname === "/AssetDashboard"}>
           <Link to="/AssetDashboard">
             <FaCogs />
             Asset Dashboard

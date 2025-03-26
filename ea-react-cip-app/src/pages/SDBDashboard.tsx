@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import styled, { createGlobalStyle } from "styled-components";
-import { Button } from "react-bootstrap";
 import DataImportButton from "../components/sdb_components/SDBFileUpload";
 import FilterControls from "../components/sdb_components/FilterControls";
-import ScenarioManager from "../components/sdb_components/ScenarioManager";
-import AssetSelector from "../components/sdb_components/SDBAssetSelector";
 import AssetSelectorButton from "../components/sdb_components/SDBAssetSelectorButton";
 import ScenarioManagerButton from "../components/sdb_components/SDBScenarioManagerContent";
+import WhatIfButton from "../components/sdb_components/SDBWhatIfButton";
 import DemandSupplyChart from "../charts/SDBCharts/SupplyDemandChart";
 import CostChart from "../charts/SDBCharts/CostChart";
 import { useFilterOptions } from "../hooks/useFilterOptions";
@@ -16,7 +14,7 @@ import AssetOverview from "../components/sdb_components/SDBAssetOverview";
 import WRZTabs from "../components/sdb_components/SDBWRZTabs";
 import WhatIfModal from "../components/sdb_components/SDBWhatIfModal";
 import BaseCard from "../components/sdb_components/sdb_cards/SDBBaseCard";
-import WhatIfButton from "../components/sdb_components/SDBWhatIfButton";
+
 // Global styles for fonts, background, etc.
 const GlobalStyle = createGlobalStyle`
   body {
@@ -34,15 +32,10 @@ const DashboardContainer = styled.div`
   min-height: 100vh;
 `;
 
-// Header styles remain unchanged
-const Header = styled.header`
-  background: #fff;
-  border-bottom: 1px solid #e5e5e5;
-  padding: 1rem 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+const DataImportWrapper = styled.div`
+  width: 100%;
+  /* Optionally mimic BaseCard padding */
+  padding: 16px;
 `;
 
 // Footer styles remain unchanged
@@ -61,8 +54,8 @@ const MainContent = styled.main`
   padding: 16px 2rem;
 `;
 
-// Side panel for controls such as file upload, filtering, and scenario management
-const SidePanel = styled.div`
+// A new container for controls with consistent spacing.
+const ControlsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -81,32 +74,26 @@ const Dashboard = () => {
     <>
       <GlobalStyle />
       <DashboardContainer>
-        <Header>
-          <h1>Supply-Demand Dashboard</h1>
-          {/* Additional header actions can go here */}
-        </Header>
         <MainContent>
           {/* Column 1: Side Panel with controls */}
-          <SidePanel>
-            <DataImportButton />
-            <BaseCard>
-              <h3>Filter Controls</h3>
-              <FilterControls
-                criteria={filterCriteria}
-                setCriteria={setFilterCriteria}
-                zones={zones}
-                planningScenarios={planningScenarios}
-                growthForecasts={growthForecasts}
-              />
-            </BaseCard>
+          <ControlsContainer>
+            <DataImportWrapper>
+              <DataImportButton />
+            </DataImportWrapper>
+            <FilterControls
+              criteria={filterCriteria}
+              setCriteria={setFilterCriteria}
+              zones={zones}
+              planningScenarios={planningScenarios}
+              growthForecasts={growthForecasts}
+            />
             <AssetSelectorButton allAssets={allAssets} />
             <ScenarioManagerButton />
             <WhatIfButton />
-          </SidePanel>
+          </ControlsContainer>
 
           {/* Column 2: Charts */}
           <BaseCard>
-            <h3>Charts</h3>
             <WRZTabs />
             <DemandSupplyChart
               demandData={demandForChart}
@@ -116,9 +103,9 @@ const Dashboard = () => {
             />
             <CostChart customAssets={customAssets} />
           </BaseCard>
+
           {/* Column 3: Asset Overview */}
           <BaseCard>
-            <h3>Asset Overview</h3>
             <AssetOverview />
           </BaseCard>
           {showWhatIfModal && (
