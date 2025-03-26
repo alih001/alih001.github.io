@@ -25,14 +25,14 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-// Overall dashboard layout using CSS Grid
+// Overall dashboard layout using CSS Grid with 3 columns
 const DashboardContainer = styled.div`
   display: grid;
   grid-template-rows: auto 1fr auto;
   min-height: 100vh;
 `;
 
-// A modern, light header with a subtle border and shadow
+// Header styles remain unchanged
 const Header = styled.header`
   background: #fff;
   border-bottom: 1px solid #e5e5e5;
@@ -43,7 +43,7 @@ const Header = styled.header`
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 `;
 
-// A simple footer that mirrors the header style
+// Footer styles remain unchanged
 const Footer = styled.footer`
   background: #fff;
   border-top: 1px solid #e5e5e5;
@@ -51,10 +51,10 @@ const Footer = styled.footer`
   text-align: center;
 `;
 
-// Main content area divided into a side panel (for controls) and a main panel (for charts, etc.)
+// Main content area divided into 3 columns: controls, charts, and asset overview
 const MainContent = styled.main`
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: 300px 1fr 1fr;
   gap: 16px;
   padding: 16px 2rem;
 `;
@@ -64,21 +64,6 @@ const SidePanel = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
-`;
-
-// Main panel for charts and asset overview components
-const MainPanel = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-`;
-
-// Unified card component with subtle shadow and rounded corners
-const Card = styled.div`
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 16px;
 `;
 
 const Dashboard = () => {
@@ -96,15 +81,16 @@ const Dashboard = () => {
       <DashboardContainer>
         <Header>
           <h1>Supply-Demand Dashboard</h1>
-          {/* Additional header actions (user profile, notifications, etc.) can go here */}
+          {/* Additional header actions can go here */}
         </Header>
         <MainContent>
+          {/* Column 1: Side Panel with controls */}
           <SidePanel>
-            <Card>
+            <BaseCard>
               <h3>Data Import</h3>
               <ExcelFileUpload />
-            </Card>
-            <Card>
+            </BaseCard>
+            <BaseCard>
               <h3>Filter Controls</h3>
               <FilterControls
                 criteria={filterCriteria}
@@ -113,42 +99,42 @@ const Dashboard = () => {
                 planningScenarios={planningScenarios}
                 growthForecasts={growthForecasts}
               />
-            </Card>
-            <Card>
+            </BaseCard>
+            <BaseCard>
               <h3>Asset Selector</h3>
               <AssetSelector allAssets={allAssets} />
-            </Card>
-            <Card>
+            </BaseCard>
+            <BaseCard>
               <h3>Scenario Manager</h3>
               <ScenarioManager
                 activeFilterCriteria={filterCriteria}
                 onLoadScenario={(criteria) => setFilterCriteria(criteria)}
               />
-            </Card>
-            <Card>
+            </BaseCard>
+            <BaseCard>
               <h3>What-If Simulator</h3>
               <Button onClick={() => setShowWhatIfModal(true)}>
                 Open Simulator
               </Button>
-            </Card>
+            </BaseCard>
           </SidePanel>
-          <MainPanel>
-            <BaseCard>
-              <h3>Charts</h3>
-              <WRZTabs />
-              <DemandSupplyChart
-                demandData={demandForChart}
-                supplyData={supplyForChart}
-                simulatedDemandData={simulatedDemandForChart}
-                drought={filterCriteria.drought}
-              />
-              <CostChart customAssets={customAssets} />
-            </BaseCard>
-            <BaseCard>
-              <h3>Asset Overview</h3>
-              <AssetOverview />
-            </BaseCard>
-          </MainPanel>
+          {/* Column 2: Charts */}
+          <BaseCard>
+            <h3>Charts</h3>
+            <WRZTabs />
+            <DemandSupplyChart
+              demandData={demandForChart}
+              supplyData={supplyForChart}
+              simulatedDemandData={simulatedDemandForChart}
+              drought={filterCriteria.drought}
+            />
+            <CostChart customAssets={customAssets} />
+          </BaseCard>
+          {/* Column 3: Asset Overview */}
+          <BaseCard>
+            <h3>Asset Overview</h3>
+            <AssetOverview />
+          </BaseCard>
           {showWhatIfModal && (
             <WhatIfModal onClose={() => setShowWhatIfModal(false)} />
           )}
