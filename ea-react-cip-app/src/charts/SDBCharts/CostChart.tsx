@@ -1,4 +1,3 @@
-// CostChart.tsx
 import React from "react";
 import styled from "styled-components";
 import { scaleBand, scaleLinear } from "@visx/scale";
@@ -19,9 +18,11 @@ const ChartContainer = styled.div`
   margin-bottom: 1rem;
 `;
 
-const margin = { top: 20, right: 30, bottom: 50, left: 50 };
+const margin = { top: 20, right: 30, bottom: 50, left: 85 };
 const chartWidth = 600;
 const chartHeight = 300;
+const svgWidth = margin.left + chartWidth + margin.right;
+const svgHeight = margin.top + chartHeight + margin.bottom;
 
 const CostChart: React.FC<CostChartProps> = ({ customAssets }) => {
   const { getCurrentWRZState } = useData();
@@ -65,7 +66,7 @@ const CostChart: React.FC<CostChartProps> = ({ customAssets }) => {
   const costTotals = stackedCostData.map((row) =>
     row.segments.reduce((sum, seg) => sum + seg.value, 0)
   );
-  const maxCost = Math.max(...costTotals);
+  const maxCost = Math.max(...costTotals, 1); // Ensure non-zero for scale
 
   // Create scales.
   const xScale = scaleBand<number>({
@@ -80,11 +81,8 @@ const CostChart: React.FC<CostChartProps> = ({ customAssets }) => {
 
   return (
     <ChartContainer>
-      <svg
-        width={margin.left + chartWidth + margin.right}
-        height={margin.top + chartHeight + margin.bottom}
-      >
-        <Group left={0} top={0}>
+      <svg width={svgWidth} height={svgHeight}>
+        <Group>
           {stackedCostData.map((data) => {
             const x = xScale(data.year);
             let cumulative = 0;
@@ -130,6 +128,27 @@ const CostChart: React.FC<CostChartProps> = ({ customAssets }) => {
             dx: "-0.25em",
           })}
         />
+        {/* Y Axis Label */}
+        <text
+          x={-chartHeight / 2 - margin.top}
+          y={15}
+          transform="rotate(-90)"
+          textAnchor="middle"
+          fill="#333"
+          fontSize={12}
+        >
+          Cost
+        </text>
+        {/* X Axis Label */}
+        <text
+          x={svgWidth / 2}
+          y={svgHeight - 10}
+          textAnchor="middle"
+          fill="#333"
+          fontSize={12}
+        >
+          Year
+        </text>
       </svg>
     </ChartContainer>
   );
