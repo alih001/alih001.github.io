@@ -1,43 +1,34 @@
+// DataImportButton.tsx
 import React from "react";
 import styled from "styled-components";
+import { FaUpload } from "react-icons/fa";
 import ExcelJS from "exceljs";
-import {
-  DemandRow,
-  SupplyRow,
-  CustomAssetRow,
-  AssetColumns,
-  WRZDataMap,
-  AssetToWRZMap,
-  AssetDetailsMap,
-} from "../../types/public-types";
 import { useData } from "../../contexts/useDataContext";
-
-const UploadContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  align-items: flex-start;
-`;
 
 const HiddenInput = styled.input`
   display: none;
 `;
 
-const UploadLabel = styled.label`
-  background: #007bff;
+const StyledButton = styled.label`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 1rem;
+  background-color: #007bff;
   color: #fff;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  border-radius: 8px;
+  font-size: 1.1rem;
   cursor: pointer;
-  font-size: 1rem;
-  transition: background 0.2s ease;
+  gap: 0.5rem;
+  transition: background-color 0.2s ease;
 
   &:hover {
-    background: #0056b3;
+    background-color: #0056b3;
   }
 `;
 
-const ExcelFileUpload: React.FC = () => {
+const DataImportButton: React.FC = () => {
   const {
     setDemandData,
     setSupplyData,
@@ -64,12 +55,12 @@ const ExcelFileUpload: React.FC = () => {
       // --- Process Demand Sheet ---
       const demandSheet = workbook.getWorksheet("Demand");
       if (demandSheet) {
-        const tempDemand: DemandRow[] = [];
+        const tempDemand = [];
         const headerRow = demandSheet.getRow(1);
-        const yearHeaders: { col: number; year: string }[] = [];
+        const yearHeaders = [];
         headerRow.eachCell((cell, colNumber) => {
           if (colNumber >= 7) {
-            let headerValue: string = "";
+            let headerValue = "";
             if (typeof cell.value === "string") {
               headerValue = cell.value;
             } else if (typeof cell.value === "number") {
@@ -83,7 +74,7 @@ const ExcelFileUpload: React.FC = () => {
           const zone = row.getCell("B").value as string;
           const planningScenario = row.getCell("C").value as string;
           const growthForecast = row.getCell("D").value as string;
-          const yearlyDemand: Record<string, number> = {};
+          const yearlyDemand = {};
           yearHeaders.forEach(({ col, year }) => {
             const cell = row.getCell(col);
             let value = 0;
@@ -106,7 +97,7 @@ const ExcelFileUpload: React.FC = () => {
         setWRZList(zones);
         setActiveWRZ(zones[0]);
 
-        const initialWRZData: WRZDataMap = {};
+        const initialWRZData = {};
         zones.forEach((zone) => {
           initialWRZData[zone] = {
             selectedAssets: new Set(),
@@ -122,18 +113,7 @@ const ExcelFileUpload: React.FC = () => {
       // --- Process Supply Sheet ---
       const sheet = workbook.getWorksheet("Supply");
       if (sheet) {
-        const groups: {
-          [key: string]: {
-            wrz: string;
-            scenario: string;
-            yearlySupply: Record<string, number>;
-            droughtAdjustments: {
-              "1/500": Record<string, number>;
-              "1/200": Record<string, number>;
-              "1/100": Record<string, number>;
-            };
-          };
-        } = {};
+        const groups = {};
 
         sheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
           if (rowNumber === 1) return;
@@ -191,7 +171,7 @@ const ExcelFileUpload: React.FC = () => {
       // --- Process Asset Mapping Sheet ---
       const mappingSheet = workbook.getWorksheet("AssetMapping");
       if (mappingSheet) {
-        const map: AssetToWRZMap = {};
+        const map = {};
 
         mappingSheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
           if (rowNumber === 1) return; // skip header
@@ -211,7 +191,7 @@ const ExcelFileUpload: React.FC = () => {
       // --- Process Asset Details Sheet ---
       const detailsSheet = workbook.getWorksheet("AssetDetails");
       if (detailsSheet) {
-        const map: AssetDetailsMap = {};
+        const map = {};
 
         detailsSheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
           if (rowNumber === 1) return; // skip header
@@ -233,11 +213,7 @@ const ExcelFileUpload: React.FC = () => {
       // --- Process CustomAssets Sheet ---
       const customAssetsSheet = workbook.getWorksheet("CustomAssets");
       if (customAssetsSheet) {
-        interface AssetColumns {
-          doCol?: number;
-          costCol?: number;
-        }
-        const assetMap: { [assetName: string]: AssetColumns } = {};
+        const assetMap = {};
         const headerRow = customAssetsSheet.getRow(1);
         headerRow.eachCell((cell, colNumber) => {
           if (colNumber === 1) return;
@@ -254,15 +230,13 @@ const ExcelFileUpload: React.FC = () => {
             }
           }
         });
-        const tempAssets: CustomAssetRow[] = [];
+        const tempAssets = [];
         customAssetsSheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
           if (rowNumber === 1) return;
           const yearCell = row.getCell(1).value;
           const year =
             typeof yearCell === "number" ? yearCell : Number(yearCell) || 0;
-          const assetData: {
-            [assetName: string]: { do: number; cost: number };
-          } = {};
+          const assetData = {};
           for (const assetName of Object.keys(assetMap)) {
             const { doCol, costCol } = assetMap[assetName];
             const doVal = doCol ? row.getCell(doCol).value : 0;
@@ -282,16 +256,19 @@ const ExcelFileUpload: React.FC = () => {
   };
 
   return (
-    <UploadContainer>
+    <>
       <HiddenInput
         type="file"
         accept=".xlsx, .xls"
         onChange={handleFileUpload}
-        id="file-upload"
+        id="data-import"
       />
-      <UploadLabel htmlFor="file-upload">Upload Excel File</UploadLabel>
-    </UploadContainer>
+      <StyledButton htmlFor="data-import">
+        <FaUpload />
+        Data Import
+      </StyledButton>
+    </>
   );
 };
 
-export default ExcelFileUpload;
+export default DataImportButton;

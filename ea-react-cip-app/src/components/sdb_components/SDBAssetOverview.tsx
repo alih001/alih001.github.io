@@ -5,7 +5,7 @@ import AssetCard from "./sdb_cards/SDBAssetCard";
 
 const OverviewGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
 `;
 

@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import { Button } from "react-bootstrap";
-import ExcelFileUpload from "../components/sdb_components/SDBFileUpload";
+import DataImportButton from "../components/sdb_components/SDBFileUpload";
 import FilterControls from "../components/sdb_components/FilterControls";
 import ScenarioManager from "../components/sdb_components/ScenarioManager";
 import AssetSelector from "../components/sdb_components/SDBAssetSelector";
+import AssetSelectorButton from "../components/sdb_components/SDBAssetSelectorButton";
+import ScenarioManagerButton from "../components/sdb_components/SDBScenarioManagerContent";
 import DemandSupplyChart from "../charts/SDBCharts/SupplyDemandChart";
 import CostChart from "../charts/SDBCharts/CostChart";
 import { useFilterOptions } from "../hooks/useFilterOptions";
@@ -14,7 +16,7 @@ import AssetOverview from "../components/sdb_components/SDBAssetOverview";
 import WRZTabs from "../components/sdb_components/SDBWRZTabs";
 import WhatIfModal from "../components/sdb_components/SDBWhatIfModal";
 import BaseCard from "../components/sdb_components/sdb_cards/SDBBaseCard";
-
+import WhatIfButton from "../components/sdb_components/SDBWhatIfButton";
 // Global styles for fonts, background, etc.
 const GlobalStyle = createGlobalStyle`
   body {
@@ -86,10 +88,7 @@ const Dashboard = () => {
         <MainContent>
           {/* Column 1: Side Panel with controls */}
           <SidePanel>
-            <BaseCard>
-              <h3>Data Import</h3>
-              <ExcelFileUpload />
-            </BaseCard>
+            <DataImportButton />
             <BaseCard>
               <h3>Filter Controls</h3>
               <FilterControls
@@ -100,24 +99,11 @@ const Dashboard = () => {
                 growthForecasts={growthForecasts}
               />
             </BaseCard>
-            <BaseCard>
-              <h3>Asset Selector</h3>
-              <AssetSelector allAssets={allAssets} />
-            </BaseCard>
-            <BaseCard>
-              <h3>Scenario Manager</h3>
-              <ScenarioManager
-                activeFilterCriteria={filterCriteria}
-                onLoadScenario={(criteria) => setFilterCriteria(criteria)}
-              />
-            </BaseCard>
-            <BaseCard>
-              <h3>What-If Simulator</h3>
-              <Button onClick={() => setShowWhatIfModal(true)}>
-                Open Simulator
-              </Button>
-            </BaseCard>
+            <AssetSelectorButton allAssets={allAssets} />
+            <ScenarioManagerButton />
+            <WhatIfButton />
           </SidePanel>
+
           {/* Column 2: Charts */}
           <BaseCard>
             <h3>Charts</h3>
