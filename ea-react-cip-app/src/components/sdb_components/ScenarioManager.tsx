@@ -2,7 +2,64 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { useScenarioManager } from "../../hooks/useScenarioManager";
 import ExportButton from "./SDBExportToExcel";
-// Styled modal components
+
+const Container = styled.div`
+  padding: 1rem;
+`;
+
+const ScenarioList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+`;
+
+const ScenarioItem = styled.li`
+  background: #f9f9f9;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid #e5e5e5;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const ScenarioInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`;
+
+const ScenarioActions = styled.div`
+  display: flex;
+  gap: 0.5rem;
+`;
+
+const Button = styled.button<{ variant?: string }>`
+  background: ${(props) =>
+    props.variant === "danger"
+      ? "#dc3545"
+      : props.variant === "success"
+      ? "#28a745"
+      : "#007bff"};
+  border: none;
+  color: #fff;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: ${(props) =>
+      props.variant === "danger"
+        ? "#c82333"
+        : props.variant === "success"
+        ? "#218838"
+        : "#0056b3"};
+  }
+`;
+
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -20,9 +77,41 @@ const ModalContent = styled.div`
   background: #fff;
   padding: 24px;
   border-radius: 8px;
-  max-width: 400px;
   width: 100%;
+  max-width: 400px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+`;
+
+const FormGroup = styled.div`
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+`;
+
+const Label = styled.label`
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+`;
+
+const TextInput = styled.input`
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+`;
+
+const TextArea = styled.textarea`
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  resize: vertical;
+`;
+
+const ModalActions = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
 `;
 
 const ScenarioManagerComponent: React.FC = () => {
@@ -32,12 +121,10 @@ const ScenarioManagerComponent: React.FC = () => {
   const [scenarioName, setScenarioName] = useState("");
   const [scenarioDescription, setScenarioDescription] = useState("");
 
-  // When the user clicks the save button, open the modal.
   const handleSave = () => {
     setShowModal(true);
   };
 
-  // Handle modal form submission.
   const handleModalSave = () => {
     if (!scenarioName) {
       alert("Please enter a scenario name.");
@@ -49,60 +136,65 @@ const ScenarioManagerComponent: React.FC = () => {
     setScenarioDescription("");
   };
 
-  // Function to load a scenario.
   const handleLoad = (scenario: any) => {
     loadScenario(scenario.filterCriteria);
   };
 
   return (
-    <div>
-      <ul>
+    <Container>
+      <ScenarioList>
         {scenarios.map((scenario) => (
-          <li key={scenario.id}>
-            <strong>{scenario.name}</strong> -{" "}
-            {new Date(scenario.createdAt).toLocaleString()}
-            <button onClick={() => handleLoad(scenario)}>Load</button>
-            <button onClick={() => deleteScenario(scenario.id)}>Delete</button>
-          </li>
+          <ScenarioItem key={scenario.id}>
+            <ScenarioInfo>
+              <strong>{scenario.name}</strong>
+              <small>{new Date(scenario.createdAt).toLocaleString()}</small>
+            </ScenarioInfo>
+            <ScenarioActions>
+              <Button onClick={() => handleLoad(scenario)}>Load</Button>
+              <Button
+                variant="danger"
+                onClick={() => deleteScenario(scenario.id)}
+              >
+                Delete
+              </Button>
+            </ScenarioActions>
+          </ScenarioItem>
         ))}
-      </ul>
-      <button onClick={handleSave}>Save Current Scenario</button>
-
+      </ScenarioList>
+      <Button onClick={handleSave}>Save Current Scenario</Button>
       <div style={{ marginTop: "1rem" }}>
         <ExportButton />
       </div>
-
       {showModal && (
         <ModalOverlay onClick={() => setShowModal(false)}>
           <ModalContent onClick={(e) => e.stopPropagation()}>
             <h3>Save Current Scenario</h3>
-            <div>
-              <label>
-                Scenario Name:
-                <input
-                  type="text"
-                  value={scenarioName}
-                  onChange={(e) => setScenarioName(e.target.value)}
-                />
-              </label>
-            </div>
-            <div>
-              <label>
-                Description:
-                <textarea
-                  value={scenarioDescription}
-                  onChange={(e) => setScenarioDescription(e.target.value)}
-                />
-              </label>
-            </div>
-            <div style={{ marginTop: "1rem" }}>
-              <button onClick={handleModalSave}>Save Scenario</button>
-              <button onClick={() => setShowModal(false)}>Cancel</button>
-            </div>
+            <FormGroup>
+              <Label>Scenario Name:</Label>
+              <TextInput
+                type="text"
+                value={scenarioName}
+                onChange={(e) => setScenarioName(e.target.value)}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label>Description:</Label>
+              <TextArea
+                value={scenarioDescription}
+                onChange={(e) => setScenarioDescription(e.target.value)}
+                rows={3}
+              />
+            </FormGroup>
+            <ModalActions>
+              <Button variant="success" onClick={handleModalSave}>
+                Save Scenario
+              </Button>
+              <Button onClick={() => setShowModal(false)}>Cancel</Button>
+            </ModalActions>
           </ModalContent>
         </ModalOverlay>
       )}
-    </div>
+    </Container>
   );
 };
 

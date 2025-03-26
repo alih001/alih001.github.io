@@ -1,5 +1,6 @@
 // DemandSupplyChart.tsx
 import React from "react";
+import styled from "styled-components";
 import { scaleBand, scaleLinear } from "@visx/scale";
 import { Bar } from "@visx/shape";
 import { Group } from "@visx/group";
@@ -12,6 +13,25 @@ import { DemandSupplyChartProps } from "../../types/public-types";
 import { useTooltip, useTooltipInPortal } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
 import { useChartData } from "../../hooks/useChartData";
+
+const ChartContainer = styled.div`
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  margin-bottom: 1rem;
+`;
+
+const StyledTooltip = styled.div`
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.75rem;
+  font-size: 12px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  max-width: 240px;
+`;
 
 const margin = { top: 20, right: 30, bottom: 50, left: 50 };
 const width = 800;
@@ -61,9 +81,7 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
       (effectiveDrought !== "None" &&
         supplyData.droughtAdjustments?.[effectiveDrought]?.[yearStr]) ||
       0;
-
     const baseEffective = Math.max(0, baseSupply - droughtAdjustment);
-
     const segments = [
       { label: "Base Supply", value: baseEffective, color: "orange" },
     ];
@@ -76,12 +94,10 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
         assetRows.length > 0
           ? Math.min(...assetRows.map((row) => row.year))
           : 2020;
-
       const settings = assetSettings[assetName] || {
         doPercentage: 100,
         startYear: baseStartYear,
       };
-
       const doPercentage = settings.doPercentage;
       const shift = settings.startYear - baseStartYear;
       const effectiveYear = year - shift;
@@ -92,9 +108,7 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
             assetName
           ]?.do || 0;
       }
-
       effectiveAssetDO = effectiveAssetDO * (doPercentage / 100);
-
       const yearsSinceStart = Math.max(0, year - settings.startYear);
       const decayRate = Math.min(
         activeSimulation?.config.assetDeterioration ?? 0,
@@ -102,14 +116,12 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
       );
       const decayedDO =
         effectiveAssetDO * Math.pow(1 - decayRate / 100, yearsSinceStart);
-
       segments.push({
         label: assetName,
         value: decayedDO,
         color: getColourForAsset(index, selectedAssetsArray.length),
       });
     });
-
     return { year, segments };
   });
 
@@ -125,7 +137,6 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
     range: [margin.left, width - margin.right],
     padding: 0.2,
   });
-
   const yScale = scaleLinear<number>({
     domain: [0, maxY],
     range: [height - margin.bottom, margin.top],
@@ -148,10 +159,7 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
     : [];
 
   return (
-    <div
-      style={{ position: "relative", zIndex: 9999, overflow: "visible" }}
-      ref={containerRef}
-    >
+    <ChartContainer ref={containerRef}>
       <svg width={width} height={height}>
         <Group>
           {stackedSupplyData.map((data) => {
@@ -164,7 +172,6 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
                   cumulative += seg.value;
                   const y1 = yScale(cumulative);
                   const segHeight = y0 - y1;
-
                   return (
                     <Bar
                       key={`bar-${data.year}-${i}`}
@@ -176,7 +183,6 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
                     />
                   );
                 })}
-
                 <rect
                   x={x}
                   y={margin.top}
@@ -209,7 +215,6 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
             );
           })}
         </Group>
-
         <LinePath
           data={lineData}
           x={(d) => d.x}
@@ -218,7 +223,6 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
           strokeWidth={2}
           curve={curveMonotoneX}
         />
-
         {simLineData.length > 0 && (
           <LinePath
             data={simLineData}
@@ -230,39 +234,36 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
             curve={curveMonotoneX}
           />
         )}
-
         <AxisBottom
           top={height - margin.bottom}
           scale={xScale}
           tickFormat={(d) => d.toString()}
-          stroke="black"
-          tickStroke="black"
+          stroke="#333"
+          tickStroke="#333"
           tickLabelProps={() => ({
-            fill: "black",
+            fill: "#333",
             fontSize: 10,
             textAnchor: "middle",
           })}
         />
-
         <AxisLeft
           left={margin.left}
           scale={yScale}
-          stroke="black"
-          tickStroke="black"
+          stroke="#333"
+          tickStroke="#333"
           tickLabelProps={() => ({
-            fill: "black",
+            fill: "#333",
             fontSize: 10,
             textAnchor: "end",
             dx: "-0.25em",
           })}
         />
-
         <text
           x={-height / 2}
           y={15}
           transform="rotate(-90)"
           textAnchor="middle"
-          fill="black"
+          fill="#333"
           fontSize={12}
         >
           Deployable Output (Ml/d)
@@ -271,48 +272,34 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
           x={width / 2}
           y={height - 5}
           textAnchor="middle"
-          fill="black"
+          fill="#333"
           fontSize={12}
         >
           Year
         </text>
       </svg>
-
       {tooltipOpen && tooltipData && (
-        <TooltipInPortal
-          top={tooltipTop}
-          left={tooltipLeft}
-          applyPositionStyle
-          style={{
-            position: "absolute",
-            backgroundColor: "white",
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            padding: "0.75rem",
-            fontSize: "12px",
-            boxShadow: "0px 2px 6px rgba(0,0,0,0.1)",
-            zIndex: 9999,
-            maxWidth: "240px",
-          }}
-        >
-          <div>
-            <strong>Year: {tooltipData.year}</strong>
-          </div>
-          <div>Demand: {tooltipData.demand.toFixed(2)} Ml/d</div>
-          <div>Total Supply: {tooltipData.totalSupply.toFixed(2)} Ml/d</div>
-          <div style={{ marginTop: "0.5rem" }}>
-            {tooltipData.segments.map((seg, i) => (
-              <div key={i}>
-                <span style={{ color: seg.color, fontWeight: 600 }}>
-                  {seg.label}:
-                </span>{" "}
-                {seg.value.toFixed(2)} Ml/d
-              </div>
-            ))}
-          </div>
+        <TooltipInPortal top={tooltipTop} left={tooltipLeft} applyPositionStyle>
+          <StyledTooltip>
+            <div>
+              <strong>Year: {tooltipData.year}</strong>
+            </div>
+            <div>Demand: {tooltipData.demand.toFixed(2)} Ml/d</div>
+            <div>Total Supply: {tooltipData.totalSupply.toFixed(2)} Ml/d</div>
+            <div style={{ marginTop: "0.5rem" }}>
+              {tooltipData.segments.map((seg, i) => (
+                <div key={i}>
+                  <span style={{ color: seg.color, fontWeight: 600 }}>
+                    {seg.label}:
+                  </span>{" "}
+                  {seg.value.toFixed(2)} Ml/d
+                </div>
+              ))}
+            </div>
+          </StyledTooltip>
         </TooltipInPortal>
       )}
-    </div>
+    </ChartContainer>
   );
 };
 

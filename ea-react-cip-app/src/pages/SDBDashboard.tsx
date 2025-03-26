@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styled from "styled-components";
+import styled, { createGlobalStyle } from "styled-components";
 import { Button } from "react-bootstrap";
 import ExcelFileUpload from "../components/sdb_components/SDBFileUpload";
 import FilterControls from "../components/sdb_components/FilterControls";
@@ -13,122 +13,128 @@ import { useChartData } from "../hooks/useChartData";
 import AssetOverview from "../components/sdb_components/SDBAssetOverview";
 import WRZTabs from "../components/sdb_components/SDBWRZTabs";
 import WhatIfModal from "../components/sdb_components/SDBWhatIfModal";
+import BaseCard from "../components/sdb_components/sdb_cards/SDBBaseCard";
 
-import {
-  DashboardContainer,
-  Header,
-  Footer,
-  MainContent,
-  MainCard,
-  ControlsSubCardGrid,
-  AssetsSubCardGrid,
-  SubCard,
-} from "../components/sdb_components/sdb_cards/SDBDashboardStyles";
-
-const HeroSection = styled.section`
-  background-position: center, bottom left;
-  background-size: cover, cover;
-  height: fit-content;
-  color: #3c474b;
-  padding: 3rem 23rem 1rem;
-  .heroInner {
-    display: flex;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  span {
-    max-width: 80%;
-  }
-  h1 {
-    font-weight: 900;
-    font-size: clamp(2rem, 5.5vw, 3.25rem);
-    line-height: 1.2;
-    margin-bottom: 1.5rem;
+// Global styles for fonts, background, etc.
+const GlobalStyle = createGlobalStyle`
+  body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background: #f4f7fa;
+    color: #333;
   }
 `;
 
-const Background = styled.div`
-  background-image: url("./src/assets/images/home_page_background.png");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
+// Overall dashboard layout using CSS Grid
+const DashboardContainer = styled.div`
+  display: grid;
+  grid-template-rows: auto 1fr auto;
   min-height: 100vh;
 `;
 
-const SDBDashboard: React.FC = () => {
-  const { filterCriteria, setFilterCriteria, customAssets, selectedAssets } =
-    useData();
+// A modern, light header with a subtle border and shadow
+const Header = styled.header`
+  background: #fff;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+`;
 
+// A simple footer that mirrors the header style
+const Footer = styled.footer`
+  background: #fff;
+  border-top: 1px solid #e5e5e5;
+  padding: 1rem 2rem;
+  text-align: center;
+`;
+
+// Main content area divided into a side panel (for controls) and a main panel (for charts, etc.)
+const MainContent = styled.main`
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 16px;
+  padding: 16px 2rem;
+`;
+
+// Side panel for controls such as file upload, filtering, and scenario management
+const SidePanel = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+// Main panel for charts and asset overview components
+const MainPanel = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+// Unified card component with subtle shadow and rounded corners
+const Card = styled.div`
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+`;
+
+const Dashboard = () => {
+  const { filterCriteria, setFilterCriteria, customAssets } = useData();
   const [showWhatIfModal, setShowWhatIfModal] = useState(false);
-
   const { activeWRZ, assetToWRZMap } = useData();
   const allAssets = assetToWRZMap[activeWRZ] || [];
-
   const { zones, planningScenarios, growthForecasts } = useFilterOptions();
-
-  // Use the custom hook to get processed chart data.
   const { demandForChart, supplyForChart, simulatedDemandForChart } =
     useChartData();
 
   return (
-    <div>
-      <Background>
-        <DashboardContainer>
-          <Header>
-            <h1>Supply-Demand Dashboard</h1>
-            {/* Global actions can be added here */}
-          </Header>
-
-          <MainContent>
-            {/* Main Card 1 – Controls */}
-            <MainCard $customwidth="300px">
-              <h2>Controls</h2>
-              {/* You can have sub-cards within this MainCard */}
-              <ControlsSubCardGrid>
-                <SubCard $customwidth="270px">
-                  <p>Import your input data here</p>
-                  <ExcelFileUpload></ExcelFileUpload>
-                </SubCard>
-                <SubCard>
-                  <p>Scenario Manager</p>
-                  <FilterControls
-                    criteria={filterCriteria}
-                    setCriteria={setFilterCriteria}
-                    zones={zones}
-                    planningScenarios={planningScenarios}
-                    growthForecasts={growthForecasts}
-                  />
-                </SubCard>
-
-                <SubCard>
-                  <p>Asset Selector</p>
-                  <AssetSelector allAssets={allAssets} />
-                </SubCard>
-
-                <SubCard>
-                  <p>Scenario Manager</p>
-                  <ScenarioManager
-                    activeFilterCriteria={filterCriteria}
-                    onLoadScenario={(criteria) => setFilterCriteria(criteria)}
-                  />
-                </SubCard>
-
-                <SubCard>
-                  <p>What-If Simulator</p>
-                  <button onClick={() => setShowWhatIfModal(true)}>
-                    Open Simulator
-                  </button>
-                </SubCard>
-
-                {showWhatIfModal && (
-                  <WhatIfModal onClose={() => setShowWhatIfModal(false)} />
-                )}
-              </ControlsSubCardGrid>
-            </MainCard>
-
-            {/* Main Card 2 – Charts */}
-            <MainCard $customwidth="1200px">
-              <h2>Charts</h2>
+    <>
+      <GlobalStyle />
+      <DashboardContainer>
+        <Header>
+          <h1>Supply-Demand Dashboard</h1>
+          {/* Additional header actions (user profile, notifications, etc.) can go here */}
+        </Header>
+        <MainContent>
+          <SidePanel>
+            <Card>
+              <h3>Data Import</h3>
+              <ExcelFileUpload />
+            </Card>
+            <Card>
+              <h3>Filter Controls</h3>
+              <FilterControls
+                criteria={filterCriteria}
+                setCriteria={setFilterCriteria}
+                zones={zones}
+                planningScenarios={planningScenarios}
+                growthForecasts={growthForecasts}
+              />
+            </Card>
+            <Card>
+              <h3>Asset Selector</h3>
+              <AssetSelector allAssets={allAssets} />
+            </Card>
+            <Card>
+              <h3>Scenario Manager</h3>
+              <ScenarioManager
+                activeFilterCriteria={filterCriteria}
+                onLoadScenario={(criteria) => setFilterCriteria(criteria)}
+              />
+            </Card>
+            <Card>
+              <h3>What-If Simulator</h3>
+              <Button onClick={() => setShowWhatIfModal(true)}>
+                Open Simulator
+              </Button>
+            </Card>
+          </SidePanel>
+          <MainPanel>
+            <BaseCard>
+              <h3>Charts</h3>
               <WRZTabs />
               <DemandSupplyChart
                 demandData={demandForChart}
@@ -136,24 +142,23 @@ const SDBDashboard: React.FC = () => {
                 simulatedDemandData={simulatedDemandForChart}
                 drought={filterCriteria.drought}
               />
-
               <CostChart customAssets={customAssets} />
-            </MainCard>
-
-            {/* Main Card 3 – Asset Overview */}
-            <MainCard>
-              <h2>Asset Overview</h2>
+            </BaseCard>
+            <BaseCard>
+              <h3>Asset Overview</h3>
               <AssetOverview />
-            </MainCard>
-          </MainContent>
-
-          <Footer>
-            <p>Hope it was useful.</p>
-          </Footer>
-        </DashboardContainer>
-      </Background>
-    </div>
+            </BaseCard>
+          </MainPanel>
+          {showWhatIfModal && (
+            <WhatIfModal onClose={() => setShowWhatIfModal(false)} />
+          )}
+        </MainContent>
+        <Footer>
+          <p>Hope it was useful.</p>
+        </Footer>
+      </DashboardContainer>
+    </>
   );
 };
 
-export default SDBDashboard;
+export default Dashboard;

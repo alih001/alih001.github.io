@@ -1,5 +1,5 @@
-// src/components/sdb_components/FileUploader.tsx
 import React from "react";
+import styled from "styled-components";
 import ExcelJS from "exceljs";
 import {
   DemandRow,
@@ -11,6 +11,31 @@ import {
   AssetDetailsMap,
 } from "../../types/public-types";
 import { useData } from "../../contexts/useDataContext";
+
+const UploadContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-start;
+`;
+
+const HiddenInput = styled.input`
+  display: none;
+`;
+
+const UploadLabel = styled.label`
+  background: #007bff;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: #0056b3;
+  }
+`;
 
 const ExcelFileUpload: React.FC = () => {
   const {
@@ -163,7 +188,7 @@ const ExcelFileUpload: React.FC = () => {
         setSupplyData(groupedSupplyData);
       }
 
-      // --- Process Asset Mappping Sheet ---
+      // --- Process Asset Mapping Sheet ---
       const mappingSheet = workbook.getWorksheet("AssetMapping");
       if (mappingSheet) {
         const map: AssetToWRZMap = {};
@@ -183,7 +208,7 @@ const ExcelFileUpload: React.FC = () => {
         setAssetToWRZMap(map);
       }
 
-      // --- Process CustomAssets Sheet ---
+      // --- Process Asset Details Sheet ---
       const detailsSheet = workbook.getWorksheet("AssetDetails");
       if (detailsSheet) {
         const map: AssetDetailsMap = {};
@@ -205,6 +230,7 @@ const ExcelFileUpload: React.FC = () => {
         setAssetDetailsMap(map);
       }
 
+      // --- Process CustomAssets Sheet ---
       const customAssetsSheet = workbook.getWorksheet("CustomAssets");
       if (customAssetsSheet) {
         interface AssetColumns {
@@ -256,9 +282,15 @@ const ExcelFileUpload: React.FC = () => {
   };
 
   return (
-    <div>
-      <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
-    </div>
+    <UploadContainer>
+      <HiddenInput
+        type="file"
+        accept=".xlsx, .xls"
+        onChange={handleFileUpload}
+        id="file-upload"
+      />
+      <UploadLabel htmlFor="file-upload">Upload Excel File</UploadLabel>
+    </UploadContainer>
   );
 };
 

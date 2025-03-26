@@ -1,12 +1,37 @@
-// FilterControls.tsx
 import React from "react";
-import { FilterControlsProps } from "../../types/public-types"; // wherever FilterCriteria is defined
+import { FilterControlsProps } from "../../types/public-types";
 import styled from "styled-components";
 
 const FilterContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem; /* adds spacing between the dropdowns */
+  gap: 1.5rem;
+  padding: 1rem;
+`;
+
+const FilterGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const FilterLabel = styled.label`
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #333;
+`;
+
+const Select = styled.select`
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: #007bff;
+  }
 `;
 
 const FilterControls: React.FC<FilterControlsProps> = ({
@@ -18,9 +43,12 @@ const FilterControls: React.FC<FilterControlsProps> = ({
 }) => {
   return (
     <FilterContainer>
-      <label>
-        Planning Scenario:
-        <select
+      <FilterGroup>
+        <FilterLabel htmlFor="planning-scenario">
+          Planning Scenario:
+        </FilterLabel>
+        <Select
+          id="planning-scenario"
           value={criteria.planningScenario}
           onChange={(e) =>
             setCriteria({ ...criteria, planningScenario: e.target.value })
@@ -31,11 +59,13 @@ const FilterControls: React.FC<FilterControlsProps> = ({
               {ps}
             </option>
           ))}
-        </select>
-      </label>
-      <label>
-        Growth Forecast:
-        <select
+        </Select>
+      </FilterGroup>
+
+      <FilterGroup>
+        <FilterLabel htmlFor="growth-forecast">Growth Forecast:</FilterLabel>
+        <Select
+          id="growth-forecast"
           value={criteria.growthForecast}
           onChange={(e) =>
             setCriteria({ ...criteria, growthForecast: e.target.value })
@@ -46,11 +76,13 @@ const FilterControls: React.FC<FilterControlsProps> = ({
               {gf}
             </option>
           ))}
-        </select>
-      </label>
-      <label>
-        Drought Scenario:
-        <select
+        </Select>
+      </FilterGroup>
+
+      <FilterGroup>
+        <FilterLabel htmlFor="drought-scenario">Drought Scenario:</FilterLabel>
+        <Select
+          id="drought-scenario"
           value={criteria.drought}
           onChange={(e) =>
             setCriteria({ ...criteria, drought: e.target.value })
@@ -60,8 +92,8 @@ const FilterControls: React.FC<FilterControlsProps> = ({
           <option value="1/500">1/500</option>
           <option value="1/200">1/200</option>
           <option value="1/100">1/100</option>
-        </select>
-      </label>
+        </Select>
+      </FilterGroup>
     </FilterContainer>
   );
 };
