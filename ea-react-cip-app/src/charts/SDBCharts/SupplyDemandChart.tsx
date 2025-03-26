@@ -12,6 +12,7 @@ import { DemandSupplyChartProps } from "../../types/public-types";
 import { useTooltip, useTooltipInPortal } from "@visx/tooltip";
 import { localPoint } from "@visx/event";
 import { useChartData } from "../../hooks/useChartData";
+
 const margin = { top: 20, right: 30, bottom: 50, left: 50 };
 const width = 800;
 const height = 400;
@@ -95,12 +96,10 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
       effectiveAssetDO = effectiveAssetDO * (doPercentage / 100);
 
       const yearsSinceStart = Math.max(0, year - settings.startYear);
-      // const decayRate = activeSimulation?.config.assetDeterioration ?? 0;
       const decayRate = Math.min(
         activeSimulation?.config.assetDeterioration ?? 0,
         20
-      ); // 20% max
-
+      );
       const decayedDO =
         effectiveAssetDO * Math.pow(1 - decayRate / 100, yearsSinceStart);
 
@@ -278,6 +277,41 @@ const DemandSupplyChart: React.FC<DemandSupplyChartProps> = ({
           Year
         </text>
       </svg>
+
+      {tooltipOpen && tooltipData && (
+        <TooltipInPortal
+          top={tooltipTop}
+          left={tooltipLeft}
+          applyPositionStyle
+          style={{
+            position: "absolute",
+            backgroundColor: "white",
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+            padding: "0.75rem",
+            fontSize: "12px",
+            boxShadow: "0px 2px 6px rgba(0,0,0,0.1)",
+            zIndex: 9999,
+            maxWidth: "240px",
+          }}
+        >
+          <div>
+            <strong>Year: {tooltipData.year}</strong>
+          </div>
+          <div>Demand: {tooltipData.demand.toFixed(2)} Ml/d</div>
+          <div>Total Supply: {tooltipData.totalSupply.toFixed(2)} Ml/d</div>
+          <div style={{ marginTop: "0.5rem" }}>
+            {tooltipData.segments.map((seg, i) => (
+              <div key={i}>
+                <span style={{ color: seg.color, fontWeight: 600 }}>
+                  {seg.label}:
+                </span>{" "}
+                {seg.value.toFixed(2)} Ml/d
+              </div>
+            ))}
+          </div>
+        </TooltipInPortal>
+      )}
     </div>
   );
 };
