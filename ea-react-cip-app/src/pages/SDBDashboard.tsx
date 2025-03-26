@@ -15,6 +15,7 @@ import WRZTabs from "../components/sdb_components/SDBWRZTabs";
 import WhatIfModal from "../components/sdb_components/SDBWhatIfModal";
 import BaseCard from "../components/sdb_components/sdb_cards/SDBBaseCard";
 import { EmptyStateMessage } from "../components/custom_components/EmptyComponent";
+import WRZBreakdownButton from "../components/sdb_components/WRZBreakdownButton";
 // Global styles for fonts, background, etc.
 const GlobalStyle = createGlobalStyle`
   body {
@@ -79,6 +80,7 @@ const Dashboard = () => {
               planningScenarios={planningScenarios}
               growthForecasts={growthForecasts}
             />
+            <WRZBreakdownButton />
             <AssetSelectorButton allAssets={allAssets} />
             <ScenarioManagerButton />
             <WhatIfButton />

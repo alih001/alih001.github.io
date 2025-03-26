@@ -15,6 +15,7 @@ import {
   AssetDetailsMap,
   SimulationState,
   WhatIfScenario,
+  WRZSummary,
 } from "../types/public-types";
 import { Edge } from "reactflow";
 import { ViewMode } from "gantt-task-react";
@@ -33,6 +34,12 @@ type DataContextType = {
   setWRZData: React.Dispatch<React.SetStateAction<WRZDataMap>>;
   getCurrentWRZState: () => WRZState;
   updateCurrentWRZState: (update: Partial<WRZState>) => void;
+
+  wrzSummary: Record<string, WRZSummary>;
+  setWRZSummary: React.Dispatch<
+    React.SetStateAction<Record<string, WRZSummary>>
+  >;
+
   // What-if state testing
   simulation: SimulationState;
   setSimulation: React.Dispatch<React.SetStateAction<SimulationState>>;
@@ -175,6 +182,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     }));
   };
 
+  const [wrzSummary, setWRZSummary] = useState<Record<string, WRZSummary>>({});
+
   // Set up other SDB states
   // What-if scenario
   const [simulation, setSimulation] = useState<SimulationState>({
@@ -272,6 +281,8 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({
     setWhatIfScenarios,
     activeWhatIfId,
     setActiveWhatIfId,
+    wrzSummary,
+    setWRZSummary,
 
     // Other SDB States
     scenarios,

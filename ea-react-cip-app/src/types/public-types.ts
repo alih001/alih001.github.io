@@ -4,6 +4,12 @@ import React, { MouseEventHandler } from "react";
 
 // SDB dashboard types
 
+export interface WRZSummary {
+  leakage: number;
+  legalUnbilled: number;
+  illegalUnbilled: number;
+}
+
 // What-if scenario
 export interface SimulationState {
   active: boolean;

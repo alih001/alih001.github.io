@@ -8,18 +8,18 @@ const TabsContainer = styled.div`
   margin-bottom: 16px;
 `;
 
-const TabButton = styled.button<{ active: boolean }>`
+const TabButton = styled.button<{ $active: boolean }>`
   padding: 8px 16px;
   border-radius: 6px;
-  background-color: ${(props) => (props.active ? "#2e6ef7" : "#f0f0f0")};
-  color: ${(props) => (props.active ? "#fff" : "#333")};
+  background-color: ${(props) => (props.$active ? "#2e6ef7" : "#f0f0f0")};
+  color: ${(props) => (props.$active ? "#fff" : "#333")};
   border: none;
-  font-weight: ${(props) => (props.active ? "600" : "400")};
+  font-weight: ${(props) => (props.$active ? "600" : "400")};
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.2s ease;
 
   &:hover {
-    background-color: ${(props) => (props.active ? "#265bb2" : "#dcdcdc")};
+    background-color: ${(props) => (props.$active ? "#265bb2" : "#dcdcdc")};
     transform: translateY(-2px);
   }
 `;
@@ -34,7 +34,7 @@ const WRZTabs: React.FC = () => {
       {wrzList.map((wrz) => (
         <TabButton
           key={wrz}
-          active={wrz === activeWRZ}
+          $active={wrz === activeWRZ}
           onClick={() => setActiveWRZ(wrz)}
         >
           {wrz}

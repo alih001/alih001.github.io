@@ -38,6 +38,7 @@ const DataImportButton: React.FC = () => {
     setWRZData,
     setAssetToWRZMap,
     setAssetDetailsMap,
+    setWRZSummary,
   } = useData();
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -166,6 +167,35 @@ const DataImportButton: React.FC = () => {
         });
         const groupedSupplyData = Object.values(groups);
         setSupplyData(groupedSupplyData);
+      }
+
+      // --- Process WRZ Summary sheet ---
+      const wrzSummarySheet = workbook.getWorksheet("WRZSummary");
+      if (wrzSummarySheet) {
+        // We'll create a map: wrzSummaryMap[wrzName] = {
+        //   leakage, waterTakenLegal, waterTakenIllegal
+        // }
+        const tempMap: Record<
+          string,
+          { leakage: number; legalUnbilled: number; illegalUnbilled: number }
+        > = {};
+
+        wrzSummarySheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+          if (rowNumber === 1) return; // skip header row
+          const wrzName = row.getCell(1).value?.toString() || "";
+          const leakage = Number(row.getCell(2).value) || 0;
+          const waterTakenLegal = Number(row.getCell(3).value) || 0;
+          const waterTakenIllegal = Number(row.getCell(4).value) || 0;
+
+          tempMap[wrzName] = {
+            leakage,
+            legalUnbilled: waterTakenLegal,
+            illegalUnbilled: waterTakenIllegal,
+          };
+        });
+
+        // store in context
+        setWRZSummary(tempMap);
       }
 
       // --- Process Asset Mapping Sheet ---
