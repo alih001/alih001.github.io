@@ -14,7 +14,7 @@ import AssetOverview from "../components/sdb_components/SDBAssetOverview";
 import WRZTabs from "../components/sdb_components/SDBWRZTabs";
 import WhatIfModal from "../components/sdb_components/SDBWhatIfModal";
 import BaseCard from "../components/sdb_components/sdb_cards/SDBBaseCard";
-
+import { EmptyStateMessage } from "../components/custom_components/EmptyComponent";
 // Global styles for fonts, background, etc.
 const GlobalStyle = createGlobalStyle`
   body {
@@ -36,14 +36,6 @@ const DataImportWrapper = styled.div`
   width: 100%;
   /* Optionally mimic BaseCard padding */
   padding: 16px;
-`;
-
-// Footer styles remain unchanged
-const Footer = styled.footer`
-  background: #fff;
-  border-top: 1px solid #e5e5e5;
-  padding: 1rem 2rem;
-  text-align: center;
 `;
 
 // Main content area divided into 3 columns: controls, charts, and asset overview
@@ -94,14 +86,20 @@ const Dashboard = () => {
 
           {/* Column 2: Charts */}
           <BaseCard>
-            <WRZTabs />
-            <DemandSupplyChart
-              demandData={demandForChart}
-              supplyData={supplyForChart}
-              simulatedDemandData={simulatedDemandForChart}
-              drought={filterCriteria.drought}
-            />
-            <CostChart customAssets={customAssets} />
+            {demandForChart && supplyForChart ? (
+              <>
+                <WRZTabs />
+                <DemandSupplyChart
+                  demandData={demandForChart}
+                  supplyData={supplyForChart}
+                  simulatedDemandData={simulatedDemandForChart}
+                  drought={filterCriteria.drought}
+                />
+                <CostChart customAssets={customAssets} />
+              </>
+            ) : (
+              <EmptyStateMessage message="No data available." />
+            )}
           </BaseCard>
 
           {/* Column 3: Asset Overview */}
@@ -112,9 +110,6 @@ const Dashboard = () => {
             <WhatIfModal onClose={() => setShowWhatIfModal(false)} />
           )}
         </MainContent>
-        <Footer>
-          <p>Hope it was useful.</p>
-        </Footer>
       </DashboardContainer>
     </>
   );
