@@ -42,6 +42,7 @@
     "react-xarrows": "^2.0.2",
     "reactflow": "^11.10.4",
     "styled-components": "^6.1.8",
+    "uuid": "^11.1.0",
     "xarrows": "^0.0.1"
   },
   "devDependencies": {

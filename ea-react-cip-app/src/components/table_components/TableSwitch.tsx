@@ -1,5 +1,5 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
 const SwitchContainer = styled.div`
   width: 300px;
@@ -7,17 +7,18 @@ const SwitchContainer = styled.div`
   display: flex;
   cursor: pointer;
   position: relative;
-  overflow: hidden; // Hide the overflow of pseudo-elements
-  margin-left: 10rem;
+  overflow: hidden;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.75);
+  border-radius: 10px;
   &::before,
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     bottom: 0;
-    width: 20rem; // Width of the diagonal edge
-    background: inherit; // Inherit the background color from the parent
-    transform: skewX(70deg); // Adjust the skew angle for desired diagonal edge
+    width: 20rem;
+    background: inherit;
+    transform: skewX(70deg);
   }
 
   &::before {
@@ -44,13 +45,13 @@ interface SectionProps {
 }
 
 const AssetSection = styled(Section)<SectionProps>`
-  background-color: ${(props) => (props.checked ? '#3D314A' : '#D3D3D3')};
-  color: ${(props) => (props.checked ? '#fff' : '#000')};
+  background-color: ${(props) => (props.checked ? "#1a87e2" : "#D3D3D3")};
+  color: ${(props) => (props.checked ? "#fff" : "#000")};
 `;
 
 const CostSection = styled(Section)<SectionProps>`
-  background-color: ${(props) => (props.checked ? '#D3D3D3' : '#3D314A')};
-  color: ${(props) => (props.checked ? '#000' : '#fff')};
+  background-color: ${(props) => (props.checked ? "#D3D3D3" : "#1a87e2")};
+  color: ${(props) => (props.checked ? "#000" : "#fff")};
 `;
 
 interface CustomizedSwitchesProps {
@@ -58,7 +59,10 @@ interface CustomizedSwitchesProps {
   onChange: () => void;
 }
 
-export default function CustomizedSwitches({ checked, onChange }: CustomizedSwitchesProps) {
+export default function CustomizedSwitches({
+  checked,
+  onChange,
+}: CustomizedSwitchesProps) {
   return (
     <SwitchContainer onClick={onChange}>
       <AssetSection checked={checked}>Asset Table</AssetSection>
