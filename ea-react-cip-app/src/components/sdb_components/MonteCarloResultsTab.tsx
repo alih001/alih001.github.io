@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { MonteCarloSummaryByYear } from "../../hooks/useMonteCarloSimulation";
 import { scaleLinear, scaleTime } from "@visx/scale";
@@ -41,6 +41,47 @@ const LegendColor = styled.div<{ color: string; dashed?: boolean }>`
   ${({ dashed }) => dashed && "border-top: 1px dashed black; background: none;"}
 `;
 
+// Styling for the data table
+const DataPreviewContainer = styled.div`
+  margin-top: 1rem;
+  overflow-x: auto;
+`;
+
+const DataTable = styled.table`
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 600px;
+`;
+
+const TableHeader = styled.th`
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  background: #eee;
+  font-size: 0.9rem;
+  text-align: center;
+`;
+
+const TableCell = styled.td`
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  text-align: center;
+`;
+
+const ToggleButton = styled.button`
+  margin: 1rem 0;
+  padding: 0.5rem 1rem;
+  background: #2e6ef7;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  &:hover {
+    background: #204ecf;
+  }
+`;
+
 const width = 800;
 const height = 400;
 const margin = { top: 20, right: 30, bottom: 50, left: 60 };
@@ -60,7 +101,7 @@ const MonteCarloResultsTab: React.FC<MonteCarloResultsTabProps> = ({
 }) => {
   const data = results.summary;
 
-  // For the main (shadow band) chart
+  // For the main shadow-band chart
   const xValue = (d: MonteCarloSummaryByYear) => new Date(d.year, 0, 1);
 
   const xScale = scaleTime<Date>({
@@ -68,7 +109,6 @@ const MonteCarloResultsTab: React.FC<MonteCarloResultsTabProps> = ({
     range: [margin.left, width - margin.right],
   });
 
-  // Construct a unified y scale based on simulation values.
   const allY = data.flatMap((d) => [d.percentile5, d.percentile95, d.medianSupply, d.medianDemand]);
   const yScale = scaleLinear<number>({
     domain: [Math.min(...allY) * 0.95, Math.max(...allY) * 1.05],
@@ -76,35 +116,32 @@ const MonteCarloResultsTab: React.FC<MonteCarloResultsTabProps> = ({
     nice: true,
   });
 
-  // Build baseline supply/demand arrays for plotting.
-  // We use the simulation summary years to align our baseline values.
   const baselineDemandLineData = data.map((d) => ({
     year: d.year,
     date: new Date(d.year, 0, 1),
     value: baselineDemand?.[d.year] ?? 0,
   }));
-  
-
   const baselineSupplyLineData = data.map((d) => ({
     year: d.year,
     date: new Date(d.year, 0, 1),
     value: baselineSupply?.[d.year] ?? 0,
   }));
 
-  // Create a secondary data array: Probability of shortfall for each year.
-  // (Assuming your summary already contains probabilityOfShortfall as a value between 0 and 1)
+  // Probability data remains unchanged here
   const probabilityData = data.map((d) => ({
     year: d.year,
     date: new Date(d.year, 0, 1),
     probability: d.probabilityOfShortfall,
   }));
 
-  // Create a separate y scale for the probability chart (0 to 1).
   const probabilityYScale = scaleLinear<number>({
     domain: [0, 1],
     range: [height - margin.bottom, margin.top],
     nice: true,
   });
+
+  // Toggle state for data preview table
+  const [showPreview, setShowPreview] = useState(false);
 
   return (
     <div>
@@ -121,7 +158,6 @@ const MonteCarloResultsTab: React.FC<MonteCarloResultsTabProps> = ({
               fill="#2e6ef7"
               opacity={0.2}
             />
-
             {/* Simulation Median Supply */}
             <LinePath
               data={data}
@@ -131,7 +167,6 @@ const MonteCarloResultsTab: React.FC<MonteCarloResultsTabProps> = ({
               strokeWidth={2}
               curve={curveMonotoneX}
             />
-
             {/* Simulation Median Demand */}
             <LinePath
               data={data}
@@ -142,7 +177,6 @@ const MonteCarloResultsTab: React.FC<MonteCarloResultsTabProps> = ({
               strokeDasharray="4,2"
               curve={curveMonotoneX}
             />
-
             {/* Baseline Supply (Original) */}
             <LinePath
               data={baselineSupplyLineData}
@@ -153,7 +187,6 @@ const MonteCarloResultsTab: React.FC<MonteCarloResultsTabProps> = ({
               strokeDasharray="3,3"
               curve={curveMonotoneX}
             />
-
             {/* Baseline Demand (Original) */}
             <LinePath
               data={baselineDemandLineData}
@@ -230,7 +263,6 @@ const MonteCarloResultsTab: React.FC<MonteCarloResultsTabProps> = ({
         </Legend>
       </ChartContainer>
 
-      {/* New additional visualization: Probability of Shortfall Over Time */}
       <SectionHeader>Probability of Shortfall Over Time</SectionHeader>
       <ChartContainer>
         <svg width={width} height={height}>
@@ -297,6 +329,41 @@ const MonteCarloResultsTab: React.FC<MonteCarloResultsTabProps> = ({
           </LegendItem>
         </Legend>
       </ChartContainer>
+
+      {/* Toggle Button for Data Preview */}
+      <ToggleButton onClick={() => setShowPreview(!showPreview)}>
+        {showPreview ? "Hide Data" : "Show Data"}
+      </ToggleButton>
+
+      {/* Data Preview Table */}
+      {showPreview && (
+        <DataPreviewContainer>
+          <DataTable>
+            <thead>
+              <tr>
+                <TableHeader>Year</TableHeader>
+                <TableHeader>Median Supply</TableHeader>
+                <TableHeader>Median Demand</TableHeader>
+                <TableHeader>5th Percentile</TableHeader>
+                <TableHeader>95th Percentile</TableHeader>
+                <TableHeader>Probability of Shortfall</TableHeader>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((d) => (
+                <tr key={d.year}>
+                  <TableCell>{d.year}</TableCell>
+                  <TableCell>{d.medianSupply.toFixed(2)}</TableCell>
+                  <TableCell>{d.medianDemand.toFixed(2)}</TableCell>
+                  <TableCell>{d.percentile5.toFixed(2)}</TableCell>
+                  <TableCell>{d.percentile95.toFixed(2)}</TableCell>
+                  <TableCell>{(d.probabilityOfShortfall * 100).toFixed(1)}%</TableCell>
+                </tr>
+              ))}
+            </tbody>
+          </DataTable>
+        </DataPreviewContainer>
+      )}
     </div>
   );
 };
