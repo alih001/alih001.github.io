@@ -1,122 +1,54 @@
-import React from 'react';
-import styled from 'styled-components';
-import DashboardCardComponent from '../components/custom_components/DashboardCard';
-import DashboardPieChart from '../charts/PieChart';
-import { useData } from '../contexts/useDataContext';
-import DashboardTable from '../charts/summaryTable';
+// src/pages/AssetDashboard.tsx
+import React from "react";
+import styled, { createGlobalStyle } from "styled-components";
+import { EmptyStateMessage } from "../components/custom_components/EmptyComponent";
+import { useData } from "../contexts/useDataContext";
+import AssetDisplayCard from "../components/sdb_components/sdb_cards/SDBAssetsDashboardCard";
 
-const HeroSection = styled.section`
-  background-position: center, bottom left;
-  background-size: cover, cover;
-  height: fit-content;
-  color: #3C474B;
-  padding: 3rem 23rem 1rem;
-  .heroInner {
-    display: flex;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  span {
-    max-width: 80%;
-  }
-  h1 {
-    font-weight: 900;
-    font-size: clamp(2rem, 5.5vw, 3.25rem);
-    line-height: 1.2;
-    margin-bottom: 1.5rem;
+const GlobalStyle = createGlobalStyle`
+  body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background: #f4f7fa;
+    color: #333;
   }
 `;
 
-const Background = styled.div`
-  background-image: url('./src/assets/images/home_page_background.png');
-  background-size: cover;
-  background-repeat: no-repeat; 
-  background-position: center; 
+const DashboardContainer = styled.div`
+  display: grid;
+  grid-template-rows: auto 1fr auto;
   min-height: 100vh;
 `;
 
-const DashboardSection = styled.div`
-  border-radius: 15px;
+const OverviewGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  width: 95%;
-  min-height: 75vh;
-  margin-top:1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
 `;
 
-const AssetDashboard: React.FC = () => {
-  const { table1Data } = useData();
-  
+const Dashboard: React.FC = () => {
+  const { assetDetailsMap } = useData();
+
+  if (!assetDetailsMap || Object.keys(assetDetailsMap).length === 0) {
+    return <EmptyStateMessage message="No assets available." />;
+  }
+
   return (
-    <Background>
-      <HeroSection className="light hero">
-        <div className="heroInner">
-          <span>
-          <h1>Assets Dashboard</h1>
-          </span>
-        </div>
-      </HeroSection>
-      <DashboardSection>
-
-        <DashboardCardComponent
-          title="Top 10 Weir Assets (Step 2 Score)"
-          width = {34} height = {45}
-          left = {5} top = {0}
-        >
-          <DashboardTable tableData={table1Data} sortRow={16}/>
-        </DashboardCardComponent>
-
-        <DashboardCardComponent
-          title="Top 10 Weir Assets (Stage 1 Score)"
-          width = {34} height = {45}
-          left = {5} top = {0}
-        >
-          <DashboardTable tableData={table1Data} sortRow={17}/>
-        </DashboardCardComponent>
-
-        <DashboardCardComponent
-          title="Weir Type Distribution"
-          width = {34} height = {23}
-          left = {5} top = {3}
-        >
-          <DashboardPieChart 
-            width={300} height={300} 
-            data={table1Data} rowReference={10}/>
-        </DashboardCardComponent>
-
-        <DashboardCardComponent
-          title="Scour Rating Distribution"
-          width = {34} height = {23}
-          left = {5} top = {3}
-        >
-          <DashboardPieChart 
-            width={300} height={300} 
-            data={table1Data} rowReference={4}/>
-        </DashboardCardComponent>
-
-        <DashboardCardComponent
-          title="Corrosion Rating Distribution"
-          width = {34} height = {23}
-          left = {5} top = {3}
-        >
-          <DashboardPieChart 
-            width={300} height={300} 
-            data={table1Data} rowReference={6}/>
-        </DashboardCardComponent>
-
-        <DashboardCardComponent
-          title="Tackle Rating Distribution"
-          width = {34} height = {23}
-          left = {5} top = {3}
-        >
-          <DashboardPieChart 
-            width={300} height={300} 
-            data={table1Data} rowReference={7}/>
-        </DashboardCardComponent>
-      
-      </DashboardSection>
-    </Background>
+    <>
+      <GlobalStyle />
+      <DashboardContainer>
+        <OverviewGrid>
+          {Object.entries(assetDetailsMap).map(([assetName, assetData]) => (
+            <AssetDisplayCard
+              key={assetName}
+              assetName={assetName}
+              assetData={assetData}
+            />
+          ))}
+        </OverviewGrid>
+      </DashboardContainer>
+    </>
   );
-}
+};
 
-export default AssetDashboard;
+export default Dashboard;
