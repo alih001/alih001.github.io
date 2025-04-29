@@ -57,7 +57,7 @@ const HomePage: React.FC = () => {
           <HeroSection className="light hero">
             <div className="heroInner">
               <span>
-                <h1>Thames Water Capital Investment Platform</h1>
+                <h1>Thames Water Supply-Demand Balance Platform</h1>
               </span>
             </div>
           </HeroSection>

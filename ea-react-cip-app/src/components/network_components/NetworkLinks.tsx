@@ -1,4 +1,3 @@
-// NetworkLinks.tsx
 import React, { useCallback, useRef, useState, useMemo } from "react";
 import { useData } from "../../contexts/useDataContext";
 import ReactFlow, {
@@ -17,8 +16,8 @@ import { CustomNodeProps } from "../../types/public-types";
 import "reactflow/dist/style.css";
 import "../../styles/nodeStyles.css";
 import styled from "styled-components";
-
 import NodeSidebar from "./AddNodeSidebar";
+import EdgePopover from "../custom_components/Edgeover";
 
 const TextWrapper = styled.div`
   display: flex;
@@ -39,9 +38,8 @@ const StyledInput = styled.input`
   font-size: 16px;
   margin: 1rem 0;
   transition: border-color 0.3s;
-
   &:focus {
-    border-color: #007bff; // Change focus color as needed
+    border-color: #007bff;
   }
 `;
 
@@ -62,11 +60,9 @@ const Button = styled.label`
   display: inline-block;
   line-height: 60px;
   font-size: 25px;
-
   &:hover {
     background-color: #052e84;
   }
-
   &:active {
     background-color: #f1ac15;
   }
@@ -75,10 +71,6 @@ const Button = styled.label`
 const connectionLineStyle = {
   strokeWidth: 3,
   stroke: "black",
-};
-
-const edgeTypes = {
-  floating: FloatingEdge,
 };
 
 const defaultEdgeOptions = {
@@ -99,13 +91,46 @@ const NetworkLinks = () => {
   const [nodeNameInput, setNodeNameInput] = useState("");
   const editNodeRef = useRef(null);
 
+  // State for managing the edge popover
+  const [edgeContextMenu, setEdgeContextMenu] = useState<{
+    edgeId: string;
+    x: number;
+    y: number;
+  } | null>(null);
+
+  const handleEdgeContextMenu = useCallback(
+    (event: React.MouseEvent, edgeId: string) => {
+      event.preventDefault();
+      setEdgeContextMenu({ edgeId, x: event.clientX, y: event.clientY });
+    },
+    []
+  );
+
+  const updateEdgeStrength = useCallback(
+    (edgeId: string, strength: "low" | "medium" | "high") => {
+      setEdges((eds) =>
+        eds.map((edge) => (edge.id === edgeId ? { ...edge, strength } : edge))
+      );
+    },
+    [setEdges]
+  );
+
+  const edgeTypes = useMemo(
+    () => ({
+      floating: (edgeProps: any) => (
+        <FloatingEdge {...edgeProps} onEdgeContextMenu={handleEdgeContextMenu} />
+      ),
+    }),
+    [handleEdgeContextMenu]
+  );
+
   const onConnect = useCallback(
-    (params) => setEdges((eds) => addEdge(params, eds)),
+    (params) =>
+      setEdges((eds) => addEdge({ ...params, strength: "medium" }, eds)),
     [setEdges]
   );
 
   const [selectedColor, setSelectedColor] = useState("#FE9200");
-
   const reactFlowWrapper = useRef(null);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
@@ -130,7 +155,7 @@ const NetworkLinks = () => {
       ),
     }),
     [handleNodeEdit]
-  ); // Recalculate only if handleNodeEdit changes
+  );
 
   const onNodesChange = useCallback(
     (changes) => {
@@ -154,20 +179,14 @@ const NetworkLinks = () => {
   const onDrop = useCallback(
     (event) => {
       event.preventDefault();
-
       const type = event.dataTransfer.getData("application/reactflow");
-
-      console.log("add node node");
-
-      if (typeof type === "undefined" || !type) {
+      if (!type) {
         return;
       }
-
       const position = reactFlowInstance.screenToFlowPosition({
         x: event.clientX,
         y: event.clientY,
       });
-
       const newNode: CustomNodeProps = {
         id: Date.now().toString(),
         type,
@@ -178,9 +197,6 @@ const NetworkLinks = () => {
           nodeColour: "red",
         },
       };
-
-      console.log(newNode);
-
       setNodes((nds) => nds.concat(newNode));
     },
     [reactFlowInstance, setNodes]
@@ -208,10 +224,9 @@ const NetworkLinks = () => {
             }
           : node
       );
-
       setNodes(updatedNodes);
-      setEditingNode({ isEditing: false, nodeId: "" }); // Reset editing state
-      setNodeNameInput(""); // Clear input field
+      setEditingNode({ isEditing: false, nodeId: "" });
+      setNodeNameInput("");
     };
 
     return (
@@ -251,8 +266,7 @@ const NetworkLinks = () => {
 
   const renderDescription = () => (
     <TextWrapper>
-      Use your custom maps to visualise how different factors in your system
-      will affect each other :)
+      Use your custom maps to visualise how different factors in your system will affect each other :)
     </TextWrapper>
   );
 
@@ -267,7 +281,12 @@ const NetworkLinks = () => {
     <>
       <div className="network-dashboard">
         <ReactFlowProvider>
-          <div className="content" ref={reactFlowWrapper}>
+          <div
+            className="content"
+            ref={reactFlowWrapper}
+            onDrop={onDrop}
+            onDragOver={onDragOver}
+          >
             <ReactFlow
               nodes={nodes}
               edges={edges}
@@ -280,17 +299,32 @@ const NetworkLinks = () => {
               defaultEdgeOptions={defaultEdgeOptions}
               connectionLineComponent={CustomConnectionLine}
               connectionLineStyle={connectionLineStyle}
-              onDrop={onDrop}
-              onDragOver={onDragOver}
               onInit={setReactFlowInstance}
             />
           </div>
         </ReactFlowProvider>
-        <div className="networkDescription" ref={editNodeRef}>
+        <div className="networkDescription">
           <NodeSidebar />
           {renderDynamicSection()}
         </div>
       </div>
+
+      {edgeContextMenu && (
+        <EdgePopover
+          anchorPosition={{
+            x: edgeContextMenu.x,
+            y: edgeContextMenu.y,
+          }}
+          currentStrength={
+            edges.find((edge) => edge.id === edgeContextMenu.edgeId)?.strength ||
+            "medium"
+          }
+          onChangeStrength={(strength) =>
+            updateEdgeStrength(edgeContextMenu.edgeId, strength)
+          }
+          onClose={() => setEdgeContextMenu(null)}
+        />
+      )}
     </>
   );
 };

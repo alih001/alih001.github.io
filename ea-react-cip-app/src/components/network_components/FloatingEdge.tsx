@@ -1,11 +1,34 @@
-// FloatingEdge.tsx
 import { useCallback } from 'react';
-import { useStore, getStraightPath, getBezierPath } from 'reactflow';
-
+import { useStore, getBezierPath } from 'reactflow';
 import { getEdgeParams } from './utils.tsx';
 import { ConnectionPath } from '../../types/public-types.ts';
 
-const FloatingEdge: React.FC<ConnectionPath> = ({ id, source, target, markerEnd, style }) => {
+interface FloatingEdgeProps extends ConnectionPath {
+  strength?: "low" | "medium" | "high";
+  onEdgeContextMenu?: (event: React.MouseEvent<SVGPathElement>, edgeId: string) => void;
+}
+
+const getStrengthStyle = (strength: "low" | "medium" | "high") => {
+  switch (strength) {
+    case "low":
+      return { strokeWidth: 2, stroke: "#ccc" };
+    case "high":
+      return { strokeWidth: 5, stroke: "red" };
+    case "medium":
+    default:
+      return { strokeWidth: 3, stroke: "black" };
+  }
+};
+
+const FloatingEdge: React.FC<FloatingEdgeProps> = ({
+  id,
+  source,
+  target,
+  markerEnd,
+  style,
+  strength = "medium",
+  onEdgeContextMenu,
+}) => {
   const sourceNode = useStore(useCallback((store) => store.nodeInternals.get(source), [source]));
   const targetNode = useStore(useCallback((store) => store.nodeInternals.get(target), [target]));
 
@@ -22,8 +45,12 @@ const FloatingEdge: React.FC<ConnectionPath> = ({ id, source, target, markerEnd,
     targetPosition: targetPos,
     targetX: tx,
     targetY: ty,
-
   });
+
+  const strengthStyle = getStrengthStyle(strength);
+
+  console.log("Rendering FloatingEdge", id, "with strength", strength);
+
 
   return (
     <path
@@ -31,9 +58,15 @@ const FloatingEdge: React.FC<ConnectionPath> = ({ id, source, target, markerEnd,
       className="react-flow__edge-path"
       d={edgePath}
       markerEnd={markerEnd}
-      style={style}
+      style={{ ...style, ...strengthStyle }}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        if (onEdgeContextMenu) {
+          onEdgeContextMenu(e, id);
+        }
+      }}
     />
   );
-}
+};
 
 export default FloatingEdge;
